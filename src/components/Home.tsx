@@ -14,24 +14,19 @@ const Home = () => {
     <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* App Cards */}
-        <Link to="/analytics" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-          <h2 className="text-xl font-semibold text-gray-900">Analytics</h2>
-          <p className="mt-2 text-gray-600">Advanced analytics and reporting</p>
+        <Link to="/resume-parser" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold text-gray-900">Resume Parser</h2>
+          <p className="mt-2 text-gray-600">Resume Parser</p>
         </Link>
 
-        <Link to="/marketing" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-          <h2 className="text-xl font-semibold text-gray-900">Marketing</h2>
-          <p className="mt-2 text-gray-600">Marketing automation and campaigns</p>
+        <Link to="/pitch-analyzer" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold text-gray-900">Pitch Analyzer</h2>
+          <p className="mt-2 text-gray-600">Pitch Analyzer</p>
         </Link>
 
-        <Link to="/crm" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-          <h2 className="text-xl font-semibold text-gray-900">CRM</h2>
-          <p className="mt-2 text-gray-600">Customer relationship management</p>
-        </Link>
-
-        <Link to="/finance" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-          <h2 className="text-xl font-semibold text-gray-900">Finance</h2>
-          <p className="mt-2 text-gray-600">Financial management and reporting</p>
+        <Link to="/chat-service" className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold text-gray-900">Chat Service</h2>
+          <p className="mt-2 text-gray-600">Chat Service</p>
         </Link>
       </div>
     </main>
