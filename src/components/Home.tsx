@@ -3,13 +3,6 @@ import { Link } from 'react-router-dom';
 const Home = () => {
   return (
     <div className="min-h-screen bg-gray-100">
-    {/* Super App Header */}
-    <header className="bg-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <h1 className="text-3xl font-bold text-gray-900">Magure Super App</h1>
-      </div>
-    </header>
-
     {/* Main App Grid */}
     <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
