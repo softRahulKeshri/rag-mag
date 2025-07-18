@@ -1,9 +1,38 @@
-const ResumeParserApp = () => {
+import React, { useState } from "react";
+import Sidebar from "./components/Sidebar";
+import UploadCenter from "./components/UploadCenter";
+import ResumeSearch from "./components/ResumeSearch";
+import ResumeStore from "./components/ResumeStore";
+
+
+type Section = "upload" | "search" | "store";
+
+const ResumeParserApp: React.FC = () => {
+  const [activeSection, setActiveSection] = useState<Section>("upload");
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case "upload":
+        return <UploadCenter />;
+      case "search":
+        return <ResumeSearch />;
+      case "store":
+        return <ResumeStore />;
+      default:
+        return <UploadCenter />;
+    }
+  };
+
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Resume Parser App</h1>
-      <p>This is the resume parser app landing page.</p>
-      
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <Sidebar
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-auto">{renderContent()}</div>
     </div>
   );
 };
