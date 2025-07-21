@@ -3,14 +3,14 @@ import { useResumeStore } from "../store/resumeStore";
 import { useResumeUpload } from "../hooks/useResumeUpload";
 import GroupSelector from "./GroupSelector";
 import FileUploadZone from "./FileUploadZone";
-import type { Group } from "../types";
+import type { IGroup } from "../types";
 
 const UploadCenter: React.FC = () => {
   const { selectedGroup, selectGroup } = useResumeStore();
   const { uploadFiles, isUploading } = useResumeUpload();
   const [isUploadingState, setIsUploadingState] = useState(false);
 
-  const handleGroupSelect = (group: Group) => {
+  const handleGroupSelect = (group: IGroup) => {
     selectGroup(group);
   };
 

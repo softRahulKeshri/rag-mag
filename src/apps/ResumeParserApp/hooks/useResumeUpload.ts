@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useResumeStore } from "../store/resumeStore";
 import { resumeAPI, handleAPIError } from "../services/api";
-import type { Resume } from "../types";
+import type { IResume } from "../types";
 
 interface UseResumeUploadReturn {
   isUploading: boolean;
@@ -59,7 +59,7 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
         // Check for duplicate files
         const existingFiles = uploadState.selectedFiles;
         const isDuplicate = existingFiles.some(
-          (existingFile) =>
+          (existingFile: File) =>
             existingFile.name === file.name && existingFile.size === file.size
         );
 
@@ -119,8 +119,8 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
 
       try {
         // Create initial resume entries
-        const initialResumes: Resume[] = uploadState.selectedFiles.map(
-          (file) => ({
+        const initialResumes: IResume[] = uploadState.selectedFiles.map(
+          (file: File) => ({
             id: `temp-${Date.now()}-${Math.random()}`,
             fileName: file.name,
             fileSize: file.size,
@@ -149,11 +149,11 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
           }
         );
 
-              // Update resumes with actual data from server
-      uploadedResumes.forEach(() => {
-        // Update the resume in store with actual data
-        // This would need to be implemented in the store
-      });
+        // Update resumes with actual data from server
+        uploadedResumes.forEach(() => {
+          // Update the resume in store with actual data
+          // This would need to be implemented in the store
+        });
 
         // Clear selected files after successful upload
         clearSelectedFiles();
@@ -161,7 +161,7 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
         const apiError = handleAPIError(error);
 
         // Set error for each file
-        uploadState.selectedFiles.forEach((file) => {
+        uploadState.selectedFiles.forEach((file: File) => {
           setUploadError(file.name, apiError.message);
         });
 

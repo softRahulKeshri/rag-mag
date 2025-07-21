@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useResumeStore } from "../store/resumeStore";
-import type { Resume } from "../types";
+import type { IResume } from "../types";
 
 const ResumeSearch: React.FC = () => {
   const {
@@ -11,7 +11,7 @@ const ResumeSearch: React.FC = () => {
     setStatusFilter,
     clearFilters,
   } = useResumeStore();
-  const [searchResults, setSearchResults] = useState<Resume[]>([]);
+  const [searchResults, setSearchResults] = useState<IResume[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   // Filter options
@@ -47,7 +47,7 @@ const ResumeSearch: React.FC = () => {
       // Simulate search delay
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      const filtered = resumes.filter((resume) => {
+      const filtered = resumes.filter((resume: IResume) => {
         const matchesQuery =
           resume.fileName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (resume.parsedData?.personalInfo.name || "")
@@ -73,7 +73,7 @@ const ResumeSearch: React.FC = () => {
   const handleStatusFilterChange = (status: string) => {
     const currentFilters = filters.status;
     const newFilters = currentFilters.includes(status)
-      ? currentFilters.filter((s) => s !== status)
+              ? currentFilters.filter((s: string) => s !== status)
       : [...currentFilters, status];
 
     setStatusFilter(newFilters);
@@ -87,7 +87,7 @@ const ResumeSearch: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  const getStatusBadge = (status: Resume["status"]) => {
+  const getStatusBadge = (status: IResume["status"]) => {
     const option = statusOptions.find((opt) => opt.value === status);
     return (
       <span

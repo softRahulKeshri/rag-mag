@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useResumeStore } from "../store/resumeStore";
 import ResumeCollection from "../ResumeCollection/ResumeCollection";
 import type { Resume as ResumeCollectionResume } from "../ResumeCollection/types";
+import type { IResume } from "../types";
 
 const ResumeStore: React.FC = () => {
   const { resumes, deleteResume, updateResume } = useResumeStore();
@@ -9,7 +10,7 @@ const ResumeStore: React.FC = () => {
 
   // Transform resumes from ResumeParserApp format to ResumeCollection format
   const transformResumes = useCallback((): ResumeCollectionResume[] => {
-    return resumes.map((resume) => ({
+    return resumes.map((resume: IResume) => ({
       id: parseInt(resume.id) || Date.now(), // Convert string ID to number
       filename: resume.fileName,
       original_filename: resume.fileName,
@@ -64,7 +65,8 @@ const ResumeStore: React.FC = () => {
   const handleResumeDeleted = useCallback(
     (resumeId: number) => {
       const resumeToDelete = resumes.find(
-        (r) => parseInt(r.id) === resumeId || r.id === resumeId.toString()
+        (r: IResume) =>
+          parseInt(r.id) === resumeId || r.id === resumeId.toString()
       );
       if (resumeToDelete) {
         deleteResume(resumeToDelete.id);
@@ -77,7 +79,8 @@ const ResumeStore: React.FC = () => {
   const handleResumeUpdated = useCallback(
     (resumeId: number, updatedResume: ResumeCollectionResume) => {
       const resumeToUpdate = resumes.find(
-        (r) => parseInt(r.id) === resumeId || r.id === resumeId.toString()
+        (r: IResume) =>
+          parseInt(r.id) === resumeId || r.id === resumeId.toString()
       );
       if (resumeToUpdate) {
         // Transform back to ResumeParserApp format

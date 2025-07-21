@@ -1,25 +1,30 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import type { ResumeParserState, Group, Resume, UploadState } from "../types";
+import type {
+  IResumeParserState,
+  IGroup,
+  IResume,
+  IUploadState,
+} from "../types";
 
 interface ResumeParserActions {
   // Group management
-  setGroups: (groups: Group[]) => void;
-  addGroup: (group: Group) => void;
-  selectGroup: (group: Group | null) => void;
-  updateGroup: (id: string, updates: Partial<Group>) => void;
+  setGroups: (groups: IGroup[]) => void;
+  addGroup: (group: IGroup) => void;
+  selectGroup: (group: IGroup | null) => void;
+  updateGroup: (id: string, updates: Partial<IGroup>) => void;
   deleteGroup: (id: string) => void;
 
   // Resume management
-  setResumes: (resumes: Resume[]) => void;
-  addResume: (resume: Resume) => void;
-  updateResume: (id: string, updates: Partial<Resume>) => void;
+  setResumes: (resumes: IResume[]) => void;
+  addResume: (resume: IResume) => void;
+  updateResume: (id: string, updates: Partial<IResume>) => void;
   deleteResume: (id: string) => void;
   updateResumeProgress: (id: string, progress: number) => void;
-  setResumeStatus: (id: string, status: Resume["status"]) => void;
+  setResumeStatus: (id: string, status: IResume["status"]) => void;
 
   // Upload management
-  setUploadState: (state: Partial<UploadState>) => void;
+  setUploadState: (state: Partial<IUploadState>) => void;
   addSelectedFiles: (files: File[]) => void;
   removeSelectedFile: (fileName: string) => void;
   clearSelectedFiles: () => void;
@@ -37,7 +42,7 @@ interface ResumeParserActions {
   resetState: () => void;
 }
 
-const initialState: ResumeParserState = {
+const initialState: IResumeParserState = {
   groups: [
     {
       id: "1",
@@ -79,78 +84,80 @@ const initialState: ResumeParserState = {
   },
 };
 
-export const useResumeStore = create<ResumeParserState & ResumeParserActions>()(
+export const useResumeStore = create<
+  IResumeParserState & ResumeParserActions
+>()(
   devtools(
     (set) => ({
       ...initialState,
 
       // Group management
-      setGroups: (groups) => set({ groups }),
-      addGroup: (group) =>
+      setGroups: (groups: IGroup[]) => set({ groups }),
+      addGroup: (group: IGroup) =>
         set((state) => ({
           groups: [...state.groups, group],
         })),
-      selectGroup: (group) => set({ selectedGroup: group }),
-      updateGroup: (id, updates) =>
+      selectGroup: (group: IGroup | null) => set({ selectedGroup: group }),
+      updateGroup: (id: string, updates: Partial<IGroup>) =>
         set((state) => ({
-          groups: state.groups.map((group) =>
+          groups: state.groups.map((group: IGroup) =>
             group.id === id ? { ...group, ...updates } : group
           ),
         })),
-      deleteGroup: (id) =>
+      deleteGroup: (id: string) =>
         set((state) => ({
-          groups: state.groups.filter((group) => group.id !== id),
+          groups: state.groups.filter((group: IGroup) => group.id !== id),
           selectedGroup:
             state.selectedGroup?.id === id ? null : state.selectedGroup,
         })),
 
       // Resume management
-      setResumes: (resumes) => set({ resumes }),
-      addResume: (resume) =>
+      setResumes: (resumes: IResume[]) => set({ resumes }),
+      addResume: (resume: IResume) =>
         set((state) => ({
           resumes: [...state.resumes, resume],
         })),
-      updateResume: (id, updates) =>
+      updateResume: (id: string, updates: Partial<IResume>) =>
         set((state) => ({
-          resumes: state.resumes.map((resume) =>
+          resumes: state.resumes.map((resume: IResume) =>
             resume.id === id ? { ...resume, ...updates } : resume
           ),
         })),
-      deleteResume: (id) =>
+      deleteResume: (id: string) =>
         set((state) => ({
-          resumes: state.resumes.filter((resume) => resume.id !== id),
+          resumes: state.resumes.filter((resume: IResume) => resume.id !== id),
         })),
-      updateResumeProgress: (id, progress) =>
+      updateResumeProgress: (id: string, progress: number) =>
         set((state) => ({
-          resumes: state.resumes.map((resume) =>
+          resumes: state.resumes.map((resume: IResume) =>
             resume.id === id ? { ...resume, progress } : resume
           ),
         })),
-      setResumeStatus: (id, status) =>
+      setResumeStatus: (id: string, status: IResume["status"]) =>
         set((state) => ({
-          resumes: state.resumes.map((resume) =>
+          resumes: state.resumes.map((resume: IResume) =>
             resume.id === id ? { ...resume, status } : resume
           ),
         })),
 
       // Upload management
-      setUploadState: (state) =>
+      setUploadState: (state: Partial<IUploadState>) =>
         set((currentState) => ({
           uploadState: { ...currentState.uploadState, ...state },
         })),
-      addSelectedFiles: (files) =>
+      addSelectedFiles: (files: File[]) =>
         set((state) => ({
           uploadState: {
             ...state.uploadState,
             selectedFiles: [...state.uploadState.selectedFiles, ...files],
           },
         })),
-      removeSelectedFile: (fileName) =>
+      removeSelectedFile: (fileName: string) =>
         set((state) => ({
           uploadState: {
             ...state.uploadState,
             selectedFiles: state.uploadState.selectedFiles.filter(
-              (file) => file.name !== fileName
+              (file: File) => file.name !== fileName
             ),
           },
         })),
@@ -163,7 +170,7 @@ export const useResumeStore = create<ResumeParserState & ResumeParserActions>()(
             errors: {},
           },
         })),
-      setUploadProgress: (fileName, progress) =>
+      setUploadProgress: (fileName: string, progress: number) =>
         set((state) => ({
           uploadState: {
             ...state.uploadState,
@@ -173,7 +180,7 @@ export const useResumeStore = create<ResumeParserState & ResumeParserActions>()(
             },
           },
         })),
-      setUploadError: (fileName, error) =>
+      setUploadError: (fileName: string, error: string) =>
         set((state) => ({
           uploadState: {
             ...state.uploadState,
@@ -192,12 +199,12 @@ export const useResumeStore = create<ResumeParserState & ResumeParserActions>()(
         })),
 
       // Search and filters
-      setSearchQuery: (searchQuery) => set({ searchQuery }),
-      setStatusFilter: (statuses) =>
+      setSearchQuery: (searchQuery: string) => set({ searchQuery }),
+      setStatusFilter: (statuses: string[]) =>
         set((state) => ({
           filters: { ...state.filters, status: statuses },
         })),
-      setDateRangeFilter: (start, end) =>
+      setDateRangeFilter: (start: Date | null, end: Date | null) =>
         set((state) => ({
           filters: {
             ...state.filters,

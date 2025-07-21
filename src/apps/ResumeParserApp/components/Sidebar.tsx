@@ -1,144 +1,94 @@
-import React from "react";
-
+import {
+  ArrowUpTrayIcon,
+  MagnifyingGlassIcon,
+  ChartBarIcon,
+} from "@heroicons/react/24/outline";
+import { AppSection } from "../types";
+import type { AppSectionType } from "../types";
 
 interface SidebarProps {
-  activeSection: "upload" | "search" | "store";
-  onSectionChange: (section: "upload" | "search" | "store") => void;
+  activeSection: AppSectionType;
+  onSectionChange: (section: AppSectionType) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({
-  activeSection,
-  onSectionChange,
-}) => {
+const Sidebar = ({ activeSection, onSectionChange }: SidebarProps) => {
   const navigationItems = [
     {
-      id: "upload" as const,
+      id: AppSection.UPLOAD,
       title: "Upload Resume",
       description: "Seamlessly import resumes with AI parsing",
-      icon: (
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-          />
-        </svg>
-      ),
+      icon: <ArrowUpTrayIcon className="w-5 h-5" />,
     },
     {
-      id: "search" as const,
+      id: AppSection.SEARCH,
       title: "Search Resumes",
       description: "Find perfect candidates with AI-powered search",
-      icon: (
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-      ),
+      icon: <MagnifyingGlassIcon className="w-5 h-5" />,
     },
     {
-      id: "store" as const,
+      id: AppSection.STORE,
       title: "Resume Store",
       description: "Analyze talent pool with intelligent insights",
-      icon: (
-        <svg
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-          />
-        </svg>
-      ),
+      icon: <ChartBarIcon className="w-5 h-5" />,
     },
   ];
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col">
-      {/* Logo Section */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-3">
-          {/* Geometric Logo */}
-          <div className="relative">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg transform rotate-45"></div>
-            <div className="absolute inset-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg transform rotate-45 scale-75"></div>
-            <div className="absolute inset-0 w-8 h-8 bg-gradient-to-br from-pink-500 to-blue-500 rounded-lg transform rotate-45 scale-50"></div>
+    <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center space-x-3">
+            {/* Geometric Logo */}
+            <div className="relative">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg transform rotate-45"></div>
+              <div className="absolute inset-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg transform rotate-45 scale-75"></div>
+              <div className="absolute inset-0 w-8 h-8 bg-gradient-to-br from-pink-500 to-blue-500 rounded-lg transform rotate-45 scale-50"></div>
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-gray-900">ResumeAI</h1>
+              <p className="text-sm text-gray-500">
+                AI-Powered Talent Discovery Platform
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">ResumeAI</h1>
-            <p className="text-sm text-gray-500">
-              AI-Powered Talent Discovery Platform
-            </p>
-          </div>
-        </div>
-      </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
-        {navigationItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onSectionChange(item.id)}
-            className={`w-full text-left p-4 rounded-lg transition-all duration-200 group ${
-              activeSection === item.id
-                ? "bg-gray-50 border border-blue-200 shadow-sm"
-                : "hover:bg-gray-50"
-            }`}
-          >
-            <div className="flex items-start space-x-3">
-              <div
-                className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${
+          {/* Horizontal Navigation */}
+          <nav className="flex items-center space-x-1">
+            {navigationItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => onSectionChange(item.id)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   activeSection === item.id
-                    ? "bg-blue-100 text-blue-600"
-                    : "text-gray-400 group-hover:text-gray-600"
+                    ? "bg-blue-50 text-blue-700 border border-blue-200"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                 }`}
               >
-                {item.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3
-                  className={`text-sm font-medium ${
+                <div
+                  className={`flex-shrink-0 w-5 h-5 ${
                     activeSection === item.id
-                      ? "text-gray-900"
-                      : "text-gray-700"
+                      ? "text-blue-600"
+                      : "text-gray-500"
                   }`}
                 >
-                  {item.title}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            </div>
-          </button>
-        ))}
-      </nav>
+                  {item.icon}
+                </div>
+                <span>{item.title}</span>
+                {activeSection === item.id && (
+                  <div className="w-2 h-2 bg-blue-600 rounded-full" />
+                )}
+              </button>
+            ))}
+          </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
-        <p className="text-xs text-gray-400 text-center">
-          Powered by Magure.AI
-        </p>
+          {/* Footer Info */}
+          <div className="hidden lg:flex">
+            <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+              <p className="text-xs text-gray-500">Powered by Magure.AI</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

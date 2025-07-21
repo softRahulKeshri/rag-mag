@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Resume, Group, ParsedResumeData } from "../types";
+import type { IResume, IGroup, IParsedResumeData } from "../types";
 
 // Configure axios instance
 const api = axios.create({
@@ -37,19 +37,19 @@ api.interceptors.response.use(
 
 // Group management API
 export const groupAPI = {
-  getAll: async (): Promise<Group[]> => {
+  getAll: async (): Promise<IGroup[]> => {
     const response = await api.get("/groups");
     return response.data;
   },
 
   create: async (
-    group: Omit<Group, "id" | "createdAt" | "resumeCount">
-  ): Promise<Group> => {
+    group: Omit<IGroup, "id" | "createdAt" | "resumeCount">
+  ): Promise<IGroup> => {
     const response = await api.post("/groups", group);
     return response.data;
   },
 
-  update: async (id: string, updates: Partial<Group>): Promise<Group> => {
+  update: async (id: string, updates: Partial<IGroup>): Promise<IGroup> => {
     const response = await api.put(`/groups/${id}`, updates);
     return response.data;
   },
@@ -61,13 +61,13 @@ export const groupAPI = {
 
 // Resume management API
 export const resumeAPI = {
-  getAll: async (groupId?: string): Promise<Resume[]> => {
+  getAll: async (groupId?: string): Promise<IResume[]> => {
     const params = groupId ? { groupId } : {};
     const response = await api.get("/resumes", { params });
     return response.data;
   },
 
-  getById: async (id: string): Promise<Resume> => {
+  getById: async (id: string): Promise<IResume> => {
     const response = await api.get(`/resumes/${id}`);
     return response.data;
   },
@@ -81,7 +81,7 @@ export const resumeAPI = {
     files: File[],
     groupId: string,
     onProgress?: (fileName: string, progress: number) => void
-  ): Promise<Resume[]> => {
+  ): Promise<IResume[]> => {
     const formData = new FormData();
     formData.append("groupId", groupId);
 
@@ -107,7 +107,7 @@ export const resumeAPI = {
   },
 
   // Parse resume content
-  parse: async (resumeId: string): Promise<ParsedResumeData> => {
+  parse: async (resumeId: string): Promise<IParsedResumeData> => {
     const response = await api.post(`/resumes/${resumeId}/parse`);
     return response.data;
   },
@@ -116,7 +116,7 @@ export const resumeAPI = {
   search: async (
     query: string,
     filters?: Record<string, unknown>
-  ): Promise<Resume[]> => {
+  ): Promise<IResume[]> => {
     const response = await api.get("/resumes/search", {
       params: { query, ...filters },
     });

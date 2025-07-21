@@ -1,15 +1,36 @@
-export interface Resume {
+import React from "react";
+
+// App Section constants for better type safety and maintainability
+export const AppSection = {
+  UPLOAD: "upload",
+  SEARCH: "search",
+  STORE: "store",
+} as const;
+
+export type AppSectionType = (typeof AppSection)[keyof typeof AppSection];
+
+// Section configuration interface for dynamic content rendering
+export interface ISectionConfig {
+  title: string;
+  description: string;
+  component: React.ComponentType;
+}
+
+// Section configuration map for scalable content management
+export type SectionConfigMap = Record<AppSectionType, ISectionConfig>;
+
+export interface IResume {
   id: string;
   fileName: string;
   fileSize: number;
   uploadDate: Date;
   status: "uploading" | "processing" | "completed" | "error";
   progress?: number;
-  parsedData?: ParsedResumeData;
+  parsedData?: IParsedResumeData;
   error?: string;
 }
 
-export interface ParsedResumeData {
+export interface IParsedResumeData {
   personalInfo: {
     name: string;
     email: string;
@@ -17,13 +38,13 @@ export interface ParsedResumeData {
     location?: string;
     linkedin?: string;
   };
-  experience: WorkExperience[];
-  education: Education[];
+  experience: IWorkExperience[];
+  education: IEducation[];
   skills: string[];
   summary?: string;
 }
 
-export interface WorkExperience {
+export interface IWorkExperience {
   company: string;
   position: string;
   startDate: string;
@@ -32,7 +53,7 @@ export interface WorkExperience {
   achievements?: string[];
 }
 
-export interface Education {
+export interface IEducation {
   institution: string;
   degree: string;
   field: string;
@@ -41,7 +62,7 @@ export interface Education {
   gpa?: number;
 }
 
-export interface Group {
+export interface IGroup {
   id: string;
   name: string;
   description?: string;
@@ -49,18 +70,18 @@ export interface Group {
   resumeCount: number;
 }
 
-export interface UploadState {
+export interface IUploadState {
   isUploading: boolean;
   selectedFiles: File[];
   uploadProgress: Record<string, number>;
   errors: Record<string, string>;
 }
 
-export interface ResumeParserState {
-  groups: Group[];
-  selectedGroup: Group | null;
-  resumes: Resume[];
-  uploadState: UploadState;
+export interface IResumeParserState {
+  groups: IGroup[];
+  selectedGroup: IGroup | null;
+  resumes: IResume[];
+  uploadState: IUploadState;
   searchQuery: string;
   filters: {
     status: string[];

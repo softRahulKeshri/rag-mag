@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useResumeStore } from "../store/resumeStore";
-import type { Group } from "../types";
+import type { IGroup } from "../types";
 
 interface GroupSelectorProps {
-  onGroupSelect: (group: Group) => void;
-  selectedGroup: Group | null;
+  onGroupSelect: (group: IGroup) => void;
+  selectedGroup: IGroup | null;
 }
 
 const GroupSelector: React.FC<GroupSelectorProps> = ({
@@ -14,7 +14,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
   const { groups } = useResumeStore();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleGroupSelect = (group: Group) => {
+  const handleGroupSelect = (group: IGroup) => {
     onGroupSelect(group);
     setIsOpen(false);
   };
@@ -67,7 +67,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
               </div>
             ) : (
               <div className="py-1">
-                {groups.map((group) => (
+                {groups.map((group: IGroup) => (
                   <button
                     key={group.id}
                     onClick={() => handleGroupSelect(group)}
