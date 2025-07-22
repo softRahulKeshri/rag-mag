@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import Sidebar from "./components/Sidebar";
-import UploadCenter from "./components/UploadCenter";
-import ResumeSearch from "./components/ResumeSearch";
-import ResumeStore from "./components/ResumeStore";
-
+import { UploadCenter } from "./modules/upload";
+import { ResumeSearch } from "./modules/search";
+import { ResumeStore } from "./modules/store";
 
 type Section = "upload" | "search" | "store";
 
