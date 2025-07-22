@@ -13,16 +13,70 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-50 px-4">
-      {/* Blurred Gradient Background Shapes */}
-      <div className="absolute top-[-120px] left-[-100px] w-[300px] h-[300px] bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-      <div className="absolute bottom-[-120px] right-[-100px] w-[400px] h-[400px] bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-      <div className="absolute top-[20%] right-[10%] w-[200px] h-[200px] bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4">
+      {/* Premium Animated Background Elements */}
 
-      {/* Login Card */}
-      <div className="z-10 w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
+      {/* Main Gradient Orbs */}
+      <div className="absolute top-[-200px] left-[-150px] w-[500px] h-[500px] bg-gradient-to-br from-blue-400/20 via-purple-400/15 to-cyan-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse"></div>
+      <div
+        className="absolute bottom-[-200px] right-[-150px] w-[600px] h-[600px] bg-gradient-to-br from-purple-400/20 via-pink-400/15 to-indigo-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse"
+        style={{ animationDelay: "1s" }}
+      ></div>
+      <div
+        className="absolute top-[30%] right-[15%] w-[300px] h-[300px] bg-gradient-to-br from-cyan-400/15 via-blue-400/10 to-purple-400/15 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"
+        style={{ animationDelay: "2s" }}
+      ></div>
+
+      {/* Floating Geometric Shapes */}
+      <div className="absolute top-[20%] left-[10%] w-16 h-16 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-lg rotate-45 animate-float"></div>
+      <div
+        className="absolute bottom-[30%] left-[20%] w-12 h-12 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full animate-float"
+        style={{ animationDelay: "1.5s" }}
+      ></div>
+      <div
+        className="absolute top-[60%] right-[25%] w-20 h-20 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-lg rotate-12 animate-float"
+        style={{ animationDelay: "2.5s" }}
+      ></div>
+
+      {/* Subtle Grid Pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(156, 146, 172, 0.03) 1px, transparent 0)`,
+            backgroundSize: "60px 60px",
+          }}
+        ></div>
+      </div>
+
+      {/* Animated Light Rays */}
+      <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-blue-400/20 to-transparent animate-pulse"></div>
+      <div
+        className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-purple-400/20 to-transparent animate-pulse"
+        style={{ animationDelay: "1s" }}
+      ></div>
+
+      {/* Floating Particles */}
+      <div className="absolute top-[15%] left-[15%] w-2 h-2 bg-blue-400/30 rounded-full animate-bounce"></div>
+      <div
+        className="absolute top-[25%] right-[20%] w-1 h-1 bg-purple-400/40 rounded-full animate-bounce"
+        style={{ animationDelay: "0.5s" }}
+      ></div>
+      <div
+        className="absolute bottom-[20%] left-[30%] w-1.5 h-1.5 bg-cyan-400/35 rounded-full animate-bounce"
+        style={{ animationDelay: "1s" }}
+      ></div>
+      <div
+        className="absolute bottom-[35%] right-[10%] w-1 h-1 bg-pink-400/30 rounded-full animate-bounce"
+        style={{ animationDelay: "1.5s" }}
+      ></div>
+
+      {/* Premium Glass Morphism Card */}
+      <div className="z-10 w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 space-y-6 border border-white/20">
         <div className="text-center">
-          <div className="text-4xl font-bold text-indigo-600 mb-2">Magure</div>
+          <div className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+            Magure
+          </div>
           <h2 className="text-2xl font-semibold text-gray-800">Welcome Back</h2>
           <p className="text-gray-500 text-sm">
             Sign in to continue to your dashboard
@@ -42,7 +96,7 @@ const Login = () => {
               type="email"
               required
               placeholder="you@example.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -60,7 +114,7 @@ const Login = () => {
               type="password"
               required
               placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -69,7 +123,7 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 text-white font-semibold bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-all duration-200 shadow-md focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-full py-3 px-4 text-white font-semibold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Sign in
             </button>
@@ -77,12 +131,15 @@ const Login = () => {
         </form>
 
         <p className="text-center text-sm text-gray-500">
-          Don’t have an account?{" "}
-          <span className="text-indigo-600 hover:underline cursor-pointer">
+          Don't have an account?{" "}
+          <span className="text-indigo-600 hover:text-indigo-700 hover:underline cursor-pointer transition-colors duration-200">
             Contact Admin
           </span>
         </p>
       </div>
+
+      {/* Additional Premium Effects */}
+      <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/5 pointer-events-none"></div>
     </div>
   );
 };
