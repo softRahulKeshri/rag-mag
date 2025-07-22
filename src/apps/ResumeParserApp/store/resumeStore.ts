@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import type { ResumeParserState, Group, Resume, UploadState } from "../types";
+import type {
+  ResumeParserState,
+  Group,
+  Resume,
+  UploadState,
+  UploadedFile,
+} from "../types";
 
 interface ResumeParserActions {
   // Group management
@@ -26,6 +32,9 @@ interface ResumeParserActions {
   setUploadProgress: (fileName: string, progress: number) => void;
   setUploadError: (fileName: string, error: string) => void;
   clearUploadErrors: () => void;
+  addUploadedFile: (file: UploadedFile) => void;
+  clearUploadedFiles: () => void;
+  setUploadStatus: (status: UploadState["uploadStatus"]) => void;
 
   // Search and filters
   setSearchQuery: (query: string) => void;
@@ -41,23 +50,30 @@ const initialState: ResumeParserState = {
   groups: [
     {
       id: "1",
-      name: "Software Engineers",
-      description: "Engineering team candidates",
+      name: "AI",
+      description: "AI and Machine Learning team",
       createdAt: new Date("2024-01-01"),
       resumeCount: 0,
     },
     {
       id: "2",
-      name: "Product Managers",
-      description: "Product team candidates",
+      name: "Software Engineers",
+      description: "Engineering team candidates",
       createdAt: new Date("2024-01-02"),
       resumeCount: 0,
     },
     {
       id: "3",
+      name: "Product Managers",
+      description: "Product team candidates",
+      createdAt: new Date("2024-01-03"),
+      resumeCount: 0,
+    },
+    {
+      id: "4",
       name: "Designers",
       description: "Design team candidates",
-      createdAt: new Date("2024-01-03"),
+      createdAt: new Date("2024-01-04"),
       resumeCount: 0,
     },
   ],
@@ -68,6 +84,8 @@ const initialState: ResumeParserState = {
     selectedFiles: [],
     uploadProgress: {},
     errors: {},
+    uploadStatus: "idle",
+    uploadedFiles: [],
   },
   searchQuery: "",
   filters: {
@@ -188,6 +206,27 @@ export const useResumeStore = create<ResumeParserState & ResumeParserActions>()(
           uploadState: {
             ...state.uploadState,
             errors: {},
+          },
+        })),
+      addUploadedFile: (file) =>
+        set((state) => ({
+          uploadState: {
+            ...state.uploadState,
+            uploadedFiles: [...state.uploadState.uploadedFiles, file],
+          },
+        })),
+      clearUploadedFiles: () =>
+        set((state) => ({
+          uploadState: {
+            ...state.uploadState,
+            uploadedFiles: [],
+          },
+        })),
+      setUploadStatus: (status) =>
+        set((state) => ({
+          uploadState: {
+            ...state.uploadState,
+            uploadStatus: status,
           },
         })),
 

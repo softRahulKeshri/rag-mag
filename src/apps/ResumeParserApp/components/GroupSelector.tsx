@@ -12,39 +12,42 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
   selectedGroup,
 }) => {
   const { groups } = useResumeStore();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleGroupSelect = (group: Group) => {
     onGroupSelect(group);
-    setIsOpen(false);
+    setIsDropdownOpen(false);
   };
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      {/* Header */}
       <div className="flex items-center space-x-2 mb-3">
         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
         <h3 className="text-lg font-semibold text-gray-900">Select Group</h3>
       </div>
+
       <p className="text-sm text-gray-600 mb-4">
         Select your target group for CV uploads
       </p>
 
+      {/* Group Dropdown */}
       <div className="relative">
         <button
           type="button"
           onClick={toggleDropdown}
-          className="w-full flex items-center justify-between px-4 py-3 text-left bg-white border border-gray-300 rounded-lg shadow-sm hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          className="w-full flex items-center justify-between px-4 py-3 text-left bg-white border border-gray-300 rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
         >
           <span className={selectedGroup ? "text-gray-900" : "text-gray-500"}>
             {selectedGroup ? selectedGroup.name : "Select Group"}
           </span>
           <svg
             className={`w-5 h-5 text-gray-400 transition-transform ${
-              isOpen ? "rotate-180" : ""
+              isDropdownOpen ? "rotate-180" : ""
             }`}
             fill="none"
             stroke="currentColor"
@@ -59,7 +62,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
           </svg>
         </button>
 
-        {isOpen && (
+        {isDropdownOpen && (
           <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
             {groups.length === 0 ? (
               <div className="px-4 py-3 text-sm text-gray-500">
@@ -98,23 +101,48 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
         )}
       </div>
 
-      {!selectedGroup && (
-        <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+      {/* Confirmation Box */}
+      {selectedGroup && (
+        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center space-x-2">
             <svg
-              className="w-5 h-5 text-orange-500"
-              fill="currentColor"
-              viewBox="0 0 20 20"
+              className="w-5 h-5 text-blue-500 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
               <path
-                fillRule="evenodd"
-                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                clipRule="evenodd"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
               />
             </svg>
-            <span className="text-sm font-medium text-orange-800">
-              Please select a group to organize and upload your CVs
+            <span className="text-sm text-blue-800">
+              Perfect! Your CVs will be organized and uploaded to
             </span>
+            <div className="inline-flex items-center space-x-1 px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"
+                />
+              </svg>
+              <span>{selectedGroup.name}</span>
+            </div>
           </div>
         </div>
       )}

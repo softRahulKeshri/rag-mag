@@ -1,17 +1,20 @@
 import { useState, useCallback } from "react";
 import { useResumeStore } from "../store/resumeStore";
 import { resumeAPI, handleAPIError } from "../services/api";
-import type { Resume } from "../types";
+import type { Resume, UploadedFile } from "../types";
 
 interface UseResumeUploadReturn {
   isUploading: boolean;
   selectedFiles: File[];
   uploadProgress: Record<string, number>;
   errors: Record<string, string>;
+  uploadStatus: "idle" | "uploading" | "success" | "error";
+  uploadedFiles: UploadedFile[];
   handleFileSelect: (files: FileList | File[]) => void;
   handleFileDrop: (files: FileList) => void;
   removeFile: (fileName: string) => void;
   clearFiles: () => void;
+  clearUploadedFiles: () => void;
   uploadFiles: (groupId: string) => Promise<void>;
   validateFiles: (files: File[]) => string[];
 }
@@ -35,6 +38,9 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
     setUploadError,
     clearUploadErrors,
     addResume,
+    addUploadedFile,
+    clearUploadedFiles: clearUploadedFilesStore,
+    setUploadStatus,
   } = useResumeStore();
 
   const [isUploading, setIsUploading] = useState(false);
@@ -86,8 +92,9 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
 
       addSelectedFiles(fileArray);
       clearUploadErrors();
+      setUploadStatus("idle");
     },
-    [validateFiles, addSelectedFiles, clearUploadErrors]
+    [validateFiles, addSelectedFiles, clearUploadErrors, setUploadStatus]
   );
 
   const handleFileDrop = useCallback(
@@ -106,7 +113,13 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
 
   const clearFiles = useCallback(() => {
     clearSelectedFiles();
-  }, [clearSelectedFiles]);
+    setUploadStatus("idle");
+  }, [clearSelectedFiles, setUploadStatus]);
+
+  const clearUploadedFiles = useCallback(() => {
+    clearUploadedFilesStore();
+    setUploadStatus("idle");
+  }, [clearUploadedFilesStore, setUploadStatus]);
 
   const uploadFiles = useCallback(
     async (groupId: string) => {
@@ -116,6 +129,7 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
 
       setIsUploading(true);
       setUploadState({ isUploading: true });
+      setUploadStatus("uploading");
 
       try {
         // Create initial resume entries
@@ -123,10 +137,12 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
           (file) => ({
             id: `temp-${Date.now()}-${Math.random()}`,
             fileName: file.name,
+            original_filename: file.name,
             fileSize: file.size,
             uploadDate: new Date(),
             status: "uploading" as const,
             progress: 0,
+            group: groupId,
           })
         );
 
@@ -149,14 +165,29 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
           }
         );
 
-              // Update resumes with actual data from server
-      uploadedResumes.forEach(() => {
-        // Update the resume in store with actual data
-        // This would need to be implemented in the store
-      });
+        // Create uploaded file records for success state
+        const uploadedFiles: UploadedFile[] = uploadState.selectedFiles.map(
+          (file) => ({
+            id: `uploaded-${Date.now()}-${Math.random()}`,
+            name: file.name,
+            size: file.size,
+            status: "success" as const,
+            uploadedAt: new Date(),
+          })
+        );
+
+        // Add uploaded files to store
+        uploadedFiles.forEach((file) => addUploadedFile(file));
+
+        // Update resumes with actual data from server
+        uploadedResumes.forEach(() => {
+          // Update the resume in store with actual data
+          // This would need to be implemented in the store
+        });
 
         // Clear selected files after successful upload
         clearSelectedFiles();
+        setUploadStatus("success");
       } catch (error) {
         const apiError = handleAPIError(error);
 
@@ -165,6 +196,7 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
           setUploadError(file.name, apiError.message);
         });
 
+        setUploadStatus("error");
         throw apiError;
       } finally {
         setIsUploading(false);
@@ -179,6 +211,8 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
       setUploadProgress,
       clearSelectedFiles,
       setUploadError,
+      setUploadStatus,
+      addUploadedFile,
     ]
   );
 
@@ -187,10 +221,13 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
     selectedFiles: uploadState.selectedFiles,
     uploadProgress: uploadState.uploadProgress,
     errors: uploadState.errors,
+    uploadStatus: uploadState.uploadStatus,
+    uploadedFiles: uploadState.uploadedFiles,
     handleFileSelect,
     handleFileDrop,
     removeFile,
     clearFiles,
+    clearUploadedFiles,
     uploadFiles,
     validateFiles,
   };

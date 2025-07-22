@@ -1,12 +1,14 @@
 export interface Resume {
   id: string;
   fileName: string;
+  original_filename?: string;
   fileSize: number;
   uploadDate: Date;
-  status: "uploading" | "processing" | "completed" | "error";
+  status: "uploading" | "processing" | "completed" | "error" | "uploaded";
   progress?: number;
   parsedData?: ParsedResumeData;
   error?: string;
+  group?: string;
 }
 
 export interface ParsedResumeData {
@@ -54,6 +56,16 @@ export interface UploadState {
   selectedFiles: File[];
   uploadProgress: Record<string, number>;
   errors: Record<string, string>;
+  uploadStatus: "idle" | "uploading" | "success" | "error";
+  uploadedFiles: UploadedFile[];
+}
+
+export interface UploadedFile {
+  id: string;
+  name: string;
+  size: number;
+  status: "success" | "error";
+  uploadedAt: Date;
 }
 
 export interface ResumeParserState {
