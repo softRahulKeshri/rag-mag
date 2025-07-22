@@ -1,58 +1,70 @@
-import { useState } from "react";
+import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/react/24/solid';
 import ChatListItem from "./ChatListItem";
-import { mockChats } from "../constant";
+import { UserProfile } from "./UserProfile";
 import type { IChat } from "../types/types";
 
-const ChatSidebar = () => {
-  const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
+interface ChatSidebarProps {
+  chats: IChat[];
+  selectedChatId: number | null;
+  onSelectChat: (chatId: number) => void;
+  onNewChat: () => void;
+}
 
-  const handleChatSelect = (chatId: number) => {
-    setSelectedChatId(chatId);
-  };
-
+export const ChatSidebar = ({
+  chats,
+  selectedChatId,
+  onSelectChat,
+  onNewChat,
+}: ChatSidebarProps) => {
   return (
-    <div className="w-64 bg-gray-800 text-white h-full">
-      <div className="h-full flex flex-col">
-        {/* Top Section */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded mb-4">
-            + New Chat
-          </button>
+    <div className="w-72 bg-gray-900/95 backdrop-blur-sm border-r border-gray-800 text-white h-full flex flex-col">
+      {/* Sidebar Header */}
+      <div className="p-4 border-b border-gray-800">
+        <button 
+          onClick={onNewChat}
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-medium py-2.5 px-4 rounded-lg mb-2 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20"
+        >
+          <PlusIcon className="h-5 w-5" />
+          <span>New Chat</span>
+        </button>
+      </div>
 
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search chats..."
-              className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button className="absolute right-3 top-2 text-gray-400 hover:text-white">
-              🔍
-            </button>
+      {/* Search Bar */}
+      <div className="px-4 py-3">
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <MagnifyingGlassIcon className="h-4 w-4 text-gray-500" />
           </div>
-
-          <div className="space-y-2">
-            {mockChats.map((chat: IChat) => (
-              <ChatListItem
-                key={chat.id}
-                chat={chat}
-                isSelected={chat.id === selectedChatId}
-                onClick={() => handleChatSelect(chat.id)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom Section */}
-        <div className="border-t border-gray-700 p-4 space-y-4">
-          <div className="border-b border-gray-700 pb-4">
-            <button className="text-gray-400 hover:text-white cursor-pointer">
-              Upgrade
-            </button>
-          </div>
+          <input
+            type="text"
+            placeholder="Search chats..."
+            className="w-full bg-gray-800/50 border border-gray-700 text-white rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent placeholder-gray-500"
+          />
         </div>
       </div>
+
+      {/* Chat List */}
+      <div className="flex-1 overflow-y-auto py-2 px-2">
+        <div className="space-y-1">
+          {chats.map((chat: IChat) => (
+            <ChatListItem
+              key={chat.id}
+              chat={chat}
+              isSelected={chat.id === selectedChatId}
+              onClick={() => onSelectChat(chat.id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* User Profile */}
+      <UserProfile 
+        name="John Doe"
+        email="john@example.com"
+        plan="Free Plan"
+        onSettingsClick={() => console.log('Settings clicked')}
+      />
     </div>
   );
 };
 
-export default ChatSidebar;

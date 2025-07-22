@@ -1,5 +1,5 @@
 
-const Tools = () => {
+export const Tools = () => {
   return (
     <div className="border-b border-gray-700 mb-4">
       <div className="flex space-x-4 px-4 py-2">
@@ -18,4 +18,4 @@ const Tools = () => {
   );
 };
 
-export default Tools;
+

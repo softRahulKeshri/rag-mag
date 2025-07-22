@@ -12,6 +12,7 @@ import Login from "./components/Login";
 import ChatServiceApp from "./apps/ChatServiceApp/ChatServiceApp";
 import PitchAnalyzerApp from "./apps/PitchAnalyzerApp/PitchAnalyzerApp";
 import ResumeParserApp from "./apps/ResumeParserApp/ResumeParserApp";
+import ProfilePage from "./components/ProfilePage";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
                 <Route path="/resume-parser/*" element={<ResumeParserApp />} />
                 <Route path="/pitch-analyzer/*" element={<PitchAnalyzerApp />} />
                 <Route path="/chat-service/*" element={<ChatServiceApp />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Layout>

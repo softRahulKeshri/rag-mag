@@ -1,8 +1,16 @@
+export interface IFileAttachment {
+  name: string;
+  size: number;
+  type: string;
+}
+
 export interface IMessage {
-  id: number;
+  id: number | string;
   content: string;
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   timestamp: string;
+  file?: IFileAttachment;
+  isStreaming?: boolean;
 }
 
 export interface IChat {

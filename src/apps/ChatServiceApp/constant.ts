@@ -3,24 +3,24 @@ import type { IChat } from "./types/types";
 export const mockChats: IChat[] = [
   {
     id: 1,
-    title: "PDF Query",
+    title: "PDF Document Analysis",
     timestamp: "2 minutes ago",
     messages: [
       {
         id: 1,
-        content: "Hello! How can I help you today?",
+        content: "Hello! I'm your AI assistant. I can help you analyze PDF documents. Please upload a PDF or ask me a question!",
         role: "assistant",
         timestamp: "2 minutes ago",
       },
       {
         id: 2,
-        content: "What is the capital of France?",
+        content: "I need help analyzing this research paper about climate change.",
         role: "user",
         timestamp: "1 minute ago",
       },
       {
         id: 3,
-        content: "The capital of France is Paris.",
+        content: "I can help you with that! Please upload the PDF file and let me know what specific aspects you'd like me to analyze. I can summarize, extract key points, or answer questions about the content.",
         role: "assistant",
         timestamp: "1 minute ago",
       },
@@ -28,21 +28,29 @@ export const mockChats: IChat[] = [
   },
   {
     id: 2,
-    title: "Chat 2",
+    title: "Technical Documentation",
     timestamp: "5 minutes ago",
-    messages: [],
+    messages: [
+      {
+        id: 1,
+        content: "Welcome to the technical documentation chat! How can I assist you today?",
+        role: "assistant",
+        timestamp: "5 minutes ago",
+      }
+    ],
   },
   {
     id: 3,
-    title: "Chat 3",
+    title: "Research Paper Discussion",
     timestamp: "10 minutes ago",
-    messages: [],
-  },
-  {
-    id: 4,
-    title: "Chat 4",
-    timestamp: "1 hour ago",
-    messages: [],
+    messages: [
+      {
+        id: 1,
+        content: "I'm here to help you with your research. What topic are you working on?",
+        role: "assistant",
+        timestamp: "10 minutes ago",
+      }
+    ],
   },
 ];
 
