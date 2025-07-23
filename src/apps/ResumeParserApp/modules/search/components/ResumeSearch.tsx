@@ -6,12 +6,12 @@ import type { Group } from "../../../types/api";
 import { BrandColors } from "../../../theme/colors";
 import {
   DocumentTextIcon,
-  PlusIcon,
   FolderIcon,
   ChevronDownIcon,
   MagnifyingGlassIcon,
   StarIcon,
   UserIcon,
+  ArrowUpTrayIcon,
 } from "@heroicons/react/24/outline";
 
 // Dummy data for testing the UI
@@ -91,6 +91,8 @@ const ResumeSearch: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState("All Groups");
   const [groups, setGroups] = useState<Group[]>([]);
   const [showDummyData, setShowDummyData] = useState(true); // For testing UI
+  const [searchMode, setSearchMode] = useState<"text" | "jd">("text");
+  const [jdFile, setJdFile] = useState<File | null>(null);
 
   // Fetch groups on component mount
   useEffect(() => {
@@ -118,6 +120,35 @@ const ResumeSearch: React.FC = () => {
     setGroupFilter(selectedGroupId);
     setShowDummyData(false); // Hide dummy data when real search is performed
     performSearch();
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (
+      file &&
+      (file.type === "application/pdf" ||
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    ) {
+      setJdFile(file);
+    }
+  };
+
+  const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (
+      file &&
+      (file.type === "application/pdf" ||
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    ) {
+      setJdFile(file);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
   };
 
   const calculateAverageScore = (scoreCard: ScoreCard): number => {
@@ -178,74 +209,184 @@ const ResumeSearch: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             {/* Search by Text Button */}
             <button
-              className="flex flex-col items-center justify-center px-8 py-6 rounded-xl transition-all duration-200 hover:scale-105 shadow-lg"
-              style={{ backgroundColor: BrandColors.gradient.orange }}
+              onClick={() => setSearchMode("text")}
+              className={`flex flex-col items-center justify-center px-8 py-6 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg ${
+                searchMode === "text"
+                  ? "bg-white text-gray-900"
+                  : "bg-purple-500 bg-opacity-20 text-white border-2 border-white"
+              }`}
             >
-              <DocumentTextIcon className="w-5 h-5 text-white" />
-              <span className="mt-2 font-semibold text-white">
-                Search by Text
-              </span>
+              <DocumentTextIcon className="w-5 h-5" />
+              <span className="mt-2 font-semibold">Search by Text</span>
             </button>
 
             {/* Upload JD Button */}
-            <button className="flex flex-col items-center justify-center px-8 py-6 rounded-xl border-2 border-white bg-white bg-opacity-10 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-opacity-20 shadow-lg">
-              <PlusIcon className="w-5 h-5 text-white" />
-              <span className="mt-2 font-semibold text-white">Upload JD</span>
+            <button
+              onClick={() => setSearchMode("jd")}
+              className={`flex flex-col items-center justify-center px-8 py-6 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg ${
+                searchMode === "jd"
+                  ? "bg-white text-gray-900"
+                  : "bg-purple-500 bg-opacity-20 text-white border-2 border-white"
+              }`}
+            >
+              <ArrowUpTrayIcon className="w-5 h-5" />
+              <span className="mt-2 font-semibold">Upload JD</span>
             </button>
           </div>
 
-          {/* Search Bar Component */}
-          <div className="bg-white rounded-2xl p-2 shadow-xl max-w-4xl mx-auto">
-            <div className="flex items-center space-x-3">
-              {/* Group Dropdown */}
-              <div className="relative">
-                <select
-                  value={selectedGroup}
-                  onChange={(e) => setSelectedGroup(e.target.value)}
-                  className="appearance-none bg-transparent pl-10 pr-8 py-3 text-gray-700 font-medium focus:outline-none cursor-pointer"
-                  disabled={groupsLoading}
+          {/* Dynamic Search Component */}
+          <div className="bg-white rounded-2xl p-2 shadow-xl max-w-4xl mx-auto transition-all duration-300">
+            {searchMode === "text" ? (
+              /* Text Search Mode */
+              <div className="flex items-center space-x-3">
+                {/* Group Dropdown */}
+                <div className="relative">
+                  <select
+                    value={selectedGroup}
+                    onChange={(e) => setSelectedGroup(e.target.value)}
+                    className="appearance-none bg-transparent pl-10 pr-8 py-3 text-gray-700 font-medium focus:outline-none cursor-pointer"
+                    disabled={groupsLoading}
+                  >
+                    <option value="All Groups">All Groups</option>
+                    {groups.map((group) => (
+                      <option key={group.id} value={group.name}>
+                        {group.name}
+                      </option>
+                    ))}
+                  </select>
+                  <FolderIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  {groupsLoading && (
+                    <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Divider */}
+                <div className="w-px h-8 bg-gray-300"></div>
+
+                {/* Search Input */}
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder="Describe your ideal candidate or paste job requirements..."
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                    className="w-full px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none"
+                  />
+                </div>
+
+                {/* Search Button */}
+                <button
+                  onClick={handleSearch}
+                  className="flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200 hover:scale-105 shadow-lg"
+                  style={{ backgroundColor: BrandColors.gradient.purple }}
                 >
-                  <option value="All Groups">All Groups</option>
-                  {groups.map((group) => (
-                    <option key={group.id} value={group.name}>
-                      {group.name}
-                    </option>
-                  ))}
-                </select>
-                <FolderIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-                <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
-                {groupsLoading && (
-                  <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                  <MagnifyingGlassIcon className="w-5 h-5" />
+                  <span>Search</span>
+                </button>
+              </div>
+            ) : (
+              /* JD Upload Mode */
+              <div className="flex flex-col space-y-4">
+                {/* Group Dropdown */}
+                <div className="relative">
+                  <select
+                    value={selectedGroup}
+                    onChange={(e) => setSelectedGroup(e.target.value)}
+                    className="appearance-none bg-transparent pl-10 pr-8 py-3 text-gray-700 font-medium focus:outline-none cursor-pointer"
+                    disabled={groupsLoading}
+                  >
+                    <option value="All Groups">All Groups</option>
+                    {groups.map((group) => (
+                      <option key={group.id} value={group.name}>
+                        {group.name}
+                      </option>
+                    ))}
+                  </select>
+                  <FolderIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  {groupsLoading && (
+                    <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                    </div>
+                  )}
+                </div>
+
+                {/* File Upload Zone */}
+                <div>
+                  <div
+                    className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all duration-200 hover:bg-gray-50"
+                    style={{
+                      borderColor: BrandColors.gradient.purple,
+                      backgroundColor: "rgba(185, 106, 247, 0.05)",
+                    }}
+                    onDrop={handleFileDrop}
+                    onDragOver={handleDragOver}
+                    onClick={() =>
+                      document.getElementById("jd-file-input")?.click()
+                    }
+                  >
+                    {jdFile ? (
+                      <div className="flex items-center justify-center space-x-3">
+                        <DocumentTextIcon className="w-8 h-8 text-green-600" />
+                        <div className="text-left">
+                          <p className="font-medium text-gray-900">
+                            {jdFile.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Click to change file
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <ArrowUpTrayIcon
+                          className="w-12 h-12 mx-auto mb-3"
+                          style={{ color: BrandColors.gradient.purple }}
+                        />
+                        <p className="font-medium text-gray-900 mb-1">
+                          Drop your JD file here or click to browse
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Supports PDF and DOCX files
+                        </p>
+                      </div>
+                    )}
+                    <input
+                      id="jd-file-input"
+                      type="file"
+                      accept=".pdf,.docx"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
                   </div>
-                )}
+                </div>
+
+                {/* Search with JD Button */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleSearch}
+                    disabled={!jdFile}
+                    className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 shadow-lg ${
+                      jdFile
+                        ? "text-white"
+                        : "text-gray-400 bg-gray-200 cursor-not-allowed"
+                    }`}
+                    style={
+                      jdFile
+                        ? { backgroundColor: BrandColors.gradient.purple }
+                        : {}
+                    }
+                  >
+                    <MagnifyingGlassIcon className="w-5 h-5" />
+                    <span>Search with JD</span>
+                  </button>
+                </div>
               </div>
-
-              {/* Divider */}
-              <div className="w-px h-8 bg-gray-300"></div>
-
-              {/* Search Input */}
-              <div className="flex-1">
-                <input
-                  type="text"
-                  placeholder="Describe your ideal candidate or paste job requirements..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-                  className="w-full px-4 py-3 text-gray-700 placeholder-gray-500 focus:outline-none"
-                />
-              </div>
-
-              {/* Search Button */}
-              <button
-                onClick={handleSearch}
-                className="flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200 hover:scale-105 shadow-lg"
-                style={{ backgroundColor: BrandColors.gradient.orange }}
-              >
-                <MagnifyingGlassIcon className="w-5 h-5" />
-                <span>Search</span>
-              </button>
-            </div>
+            )}
           </div>
         </div>
       </div>
