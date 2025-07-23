@@ -1,1 +1,120 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-gradient-orange: #fda052;
+  --color-brand-gradient-purple: #b96af7;
+  --color-brand-gradient-blue: #3077f3;
+  --color-brand-gradient-cyan: #41e6f8;
+
+  --color-primary-charcoal-slate: #2e3141;
+
+  --color-neutral-n-black: #050507;
+  --color-neutral-n3000: #171921;
+  --color-neutral-n2000: #20222e;
+  --color-neutral-n1000: #2e3141;
+  --color-neutral-n900: #434654;
+  --color-neutral-n800: #585a67;
+  --color-neutral-n700: #6d6f7a;
+  --color-neutral-n600: #82838d;
+  --color-neutral-n500: #9698a0;
+  --color-neutral-n400: #abadb3;
+  --color-neutral-n300: #c0c1c6;
+  --color-neutral-n200: #d5d6d9;
+  --color-neutral-n150: #eaeaec;
+  --color-neutral-n100: #f5f5f5;
+  --color-neutral-n-white: #ffffff;
+
+  --color-greyscale-g-black: #070707;
+  --color-greyscale-g3000: #212121;
+  --color-greyscale-g2000: #2e2e2e;
+  --color-greyscale-g1000: #414141;
+  --color-greyscale-g900: #545454;
+  --color-greyscale-g800: #676767;
+  --color-greyscale-g700: #7a7a7a;
+  --color-greyscale-g600: #8d8d8d;
+  --color-greyscale-g500: #a0a0a0;
+  --color-greyscale-g400: #b3b3b3;
+  --color-greyscale-g300: #c6c6c6;
+  --color-greyscale-g200: #d9d9d9;
+  --color-greyscale-g150: #ececec;
+  --color-greyscale-g100: #f5f5f5;
+  --color-greyscale-g-white: #ffffff;
+
+  --color-primary-ui-blue-p700: #11397e;
+  --color-primary-ui-blue-p600: #1e50a8;
+  --color-primary-ui-blue-p500: #3077f3;
+  --color-primary-ui-blue-p400: #94bafd;
+  --color-primary-ui-blue-p300: #bfd6ff;
+  --color-primary-ui-blue-p200: #e3edff;
+  --color-primary-ui-blue-p100: #eff5ff;
+}
+
+/* Custom Animations for Premium Login Screen */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-10px) rotate(-1deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite;
+}
+
+/* Enhanced backdrop blur for better glass morphism */
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+    backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}

@@ -1,18 +1,14 @@
 import React from "react";
-
-
-interface SidebarProps {
-  activeSection: "upload" | "search" | "store";
-  onSectionChange: (section: "upload" | "search" | "store") => void;
-}
+import type { SidebarProps, NavigationItem } from "../types/sidebar";
+import { Section } from "../types/shared";
 
 const Sidebar: React.FC<SidebarProps> = ({
   activeSection,
   onSectionChange,
 }) => {
-  const navigationItems = [
+  const navigationItems: NavigationItem[] = [
     {
-      id: "upload" as const,
+      id: Section.UPLOAD,
       title: "Upload Resume",
       description: "Seamlessly import resumes with AI parsing",
       icon: (
@@ -32,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       ),
     },
     {
-      id: "search" as const,
+      id: Section.SEARCH,
       title: "Search Resumes",
       description: "Find perfect candidates with AI-powered search",
       icon: (
@@ -52,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       ),
     },
     {
-      id: "store" as const,
+      id: Section.STORE,
       title: "Resume Store",
       description: "Analyze talent pool with intelligent insights",
       icon: (
@@ -74,15 +70,17 @@ const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col">
+    <div className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col shadow-sm">
       {/* Logo Section */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
-          {/* Geometric Logo */}
-          <div className="relative">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg transform rotate-45"></div>
-            <div className="absolute inset-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg transform rotate-45 scale-75"></div>
-            <div className="absolute inset-0 w-8 h-8 bg-gradient-to-br from-pink-500 to-blue-500 rounded-lg transform rotate-45 scale-50"></div>
+          {/* Magure.AI Logo */}
+          <div className="flex-shrink-0">
+            <img
+              src="/magure_ai_logo.svg"
+              alt="Magure.AI Logo"
+              className="w-8 h-8"
+            />
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900">ResumeAI</h1>
@@ -101,13 +99,13 @@ const Sidebar: React.FC<SidebarProps> = ({
             onClick={() => onSectionChange(item.id)}
             className={`w-full text-left p-4 rounded-lg transition-all duration-200 group ${
               activeSection === item.id
-                ? "bg-gray-50 border border-blue-200 shadow-sm"
-                : "hover:bg-gray-50"
+                ? "bg-blue-50 border border-blue-200 shadow-sm"
+                : "hover:bg-gray-50 border border-transparent"
             }`}
           >
             <div className="flex items-start space-x-3">
               <div
-                className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${
+                className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-200 ${
                   activeSection === item.id
                     ? "bg-blue-100 text-blue-600"
                     : "text-gray-400 group-hover:text-gray-600"
@@ -117,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               </div>
               <div className="flex-1 min-w-0">
                 <h3
-                  className={`text-sm font-medium ${
+                  className={`text-sm font-medium transition-colors duration-200 ${
                     activeSection === item.id
                       ? "text-gray-900"
                       : "text-gray-700"

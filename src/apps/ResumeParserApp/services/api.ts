@@ -1,9 +1,12 @@
 import axios from "axios";
-import type { Resume, Group, ParsedResumeData } from "../types";
+import type { Group, UploadResult, Resume as ApiResume } from "../types/api";
+import type { BackendResumeResponse } from "../modules/store/types";
 
 // Configure axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api",
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL ||
+    "http://ec2-13-232-75-51.ap-south-1.compute.amazonaws.com/api",
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
@@ -35,6 +38,189 @@ api.interceptors.response.use(
   }
 );
 
+// Add interface for the API response format
+interface UploadApiResponse {
+  errors: Array<{
+    filename?: string;
+    message?: string;
+    error?: string;
+  }>;
+  uploaded: Array<{
+    id: number;
+    cloud_url: string | null;
+    comment: string | null;
+    commented_at: string | null;
+    filepath: string;
+    group: string;
+    original_filename: string;
+    stored_filename: string;
+    upload_time: string;
+  }>;
+}
+
+// Unified upload function using XMLHttpRequest for better progress tracking
+export const uploadResume = async (
+  files: File | File[],
+  groupId: string,
+  onProgress?: (progress: number) => void
+): Promise<UploadResult> => {
+  const fileArray = Array.isArray(files) ? files : [files];
+
+  const formData = new FormData();
+
+  // Add each file with the 'cv' field name as per API specification
+  fileArray.forEach((file) => {
+    formData.append("cv", file);
+  });
+
+  // Add group ID to the form data with 'group' field name
+  formData.append("group", groupId);
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    // Progress tracking
+    xhr.upload.addEventListener("progress", (event) => {
+      if (event.lengthComputable && onProgress) {
+        const percentComplete = (event.loaded / event.total) * 100;
+        onProgress(percentComplete);
+      }
+    });
+
+    xhr.addEventListener("load", () => {
+      if (xhr.status === 200) {
+        try {
+          const response: UploadApiResponse = JSON.parse(
+            xhr.responseText || "{}"
+          );
+
+          // Handle the new API response format
+          const uploadResult: UploadResult = {
+            successful: response.uploaded?.length || 0,
+            failed: response.errors?.length || 0,
+            total: fileArray.length,
+            message:
+              response.uploaded?.length > 0
+                ? `Successfully uploaded ${response.uploaded.length} file(s)`
+                : "Upload completed",
+            results:
+              response.uploaded?.map((item) => ({
+                id: item.id,
+                filename: item.original_filename || item.stored_filename,
+                original_filename: item.original_filename,
+                stored_filename: item.stored_filename,
+                filepath: item.filepath,
+                fileSize: 0, // Not provided in response
+                fileType: "pdf", // Assuming PDF based on context
+                uploadedAt: item.upload_time,
+                status: "uploaded" as const,
+                group: item.group,
+                cloud_url: item.cloud_url,
+                comment_text: item.comment,
+                commented_at: item.commented_at,
+              })) || [],
+            errors:
+              response.errors?.map((error) => ({
+                filename: error.filename || "Unknown file",
+                error: error.message || error.error || "Upload failed",
+              })) || [],
+          };
+
+          resolve(uploadResult);
+        } catch {
+          reject(new Error("Invalid response format from server"));
+        }
+      } else {
+        const errorMessage =
+          xhr.responseText || `Upload failed: ${xhr.status} ${xhr.statusText}`;
+        reject(new Error(errorMessage));
+      }
+    });
+
+    xhr.addEventListener("error", () => {
+      reject(new Error("Network error: Unable to connect to server"));
+    });
+
+    xhr.addEventListener("timeout", () => {
+      reject(
+        new Error(
+          `Upload timeout after ${
+            30000 / 1000
+          } seconds. Please try with fewer or smaller files.`
+        )
+      );
+    });
+
+    xhr.timeout = 30000;
+    xhr.open("POST", `${api.defaults.baseURL}/upload_cv`);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+    // Add authorization header if available
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    }
+
+    xhr.send(formData);
+  });
+};
+
+export const getResumes = async (): Promise<ApiResume[]> => {
+  const response = await api.get("/resumes");
+  return response.data;
+};
+
+// New API function to fetch resumes from /cvs endpoint
+export const getResumesFromCVSEndpoint = async (): Promise<
+  BackendResumeResponse[]
+> => {
+  const response = await api.post("/cvs", {});
+  return response.data;
+};
+
+// New API function to fetch groups from backend
+export const getGroupsFromBackend = async (): Promise<Group[]> => {
+  const response = await api.get("/groups");
+  return response.data;
+};
+
+export const getGroups = async (): Promise<Group[]> => {
+  const response = await api.get("/groups");
+  return response.data;
+};
+
+export const deleteResume = async (id: number): Promise<void> => {
+  try {
+    await api.delete(`/delete/${id}`);
+  } catch (error) {
+    throw handleAPIError(error);
+  }
+};
+
+export const updateResumeComment = async (
+  id: string,
+  updates: Partial<ApiResume>
+): Promise<ApiResume> => {
+  const response = await api.put(`/resumes/${id}`, updates);
+  return response.data;
+};
+
+export const searchResumes = async (
+  filters: Record<string, unknown>
+): Promise<Record<string, unknown>> => {
+  // Use the new search API endpoint
+  const searchPayload = {
+    group: filters.group || null,
+    query: filters.query || "",
+  };
+
+  console.log("🔍 API: Sending search request with payload:", searchPayload);
+  const response = await api.post("/search_api", searchPayload);
+  console.log("📡 API: Search response received:", response.data);
+  return response.data;
+};
+
 // Group management API
 export const groupAPI = {
   getAll: async (): Promise<Group[]> => {
@@ -61,13 +247,13 @@ export const groupAPI = {
 
 // Resume management API
 export const resumeAPI = {
-  getAll: async (groupId?: string): Promise<Resume[]> => {
+  getAll: async (groupId?: string): Promise<ApiResume[]> => {
     const params = groupId ? { groupId } : {};
     const response = await api.get("/resumes", { params });
     return response.data;
   },
 
-  getById: async (id: string): Promise<Resume> => {
+  getById: async (id: string): Promise<ApiResume> => {
     const response = await api.get(`/resumes/${id}`);
     return response.data;
   },
@@ -76,71 +262,35 @@ export const resumeAPI = {
     await api.delete(`/resumes/${id}`);
   },
 
-  // Upload resume with progress tracking
+  // Upload resume with progress tracking - uses unified upload function
   upload: async (
     files: File[],
     groupId: string,
     onProgress?: (fileName: string, progress: number) => void
-  ): Promise<Resume[]> => {
-    const formData = new FormData();
-    formData.append("groupId", groupId);
-
-    files.forEach((file) => {
-      formData.append("files", file);
-    });
-
-    const response = await api.post("/resumes/upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      onUploadProgress: (progressEvent) => {
-        if (progressEvent.total && onProgress) {
-          const progress = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
+  ): Promise<ApiResume[]> => {
+    // Convert the per-file progress callback to overall progress
+    const overallProgress = onProgress
+      ? (progress: number) => {
           files.forEach((file) => onProgress(file.name, progress));
         }
-      },
-    });
+      : undefined;
 
-    return response.data;
-  },
-
-  // Parse resume content
-  parse: async (resumeId: string): Promise<ParsedResumeData> => {
-    const response = await api.post(`/resumes/${resumeId}/parse`);
-    return response.data;
+    const result = await uploadResume(files, groupId, overallProgress);
+    // Return the API Resume type directly
+    return result.results || [];
   },
 
   // Search resumes
   search: async (
     query: string,
     filters?: Record<string, unknown>
-  ): Promise<Resume[]> => {
-    const response = await api.get("/resumes/search", {
-      params: { query, ...filters },
-    });
-    return response.data;
-  },
-};
+  ): Promise<ApiResume[]> => {
+    const searchPayload = {
+      group: filters?.group || null,
+      query: query || "",
+    };
 
-// Analytics API
-export const analyticsAPI = {
-  getUploadStats: async (groupId?: string) => {
-    const params = groupId ? { groupId } : {};
-    const response = await api.get("/analytics/upload-stats", { params });
-    return response.data;
-  },
-
-  getProcessingStats: async (groupId?: string) => {
-    const params = groupId ? { groupId } : {};
-    const response = await api.get("/analytics/processing-stats", { params });
-    return response.data;
-  },
-
-  getSkillDistribution: async (groupId?: string) => {
-    const params = groupId ? { groupId } : {};
-    const response = await api.get("/analytics/skill-distribution", { params });
+    const response = await api.post("/search_api", searchPayload);
     return response.data;
   },
 };
@@ -162,8 +312,48 @@ export const handleAPIError = (error: unknown): APIError => {
   // Type guard for axios errors
   if (error && typeof error === "object" && "response" in error) {
     const axiosError = error as {
-      response?: { status: number; data?: { message?: string; code?: string } };
+      response?: {
+        status: number;
+        data?: {
+          message?: string;
+          code?: string;
+          error?: string;
+        };
+      };
     };
+
+    // Handle SQLite errors specifically
+    if (axiosError.response?.data?.error) {
+      const sqliteError = axiosError.response.data.error;
+      if (sqliteError.includes("NOT NULL constraint failed")) {
+        return new APIError(
+          "Database constraint error: Required data is missing. Please try again or contact support.",
+          axiosError.response?.status || 0,
+          "CONSTRAINT_ERROR"
+        );
+      }
+      if (sqliteError.includes("UNIQUE constraint failed")) {
+        return new APIError(
+          "Duplicate entry detected. This item already exists.",
+          axiosError.response?.status || 0,
+          "UNIQUE_CONSTRAINT_ERROR"
+        );
+      }
+      if (sqliteError.includes("FOREIGN KEY constraint failed")) {
+        return new APIError(
+          "Reference error: Related data not found. Please refresh and try again.",
+          axiosError.response?.status || 0,
+          "FOREIGN_KEY_ERROR"
+        );
+      }
+      // Generic SQLite error
+      return new APIError(
+        "Database error occurred. Please try again or contact support.",
+        axiosError.response?.status || 0,
+        "DATABASE_ERROR"
+      );
+    }
+
     return new APIError(
       axiosError.response?.data?.message || "An error occurred",
       axiosError.response?.status || 0,
