@@ -1,5 +1,6 @@
 import React from "react";
 import type { SidebarProps, NavigationItem } from "../types/sidebar";
+import { Section } from "../types/shared";
 
 const Sidebar: React.FC<SidebarProps> = ({
   activeSection,
@@ -7,7 +8,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const navigationItems: NavigationItem[] = [
     {
-      id: "upload",
+      id: Section.UPLOAD,
       title: "Upload Resume",
       description: "Seamlessly import resumes with AI parsing",
       icon: (
@@ -27,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       ),
     },
     {
-      id: "search",
+      id: Section.SEARCH,
       title: "Search Resumes",
       description: "Find perfect candidates with AI-powered search",
       icon: (
@@ -47,7 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       ),
     },
     {
-      id: "store",
+      id: Section.STORE,
       title: "Resume Store",
       description: "Analyze talent pool with intelligent insights",
       icon: (

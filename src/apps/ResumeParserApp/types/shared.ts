@@ -1,5 +1,14 @@
 // Shared types used across all modules
 
+// Application sections for better type safety and maintainability
+export const Section = {
+  UPLOAD: "upload",
+  SEARCH: "search",
+  STORE: "store",
+} as const;
+
+export type Section = (typeof Section)[keyof typeof Section];
+
 export interface BaseResume {
   id: string | number;
   filename: string;
@@ -29,10 +38,16 @@ export interface BaseComment {
 }
 
 // Common status types
-export type ResumeStatus = "uploaded" | "processing" | "completed" | "failed" | "uploading" | "error";
+export type ResumeStatus =
+  | "uploaded"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "uploading"
+  | "error";
 
 // Common file types
 export type SupportedFileType = "pdf" | "doc" | "docx";
 
 // Common upload states
-export type UploadStatus = "idle" | "uploading" | "success" | "error"; 
+export type UploadStatus = "idle" | "uploading" | "success" | "error";

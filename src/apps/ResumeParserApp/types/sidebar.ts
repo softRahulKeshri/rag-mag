@@ -1,14 +1,13 @@
 // Sidebar component types
-
-export type SidebarSection = "upload" | "search" | "store";
+import { Section } from "./shared";
 
 export interface SidebarProps {
-  activeSection: SidebarSection;
-  onSectionChange: (section: SidebarSection) => void;
+  activeSection: Section;
+  onSectionChange: (section: Section) => void;
 }
 
 export interface NavigationItem {
-  id: SidebarSection;
+  id: Section;
   title: string;
   description: string;
   icon: React.ReactNode;

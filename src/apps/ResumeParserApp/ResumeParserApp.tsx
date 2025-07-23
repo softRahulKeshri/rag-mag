@@ -3,19 +3,18 @@ import Sidebar from "./components/Sidebar";
 import { UploadCenter } from "./modules/upload";
 import { ResumeSearch } from "./modules/search";
 import { ResumeStore } from "./modules/store";
-
-type Section = "upload" | "search" | "store";
+import { Section } from "./types/shared";
 
 const ResumeParserApp: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<Section>("upload");
+  const [activeSection, setActiveSection] = useState<Section>(Section.UPLOAD);
 
   const renderContent = () => {
     switch (activeSection) {
-      case "upload":
+      case Section.UPLOAD:
         return <UploadCenter />;
-      case "search":
+      case Section.SEARCH:
         return <ResumeSearch />;
-      case "store":
+      case Section.STORE:
         return <ResumeStore />;
       default:
         return <UploadCenter />;
