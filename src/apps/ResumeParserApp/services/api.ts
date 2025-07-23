@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { Group, UploadResult, Resume as ApiResume } from "../types/api";
+import type { BackendResumeResponse } from "../modules/store/types";
 
 // Configure axios instance
 const api = axios.create({
@@ -170,6 +171,20 @@ export const getResumes = async (): Promise<ApiResume[]> => {
   return response.data;
 };
 
+// New API function to fetch resumes from /cvs endpoint
+export const getResumesFromCVSEndpoint = async (): Promise<
+  BackendResumeResponse[]
+> => {
+  const response = await api.post("/cvs", {});
+  return response.data;
+};
+
+// New API function to fetch groups from backend
+export const getGroupsFromBackend = async (): Promise<Group[]> => {
+  const response = await api.get("/groups");
+  return response.data;
+};
+
 export const getGroups = async (): Promise<Group[]> => {
   const response = await api.get("/groups");
   return response.data;
@@ -189,14 +204,16 @@ export const updateResumeComment = async (
 
 export const searchResumes = async (
   filters: Record<string, unknown>
-): Promise<ApiResume[]> => {
+): Promise<Record<string, unknown>> => {
   // Use the new search API endpoint
   const searchPayload = {
     group: filters.group || null,
     query: filters.query || "",
   };
 
+  console.log("🔍 API: Sending search request with payload:", searchPayload);
   const response = await api.post("/search_api", searchPayload);
+  console.log("📡 API: Search response received:", response.data);
   return response.data;
 };
 

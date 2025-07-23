@@ -1,5 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
-import type { StoreResume, Group } from "../types";
+import type { StoreResume, Group, BackendResumeResponse } from "../types";
+import {
+  getResumesFromCVSEndpoint,
+  getGroupsFromBackend,
+} from "../../../services/api";
 
 interface UseResumeStoreReturn {
   resumes: StoreResume[];
@@ -174,8 +178,77 @@ const dummyGroups: Group[] = [
   },
 ];
 
+// Utility function to transform backend response to StoreResume
+const transformBackendResume = (
+  backendResume: BackendResumeResponse
+): StoreResume => {
+  // Extract file type from filename
+  const getFileType = (filename: string): string => {
+    const extension = filename.split(".").pop()?.toUpperCase();
+    return extension || "PDF";
+  };
+
+  // Calculate approximate file size (this is a fallback since backend doesn't provide it)
+  const getFileSize = (): number => {
+    // Return a reasonable default size for PDFs (1-2 MB range)
+    return Math.floor(Math.random() * 1000000) + 500000; // 0.5-1.5 MB
+  };
+
+  return {
+    id: backendResume.id,
+    filename: backendResume.stored_filename,
+    original_filename: backendResume.original_filename,
+    stored_filename: backendResume.stored_filename,
+    filepath: backendResume.filepath,
+    fileSize: getFileSize(),
+    fileType: getFileType(backendResume.original_filename),
+    uploadedAt: backendResume.upload_time,
+    status: "completed", // Assuming completed since they're in the store
+    group: backendResume.group,
+    cloud_url: backendResume.cloud_url,
+    commented_at: backendResume.commented_at || undefined,
+    upload_time: backendResume.upload_time,
+    // Transform comment if it exists
+    comment:
+      backendResume.comment && backendResume.comment.trim() !== ""
+        ? {
+            id: Date.now(), // Generate temporary ID
+            resumeId: backendResume.id,
+            comment: backendResume.comment || "",
+            createdAt: backendResume.commented_at || backendResume.upload_time,
+            updatedAt: backendResume.commented_at || backendResume.upload_time,
+            hrName: "HR User", // Default value, should come from auth context
+          }
+        : undefined,
+  };
+};
+
+
+
+/**
+ * Custom hook for managing resume store data with real API integration
+ *
+ * This hook fetches resumes from the backend API endpoint:
+ * - POST /api/cvs with payload "{}"
+ * - Transforms backend response to frontend format
+ * - Provides fallback to dummy data if API fails
+ * - Handles loading states and error management
+ *
+ * Backend API Response Format:
+ * {
+ *   cloud_url: string,
+ *   comment: string | null,
+ *   commented_at: string | null,
+ *   filepath: string,
+ *   group: string,
+ *   id: number,
+ *   original_filename: string,
+ *   stored_filename: string,
+ *   upload_time: string
+ * }
+ */
 export const useResumeStore = (): UseResumeStoreReturn => {
-  const [resumes, setResumes] = useState<StoreResume[]>(dummyResumes);
+  const [resumes, setResumes] = useState<StoreResume[]>([]);
   const [groups, setGroups] = useState<Group[]>(dummyGroups);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -184,11 +257,25 @@ export const useResumeStore = (): UseResumeStoreReturn => {
     setIsLoading(true);
     setError(null);
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setResumes(dummyResumes);
+      console.log("Fetching resumes from backend...");
+      // Call the real API endpoint
+      const backendResumes = await getResumesFromCVSEndpoint();
+      console.log(
+        `Successfully fetched ${backendResumes.length} resumes from backend`
+      );
+
+      // Transform backend response to frontend format
+      const transformedResumes = backendResumes.map(transformBackendResume);
+
+      setResumes(transformedResumes);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load resumes");
+      console.error("Failed to fetch resumes:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load resumes";
+      setError(errorMessage);
+      // Fallback to dummy data if API fails
+      console.log("Falling back to dummy data due to API failure");
+      setResumes(dummyResumes);
     } finally {
       setIsLoading(false);
     }
@@ -196,11 +283,18 @@ export const useResumeStore = (): UseResumeStoreReturn => {
 
   const refreshGroups = useCallback(async () => {
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setGroups(dummyGroups);
+      console.log("Fetching groups from backend...");
+      // Call the real API endpoint
+      const backendGroups = await getGroupsFromBackend();
+      console.log(
+        `Successfully fetched ${backendGroups.length} groups from backend`
+      );
+      setGroups(backendGroups);
     } catch (err) {
       console.error("Failed to load groups:", err);
+      // Fallback to dummy groups if API fails
+      console.log("Falling back to dummy groups due to API failure");
+      setGroups(dummyGroups);
     }
   }, []);
 

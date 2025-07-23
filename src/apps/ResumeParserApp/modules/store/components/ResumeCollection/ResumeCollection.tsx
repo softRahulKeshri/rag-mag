@@ -36,8 +36,6 @@ function useGroups() {
 
 const ResumeCollection = ({
   resumes,
-  onView = () => {},
-  onDownload = () => {},
   onDelete = () => {},
   onResumeDeleted = () => {},
   onResumeUpdated = () => {},
@@ -278,8 +276,6 @@ const ResumeCollection = ({
           endIndex={endIndex}
           selectedGroup={selectedGroup}
           searchQuery={searchQuery}
-          onView={onView}
-          onDownload={onDownload}
           onDelete={onDelete}
           onResumeDeleted={handleResumeDeleted}
           onCommentAdded={handleCommentAdded}
@@ -292,4 +288,4 @@ const ResumeCollection = ({
   );
 };
 
-export default ResumeCollection; 
+export default ResumeCollection;

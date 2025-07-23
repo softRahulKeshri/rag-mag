@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useResumeSearch } from "../hooks/useResumeSearch";
 import { useGroupApi } from "../../../hooks/useGroupApi";
-import type { SearchResult } from "../types";
+import type { ScoreCard, CandidateDetail } from "../types";
 import type { Group } from "../../../types/api";
-import { BrandColors, TailwindColorClasses } from "../../../theme/colors";
+import { BrandColors } from "../../../theme/colors";
 
 // Icons for the action buttons - Document/Text icon (improved)
 const DocumentIcon = () => (
@@ -56,17 +56,85 @@ const StarIcon = () => (
   </svg>
 );
 
+const UserIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className || "w-6 h-6"}
+    fill="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+  </svg>
+);
+
+// Dummy data for testing the UI
+const dummyCandidates: CandidateDetail[] = [
+  {
+    candidate_name: "John Doe",
+    details:
+      "Experienced React developer with 5+ years in frontend development. Strong skills in TypeScript, Redux, and modern web technologies. Led development of multiple enterprise applications and has a proven track record of delivering high-quality code.",
+    file_name: "john_doe_resume.pdf",
+    score_card: {
+      clarity_score: 9,
+      experience_score: 8,
+      loyalty_score: 7,
+      reputation_score: 9,
+    },
+    comment:
+      "Excellent technical skills and great cultural fit. Highly recommended for senior positions.",
+    commented_at: "2024-01-15T10:30:00Z",
+  },
+  {
+    candidate_name: "Sarah Johnson",
+    details:
+      "Full-stack developer with expertise in React, Node.js, and cloud technologies. 3+ years of experience building scalable applications. Strong problem-solving skills and excellent communication abilities.",
+    file_name: "sarah_johnson_resume.pdf",
+    score_card: {
+      clarity_score: 7,
+      experience_score: 6,
+      loyalty_score: 8,
+      reputation_score: 7,
+    },
+    comment: "Good potential, needs some mentoring but shows promise.",
+    commented_at: "2024-01-14T14:20:00Z",
+  },
+  {
+    candidate_name: "Michael Chen",
+    details:
+      "Senior software engineer with 7+ years specializing in React and TypeScript. Expert in performance optimization and architectural design. Has led multiple teams and delivered projects worth millions.",
+    file_name: "michael_chen_resume.pdf",
+    score_card: {
+      clarity_score: 8,
+      experience_score: 9,
+      loyalty_score: 6,
+      reputation_score: 8,
+    },
+  },
+  {
+    candidate_name: "Emily Rodriguez",
+    details:
+      "Frontend developer with 2 years of experience in React and modern JavaScript. Quick learner with strong attention to detail. Passionate about creating user-friendly interfaces and improving user experience.",
+    file_name: "emily_rodriguez_resume.pdf",
+    score_card: {
+      clarity_score: 6,
+      experience_score: 5,
+      loyalty_score: 9,
+      reputation_score: 6,
+    },
+    comment:
+      "Junior developer with great potential. Would be perfect for entry-level positions.",
+    commented_at: "2024-01-13T09:15:00Z",
+  },
+];
+
 const ResumeSearch: React.FC = () => {
   const {
     searchResults,
     isLoading,
     error,
     filters,
+    summary,
     setQuery,
-    setStatusFilter,
-    setDateRange,
     setGroupFilter,
-    clearFilters,
     performSearch,
   } = useResumeSearch();
 
@@ -74,6 +142,7 @@ const ResumeSearch: React.FC = () => {
   const [searchInput, setSearchInput] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("All Groups");
   const [groups, setGroups] = useState<Group[]>([]);
+  const [showDummyData, setShowDummyData] = useState(true); // For testing UI
 
   // Fetch groups on component mount
   useEffect(() => {
@@ -99,58 +168,37 @@ const ResumeSearch: React.FC = () => {
         : groups.find((g) => g.name === selectedGroup)?.id.toString();
 
     setGroupFilter(selectedGroupId);
+    setShowDummyData(false); // Hide dummy data when real search is performed
     performSearch();
   };
 
-  const handleStatusFilterChange = (status: string) => {
-    const currentStatuses = filters.status;
-    const newStatuses = currentStatuses.includes(status)
-      ? currentStatuses.filter((s) => s !== status)
-      : [...currentStatuses, status];
-    setStatusFilter(newStatuses);
-  };
-
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
-  const getStatusBadge = (status: SearchResult["status"]) => {
-    const statusConfig = {
-      uploading: {
-        color: "bg-yellow-100 text-yellow-800 border-yellow-200",
-        text: "Uploading",
-      },
-      processing: {
-        color: `${TailwindColorClasses.bg.uiBlue100} ${TailwindColorClasses.text.uiBlue600} ${TailwindColorClasses.border.uiBlue200}`,
-        text: "Processing",
-      },
-      completed: {
-        color: "bg-green-100 text-green-800 border-green-200",
-        text: "Completed",
-      },
-      error: {
-        color: "bg-red-100 text-red-800 border-red-200",
-        text: "Error",
-      },
-      uploaded: {
-        color: `${TailwindColorClasses.bg.neutral200} ${TailwindColorClasses.text.neutral700} ${TailwindColorClasses.border.neutral300}`,
-        text: "Uploaded",
-      },
-    };
-
-    const config = statusConfig[status];
+  const calculateAverageScore = (scoreCard: ScoreCard): number => {
     return (
-      <span
-        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${config.color}`}
-      >
-        {config.text}
-      </span>
+      (scoreCard.clarity_score +
+        scoreCard.experience_score +
+        scoreCard.loyalty_score +
+        scoreCard.reputation_score) /
+      4
     );
   };
+
+  const getScoreColor = (score: number): string => {
+    if (score >= 8) return "text-green-600 bg-green-100";
+    if (score >= 6) return "text-yellow-600 bg-yellow-100";
+    return "text-red-600 bg-red-100";
+  };
+
+  const getScoreLabel = (score: number): string => {
+    if (score >= 8) return "Excellent";
+    if (score >= 6) return "Good";
+    return "Needs Improvement";
+  };
+
+  // Use dummy data for UI testing, real data for actual search
+  const displayResults = showDummyData ? dummyCandidates : searchResults;
+  const displaySummary = showDummyData
+    ? "Found 4 highly qualified candidates matching your search criteria. Results are sorted by average score with the best matches first."
+    : summary;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -271,97 +319,33 @@ const ResumeSearch: React.FC = () => {
         </div>
       </div>
 
-      {/* Search Results Section - Only show when there are results or filters applied */}
-      {(searchResults.length > 0 ||
-        filters.query ||
-        filters.status.length > 0 ||
-        filters.dateRange.start ||
-        filters.dateRange.end) && (
+      {/* Search Results Section - Show dummy data by default for UI testing */}
+      {(displayResults.length > 0 || filters.query) && (
         <div className="px-6 pb-12">
           <div className="max-w-6xl mx-auto">
-            {/* Filters Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Filters
-              </h3>
-
-              {/* Status Filter */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Status
-                </label>
-                <div className="flex flex-wrap gap-4">
-                  {["uploaded", "processing", "completed", "error"].map(
-                    (status) => (
-                      <label
-                        key={status}
-                        className="flex items-center cursor-pointer"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={filters.status.includes(status)}
-                          onChange={() => handleStatusFilterChange(status)}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <span className="ml-2 text-sm text-gray-700 capitalize">
-                          {status}
-                        </span>
-                      </label>
-                    )
-                  )}
-                </div>
+            {/* Summary Section */}
+            {displaySummary && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Search Summary
+                </h3>
+                <p className="text-gray-700 leading-relaxed">
+                  {displaySummary}
+                </p>
+                {showDummyData && (
+                  <p className="text-sm text-gray-500 mt-2 italic">
+                    💡 This is dummy data for UI testing. Perform a real search
+                    to see actual results.
+                  </p>
+                )}
               </div>
-
-              {/* Date Range Filter */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Upload Date Range
-                </label>
-                <div className="flex items-center space-x-4">
-                  <input
-                    type="date"
-                    value={
-                      filters.dateRange.start?.toISOString().split("T")[0] || ""
-                    }
-                    onChange={(e) =>
-                      setDateRange(
-                        e.target.value ? new Date(e.target.value) : null,
-                        filters.dateRange.end
-                      )
-                    }
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                  <span className="text-gray-500">to</span>
-                  <input
-                    type="date"
-                    value={
-                      filters.dateRange.end?.toISOString().split("T")[0] || ""
-                    }
-                    onChange={(e) =>
-                      setDateRange(
-                        filters.dateRange.start,
-                        e.target.value ? new Date(e.target.value) : null
-                      )
-                    }
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-              </div>
-
-              {/* Clear Filters */}
-              <button
-                onClick={clearFilters}
-                className="text-sm text-blue-600 hover:text-blue-800 underline font-medium"
-              >
-                Clear all filters
-              </button>
-            </div>
+            )}
 
             {/* Results Section */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200">
               <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-xl font-semibold text-gray-900">
-                  Search Results ({searchResults.length})
+                  Search Results ({displayResults.length})
                 </h3>
               </div>
 
@@ -378,65 +362,122 @@ const ResumeSearch: React.FC = () => {
                 </div>
               )}
 
-              {!isLoading && !error && searchResults.length === 0 && (
+              {!isLoading && !error && displayResults.length === 0 && (
                 <div className="p-12 text-center">
                   <p className="text-gray-600 text-lg">No results found</p>
                 </div>
               )}
 
-              {!isLoading && !error && searchResults.length > 0 && (
+              {!isLoading && !error && displayResults.length > 0 && (
                 <div className="divide-y divide-gray-200">
-                  {searchResults.map((result) => (
-                    <div
-                      key={result.id}
-                      className="p-6 hover:bg-gray-50 transition-colors duration-200"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                            {result.original_filename || result.fileName}
-                          </h4>
-                          <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-                            <span>{formatFileSize(result.fileSize)}</span>
-                            <span>•</span>
-                            <span>
-                              Uploaded: {result.uploadDate.toLocaleDateString()}
-                            </span>
-                            {result.group && (
-                              <>
-                                <span>•</span>
-                                <span>Group: {result.group}</span>
-                              </>
+                  {displayResults.map((candidate, index) => {
+                    const avgScore = calculateAverageScore(
+                      candidate.score_card
+                    );
+                    const scoreColor = getScoreColor(avgScore);
+                    const scoreLabel = getScoreLabel(avgScore);
+
+                    return (
+                      <div
+                        key={`${candidate.candidate_name}-${index}`}
+                        className="p-6 hover:bg-gray-50 transition-colors duration-200"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            {/* Candidate Header */}
+                            <div className="flex items-center space-x-3 mb-4">
+                              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <UserIcon className="text-blue-600" />
+                              </div>
+                              <div>
+                                <h4 className="text-xl font-semibold text-gray-900">
+                                  {candidate.candidate_name}
+                                </h4>
+                                <p className="text-sm text-gray-500">
+                                  File: {candidate.file_name}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Candidate Details */}
+                            <div className="mb-4">
+                              <p className="text-gray-700 leading-relaxed">
+                                {candidate.details}
+                              </p>
+                            </div>
+
+                            {/* Score Cards */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                              <div className="bg-gray-50 rounded-lg p-3">
+                                <div className="text-sm font-medium text-gray-600 mb-1">
+                                  Clarity
+                                </div>
+                                <div className="text-lg font-semibold text-gray-900">
+                                  {candidate.score_card.clarity_score}/10
+                                </div>
+                              </div>
+                              <div className="bg-gray-50 rounded-lg p-3">
+                                <div className="text-sm font-medium text-gray-600 mb-1">
+                                  Experience
+                                </div>
+                                <div className="text-lg font-semibold text-gray-900">
+                                  {candidate.score_card.experience_score}/10
+                                </div>
+                              </div>
+                              <div className="bg-gray-50 rounded-lg p-3">
+                                <div className="text-sm font-medium text-gray-600 mb-1">
+                                  Loyalty
+                                </div>
+                                <div className="text-lg font-semibold text-gray-900">
+                                  {candidate.score_card.loyalty_score}/10
+                                </div>
+                              </div>
+                              <div className="bg-gray-50 rounded-lg p-3">
+                                <div className="text-sm font-medium text-gray-600 mb-1">
+                                  Reputation
+                                </div>
+                                <div className="text-lg font-semibold text-gray-900">
+                                  {candidate.score_card.reputation_score}/10
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Comment */}
+                            {candidate.comment && (
+                              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+                                <p className="text-sm text-blue-800">
+                                  <span className="font-medium">Comment:</span>{" "}
+                                  {candidate.comment}
+                                </p>
+                                {candidate.commented_at && (
+                                  <p className="text-xs text-blue-600 mt-1">
+                                    {new Date(
+                                      candidate.commented_at
+                                    ).toLocaleDateString()}
+                                  </p>
+                                )}
+                              </div>
                             )}
                           </div>
-                          {result.parsedData && (
-                            <div className="space-y-1">
-                              <p className="text-sm text-gray-700">
-                                <span className="font-medium">Name:</span>{" "}
-                                {result.parsedData.personalInfo.name}
-                              </p>
-                              <p className="text-sm text-gray-700">
-                                <span className="font-medium">Email:</span>{" "}
-                                {result.parsedData.personalInfo.email}
-                              </p>
-                              {result.parsedData.skills.length > 0 && (
-                                <p className="text-sm text-gray-700">
-                                  <span className="font-medium">Skills:</span>{" "}
-                                  {result.parsedData.skills
-                                    .slice(0, 5)
-                                    .join(", ")}
-                                  {result.parsedData.skills.length > 5 && "..."}
-                                </p>
-                              )}
+
+                          {/* Average Score Badge */}
+                          <div className="ml-6 flex flex-col items-center">
+                            <div
+                              className={`px-4 py-2 rounded-full text-sm font-semibold ${scoreColor}`}
+                            >
+                              {scoreLabel}
                             </div>
-                          )}
-                        </div>
-                        <div className="ml-6">
-                          {getStatusBadge(result.status)}
+                            <div className="text-2xl font-bold text-gray-900 mt-2">
+                              {avgScore.toFixed(1)}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              Avg Score
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

@@ -11,6 +11,23 @@ export interface StoreResume {
   status: "uploaded" | "processing" | "completed" | "failed";
   group?: string;
   comment?: ResumeComment;
+  // Backend API specific fields
+  cloud_url?: string;
+  commented_at?: string;
+  upload_time?: string;
+}
+
+// Backend API response interface for /cvs endpoint
+export interface BackendResumeResponse {
+  cloud_url: string;
+  comment: string | null;
+  commented_at: string | null;
+  filepath: string;
+  group: string;
+  id: number;
+  original_filename: string;
+  stored_filename: string;
+  upload_time: string;
 }
 
 export interface ResumeComment {
@@ -41,8 +58,6 @@ export interface GroupStat {
 
 export interface ResumeCollectionProps {
   resumes: StoreResume[];
-  onView?: (resume: StoreResume) => void;
-  onDownload?: (resume: StoreResume) => void;
   onDelete?: (resume: StoreResume) => void;
   onResumeDeleted?: (resumeId: number) => void;
   onResumeUpdated?: (resumeId: number, updatedResume: StoreResume) => void;

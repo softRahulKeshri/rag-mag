@@ -13,8 +13,6 @@ interface ResumeGridProps {
   endIndex: number;
   selectedGroup: string | null;
   searchQuery: string;
-  onView: (resume: Resume) => void;
-  onDownload: (resume: Resume) => void;
   onDelete: (resume: Resume) => void;
   onResumeDeleted: (resumeId: number) => void;
   onCommentAdded: (resumeId: number, comment: ResumeComment) => void;
@@ -32,8 +30,6 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
   endIndex,
   selectedGroup,
   searchQuery,
-  onView,
-  onDownload,
   onDelete,
   onResumeDeleted,
   onCommentAdded,
@@ -102,8 +98,123 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
           <FileCard
             key={resume.id}
             resume={resume}
-            onView={() => onView(resume)}
-            onDownload={() => onDownload(resume)}
+            onView={() => {
+              if (resume.cloud_url) {
+                try {
+                  // Open the cloud URL in a new tab for viewing
+                  window.open(resume.cloud_url, "_blank");
+                  console.log(
+                    `✅ Opened resume "${
+                      resume.original_filename || resume.filename
+                    }" in new tab`
+                  );
+                } catch (error) {
+                  console.error(
+                    `❌ Failed to open resume "${
+                      resume.original_filename || resume.filename
+                    }":`,
+                    error
+                  );
+                  alert(
+                    `Unable to view resume "${
+                      resume.original_filename || resume.filename
+                    }" - please try again`
+                  );
+                }
+              } else {
+                console.warn(
+                  "No cloud URL available for viewing resume:",
+                  resume
+                );
+                alert(
+                  `Unable to view resume "${
+                    resume.original_filename || resume.filename
+                  }" - no cloud URL available`
+                );
+              }
+            }}
+            onDownload={() => {
+              if (resume.cloud_url) {
+                const downloadFile = async () => {
+                  try {
+                    console.log(
+                      `🔄 Starting download for "${
+                        resume.original_filename || resume.filename
+                      }"`
+                    );
+
+                    // Fetch the file from the cloud URL
+                    const response = await fetch(resume.cloud_url!);
+                    if (!response.ok) {
+                      throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    // Get the file as a blob
+                    const blob = await response.blob();
+
+                    // Create a blob URL
+                    const blobUrl = window.URL.createObjectURL(blob);
+
+                    // Create download link
+                    const link = document.createElement("a");
+                    link.href = blobUrl;
+                    link.download = resume.original_filename || resume.filename;
+                    link.style.display = "none";
+
+                    // Append to body, click, and cleanup
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Clean up the blob URL
+                    window.URL.revokeObjectURL(blobUrl);
+
+                    console.log(
+                      `✅ Successfully downloaded "${
+                        resume.original_filename || resume.filename
+                      }"`
+                    );
+                  } catch (error) {
+                    console.error(
+                      `❌ Download failed for "${
+                        resume.original_filename || resume.filename
+                      }":`,
+                      error
+                    );
+
+                    // Fallback: try to open in new tab
+                    try {
+                      window.open(resume.cloud_url, "_blank");
+                      alert(
+                        `Download failed. Opened resume "${
+                          resume.original_filename || resume.filename
+                        }" in new tab. You can save it manually using Ctrl+S (or Cmd+S on Mac).`
+                      );
+                    } catch (fallbackError) {
+                      console.error(`❌ Fallback also failed:`, fallbackError);
+                      alert(
+                        `Unable to download or open resume "${
+                          resume.original_filename || resume.filename
+                        }". Please try again or contact support.`
+                      );
+                    }
+                  }
+                };
+
+                // Execute the download
+                downloadFile();
+              } else {
+                console.warn(
+                  "No cloud URL available for downloading resume:",
+                  resume
+                );
+                alert(
+                  `Unable to download resume "${
+                    resume.original_filename || resume.filename
+                  }" - no cloud URL available`
+                );
+              }
+            }}
             onDelete={() => handleDeleteClick(resume)}
             onComment={() => handleCommentClick(resume)}
           />

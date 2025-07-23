@@ -1,12 +1,17 @@
 import { useState, useCallback } from "react";
-import type { SearchFilters, SearchResult } from "../types";
+import type {
+  SearchFilters,
+  SearchApiResponse,
+  CandidateDetail,
+} from "../types";
 import { searchResumes } from "../../../services/api";
 
 interface UseResumeSearchReturn {
-  searchResults: SearchResult[];
+  searchResults: CandidateDetail[];
   isLoading: boolean;
   error: string | null;
   filters: SearchFilters;
+  summary: string;
   setQuery: (query: string) => void;
   setStatusFilter: (statuses: string[]) => void;
   setDateRange: (start: Date | null, end: Date | null) => void;
@@ -16,9 +21,10 @@ interface UseResumeSearchReturn {
 }
 
 export const useResumeSearch = (): UseResumeSearchReturn => {
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<CandidateDetail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [summary, setSummary] = useState<string>("");
   const [filters, setFilters] = useState<SearchFilters>({
     query: "",
     status: [],
@@ -61,35 +67,60 @@ export const useResumeSearch = (): UseResumeSearchReturn => {
   }, []);
 
   const performSearch = useCallback(async () => {
+    if (!filters.query.trim()) {
+      setSearchResults([]);
+      setSummary("");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      // Convert SearchFilters to Record<string, unknown>
-      const searchParams: Record<string, unknown> = {
-        query: filters.query,
-        status: filters.status,
-        dateRange: filters.dateRange,
-        group: filters.group || null, // Ensure null is passed for "All Groups"
+      // Prepare search payload based on group selection
+      const searchPayload: Record<string, unknown> = {
+        query: filters.query.trim(),
+        group: filters.group || null, // null for "All Groups"
       };
 
-      const results = await searchResumes(searchParams);
+      console.log("🔍 Performing search with payload:", searchPayload);
 
-      // Convert API Resume to SearchResult
-      const searchResults: SearchResult[] = results.map((resume) => ({
-        id: resume.id.toString(),
-        fileName: resume.filename,
-        original_filename: resume.original_filename,
-        fileSize: resume.fileSize,
-        uploadDate: new Date(resume.uploadedAt),
-        status: resume.status === "failed" ? "error" : resume.status,
-        group: resume.group,
-      }));
+      const response = await searchResumes(searchPayload);
 
-      setSearchResults(searchResults);
+      // Handle the new API response format
+      if (response && typeof response === "object" && "answer" in response) {
+        const searchResponse = response as unknown as SearchApiResponse;
+        const candidates = searchResponse.answer.candidate_details || [];
+
+        // Sort candidates by average score (descending order)
+        const sortedCandidates = candidates.sort((a, b) => {
+          const avgScoreA =
+            (a.score_card.clarity_score +
+              a.score_card.experience_score +
+              a.score_card.loyalty_score +
+              a.score_card.reputation_score) /
+            4;
+          const avgScoreB =
+            (b.score_card.clarity_score +
+              b.score_card.experience_score +
+              b.score_card.loyalty_score +
+              b.score_card.reputation_score) /
+            4;
+          return avgScoreB - avgScoreA;
+        });
+
+        setSearchResults(sortedCandidates);
+        setSummary(searchResponse.answer.summary || "");
+      } else {
+        // Fallback for legacy response format
+        setSearchResults([]);
+        setSummary("No results found");
+      }
     } catch (err) {
+      console.error("❌ Search error:", err);
       setError(err instanceof Error ? err.message : "Search failed");
       setSearchResults([]);
+      setSummary("");
     } finally {
       setIsLoading(false);
     }
@@ -100,6 +131,7 @@ export const useResumeSearch = (): UseResumeSearchReturn => {
     isLoading,
     error,
     filters,
+    summary,
     setQuery,
     setStatusFilter,
     setDateRange,

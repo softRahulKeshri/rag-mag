@@ -1,17 +1,11 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useResumeStore } from "../hooks/useResumeStore";
-import { NewResumeCollection } from "./ResumeCollection";
+import ResumeCollection from "./ResumeCollection/ResumeCollection";
 import type { StoreResume } from "../types";
 
 const ResumeStore: React.FC = () => {
-  const {
-    resumes,
-    groups,
-    isLoading,
-    error,
-    refreshResumes,
-    handleDeleteResume,
-  } = useResumeStore();
+  const { resumes, isLoading, error, refreshResumes, handleDeleteResume } =
+    useResumeStore();
 
   const mapStatus = (
     status: string
@@ -36,57 +30,25 @@ const ResumeStore: React.FC = () => {
     status: mapStatus(resume.status),
   }));
 
-  // Transform groups to match the expected format for the new UI
-  const transformedGroups = useMemo(() => {
-    // Count resumes in each group
-    const groupCounts = new Map<string, number>();
-    transformedResumes.forEach((resume) => {
-      if (resume.group) {
-        groupCounts.set(resume.group, (groupCounts.get(resume.group) || 0) + 1);
-      }
-    });
-
-    return groups.map((group) => ({
-      name: group.name,
-      count: groupCounts.get(group.name) || 0,
-      isActive: (groupCounts.get(group.name) || 0) > 0,
-    }));
-  }, [groups, transformedResumes]);
-
-  // Transform resumes to the format expected by NewResumeCollection
-  const resumeCards = transformedResumes.map((resume) => ({
-    id: resume.id,
-    filename: resume.original_filename || resume.filename,
-    fileSize: `${(resume.fileSize / (1024 * 1024)).toFixed(1)} MB`,
-    fileType: resume.fileType,
-    group: resume.group,
-    uploadDate: new Date(resume.uploadedAt).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }),
-  }));
-
-  const handleView = (resume: (typeof resumeCards)[0]) => {
-    console.log("View resume:", resume);
-    // Implement view functionality
-  };
-
-  const handleDownload = (resume: (typeof resumeCards)[0]) => {
-    console.log("Download resume:", resume);
-    // Implement download functionality
-  };
-
-  const handleDelete = (resume: (typeof resumeCards)[0]) => {
-    const storeResume = transformedResumes.find((r) => r.id === resume.id);
-    if (storeResume) {
-      handleDeleteResume(storeResume);
+  // Handle resume deletion
+  const handleResumeDeleted = async (resume: StoreResume) => {
+    try {
+      await handleDeleteResume(resume);
+      // Refresh resumes after deletion
+      await refreshResumes();
+    } catch (error) {
+      console.error("Failed to delete resume:", error);
     }
   };
 
-  const handleAddComment = (resume: (typeof resumeCards)[0]) => {
-    console.log("Add comment to resume:", resume);
-    // Implement comment functionality
+  // Handle resume updates (for comments)
+  const handleResumeUpdated = async () => {
+    try {
+      // Refresh resumes to get the latest data
+      await refreshResumes();
+    } catch (error) {
+      console.error("Failed to update resume:", error);
+    }
   };
 
   // Show error state if there's an error
@@ -133,16 +95,16 @@ const ResumeStore: React.FC = () => {
   }
 
   return (
-    <NewResumeCollection
-      resumes={resumeCards}
-      groups={transformedGroups}
-      totalResumes={transformedResumes.length}
-      totalGroups={groups.length}
+    <ResumeCollection
+      resumes={transformedResumes}
+      onDelete={handleResumeDeleted}
+      onResumeDeleted={(resumeId: number) => {
+        // This is handled by the onDelete callback
+        console.log("Resume deleted:", resumeId);
+      }}
+      onResumeUpdated={handleResumeUpdated}
+      onRefreshResumes={refreshResumes}
       isLoading={isLoading}
-      onView={handleView}
-      onDownload={handleDownload}
-      onDelete={handleDelete}
-      onAddComment={handleAddComment}
     />
   );
 };
