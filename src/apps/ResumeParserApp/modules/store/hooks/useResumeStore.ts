@@ -3,13 +3,17 @@ import type { StoreResume, Group, BackendResumeResponse } from "../types";
 import {
   getResumesFromCVSEndpoint,
   getGroupsFromBackend,
+  deleteResume,
 } from "../../../services/api";
 
 interface UseResumeStoreReturn {
   resumes: StoreResume[];
   groups: Group[];
   isLoading: boolean;
+  isDeleting: boolean;
+  deletingResumeId: number | null;
   error: string | null;
+  clearError: () => void;
   refreshResumes: () => Promise<void>;
   refreshGroups: () => Promise<void>;
   handleDeleteResume: (resume: StoreResume) => Promise<void>;
@@ -223,8 +227,6 @@ const transformBackendResume = (
   };
 };
 
-
-
 /**
  * Custom hook for managing resume store data with real API integration
  *
@@ -251,6 +253,8 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   const [resumes, setResumes] = useState<StoreResume[]>([]);
   const [groups, setGroups] = useState<Group[]>(dummyGroups);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deletingResumeId, setDeletingResumeId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const refreshResumes = useCallback(async () => {
@@ -299,12 +303,27 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   }, []);
 
   const handleDeleteResume = useCallback(async (resume: StoreResume) => {
+    setIsDeleting(true);
+    setDeletingResumeId(resume.id);
+    setError(null);
+
     try {
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      console.log(`Deleting resume with ID: ${resume.id}`);
+      // Call the real API endpoint
+      await deleteResume(resume.id);
+      console.log(`Successfully deleted resume with ID: ${resume.id}`);
+
+      // Remove the resume from local state
       setResumes((prev) => prev.filter((r) => r.id !== resume.id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete resume");
+      console.error("Failed to delete resume:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to delete resume";
+      setError(errorMessage);
+      throw err; // Re-throw to let the component handle the error
+    } finally {
+      setIsDeleting(false);
+      setDeletingResumeId(null);
     }
   }, []);
 
@@ -380,6 +399,11 @@ export const useResumeStore = (): UseResumeStoreReturn => {
     [handleUpdateResume]
   );
 
+  // Clear error function
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
   // Load initial data
   useEffect(() => {
     refreshResumes();
@@ -390,7 +414,10 @@ export const useResumeStore = (): UseResumeStoreReturn => {
     resumes,
     groups,
     isLoading,
+    isDeleting,
+    deletingResumeId,
     error,
+    clearError,
     refreshResumes,
     refreshGroups,
     handleDeleteResume,

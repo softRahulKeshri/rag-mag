@@ -190,8 +190,12 @@ export const getGroups = async (): Promise<Group[]> => {
   return response.data;
 };
 
-export const deleteResume = async (id: string): Promise<void> => {
-  await api.delete(`/resumes/${id}`);
+export const deleteResume = async (id: number): Promise<void> => {
+  try {
+    await api.delete(`/delete/${id}`);
+  } catch (error) {
+    throw handleAPIError(error);
+  }
 };
 
 export const updateResumeComment = async (
@@ -308,8 +312,48 @@ export const handleAPIError = (error: unknown): APIError => {
   // Type guard for axios errors
   if (error && typeof error === "object" && "response" in error) {
     const axiosError = error as {
-      response?: { status: number; data?: { message?: string; code?: string } };
+      response?: {
+        status: number;
+        data?: {
+          message?: string;
+          code?: string;
+          error?: string;
+        };
+      };
     };
+
+    // Handle SQLite errors specifically
+    if (axiosError.response?.data?.error) {
+      const sqliteError = axiosError.response.data.error;
+      if (sqliteError.includes("NOT NULL constraint failed")) {
+        return new APIError(
+          "Database constraint error: Required data is missing. Please try again or contact support.",
+          axiosError.response?.status || 0,
+          "CONSTRAINT_ERROR"
+        );
+      }
+      if (sqliteError.includes("UNIQUE constraint failed")) {
+        return new APIError(
+          "Duplicate entry detected. This item already exists.",
+          axiosError.response?.status || 0,
+          "UNIQUE_CONSTRAINT_ERROR"
+        );
+      }
+      if (sqliteError.includes("FOREIGN KEY constraint failed")) {
+        return new APIError(
+          "Reference error: Related data not found. Please refresh and try again.",
+          axiosError.response?.status || 0,
+          "FOREIGN_KEY_ERROR"
+        );
+      }
+      // Generic SQLite error
+      return new APIError(
+        "Database error occurred. Please try again or contact support.",
+        axiosError.response?.status || 0,
+        "DATABASE_ERROR"
+      );
+    }
+
     return new APIError(
       axiosError.response?.data?.message || "An error occurred",
       axiosError.response?.status || 0,

@@ -1,11 +1,20 @@
 import React from "react";
 import { useResumeStore } from "../hooks/useResumeStore";
 import ResumeCollection from "./ResumeCollection/ResumeCollection";
+import ErrorDisplay from "./ResumeCollection/ErrorDisplay";
 import type { StoreResume } from "../types";
 
 const ResumeStore: React.FC = () => {
-  const { resumes, isLoading, error, refreshResumes, handleDeleteResume } =
-    useResumeStore();
+  const {
+    resumes,
+    isLoading,
+    isDeleting,
+    deletingResumeId,
+    error,
+    clearError,
+    refreshResumes,
+    handleDeleteResume,
+  } = useResumeStore();
 
   const mapStatus = (
     status: string
@@ -34,10 +43,12 @@ const ResumeStore: React.FC = () => {
   const handleResumeDeleted = async (resume: StoreResume) => {
     try {
       await handleDeleteResume(resume);
-      // Refresh resumes after deletion
+      // Refresh resumes after successful deletion to ensure UI is in sync
       await refreshResumes();
     } catch (error) {
       console.error("Failed to delete resume:", error);
+      // Error is already handled in the hook and will be displayed via the error state
+      // The UI won't break - it will show the error message and allow retry
     }
   };
 
@@ -56,39 +67,11 @@ const ResumeStore: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-red-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">Error</h3>
-                <div className="mt-2 text-sm text-red-700">
-                  <p>{error}</p>
-                </div>
-                <div className="mt-4">
-                  <button
-                    onClick={refreshResumes}
-                    className="bg-red-100 px-3 py-2 rounded-md text-sm font-medium text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                  >
-                    Retry
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ErrorDisplay
+            error={error}
+            onDismiss={clearError}
+            onRetry={refreshResumes}
+          />
         </div>
       </div>
     );
@@ -105,6 +88,8 @@ const ResumeStore: React.FC = () => {
       onResumeUpdated={handleResumeUpdated}
       onRefreshResumes={refreshResumes}
       isLoading={isLoading}
+      isDeleting={isDeleting}
+      deletingResumeId={deletingResumeId}
     />
   );
 };

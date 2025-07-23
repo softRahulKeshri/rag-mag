@@ -63,4 +63,6 @@ export interface ResumeCollectionProps {
   onResumeUpdated?: (resumeId: number, updatedResume: StoreResume) => void;
   onRefreshResumes?: () => Promise<void>;
   isLoading?: boolean;
+  isDeleting?: boolean;
+  deletingResumeId?: number | null;
 }

@@ -13,6 +13,7 @@ import SearchAndFilter from "./SearchAndFilter";
 import LoadingState from "./LoadingState";
 import EmptyState from "./EmptyState";
 import ResumeGrid from "./ResumeGrid";
+import ErrorDisplay from "./ErrorDisplay";
 
 // Import types and utilities
 import type {
@@ -41,6 +42,8 @@ const ResumeCollection = ({
   onResumeUpdated = () => {},
   onRefreshResumes,
   isLoading = false,
+  isDeleting = false,
+  deletingResumeId = null,
 }: ResumeCollectionProps) => {
   // State
   const [searchQuery, setSearchQuery] = useState("");
@@ -257,6 +260,17 @@ const ResumeCollection = ({
         isLoading={isLoading}
       />
 
+      {/* Error Display */}
+      {groupsError && (
+        <div className="mb-6">
+          <ErrorDisplay
+            error={groupsError}
+            onDismiss={clearGroupsError}
+            onRetry={refreshGroups}
+          />
+        </div>
+      )}
+
       {/* Content Section */}
       {isLoading ? (
         <LoadingState />
@@ -282,6 +296,8 @@ const ResumeCollection = ({
           onCommentUpdated={handleCommentUpdated}
           onCommentDeleted={handleCommentDeleted}
           onPageChange={handlePageChange}
+          isDeleting={isDeleting}
+          deletingResumeId={deletingResumeId}
         />
       )}
     </div>
