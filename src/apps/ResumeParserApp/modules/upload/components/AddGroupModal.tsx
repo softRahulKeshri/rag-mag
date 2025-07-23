@@ -5,7 +5,7 @@ import type { CreateGroupRequest, Group } from "../../../types/api";
 interface AddGroupModalProps {
   open: boolean;
   onClose: () => void;
-  onGroupCreated: (group: Group) => void;
+  onGroupCreated: (group: Group) => Promise<void>;
 }
 
 const AddGroupModal: React.FC<AddGroupModalProps> = ({
@@ -63,11 +63,10 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
       try {
         const groupData: CreateGroupRequest = {
           name: groupName.trim(),
-          description: "", // Empty description as requested
         };
 
         const newGroup = await createGroup(groupData);
-        onGroupCreated(newGroup);
+        await onGroupCreated(newGroup);
         onClose();
         // Reset form
         setGroupName("");

@@ -149,7 +149,6 @@ export const useGroupApi = () => {
             (responseGroupData.description as string) ||
             (responseGroupData.group_description as string) ||
             (responseGroupData.groupDescription as string) ||
-            groupData.description ||
             "",
           createdAt:
             (responseGroupData.createdAt as string) ||
@@ -185,29 +184,57 @@ export const useGroupApi = () => {
 
   /**
    * Delete a group by ID
-   * POST /groups/{id}/delete
+   * DELETE /groups/{id}
    */
   const deleteGroup = useCallback(
-    async (id: number): Promise<{ success: boolean; message?: string }> => {
+    async (
+      id: number
+    ): Promise<{
+      success: boolean;
+      message?: string;
+      hasAssociatedData?: boolean;
+    }> => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const url = buildUrl(`/groups/${id}/delete`);
+        const url = buildUrl(`/groups/${id}`);
         console.log(`🗑️ Group API: Deleting group with ID ${id} at: ${url}`);
 
         const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "POST",
+          method: "DELETE",
         });
 
         console.log(`📡 Delete Group API Response:`, response);
 
+        // Check for success message
+        if (response.message === "Group deleted") {
+          return {
+            success: true,
+            message: "Group deleted successfully",
+          };
+        }
+
+        // Handle unexpected response
         return {
           success: true,
           message: (response.message as string) || "Group deleted successfully",
         };
       } catch (error) {
         console.error("❌ Error deleting group:", error);
+
+        // Check if it's the specific "Group has associated CVs" error
+        if (
+          error instanceof Error &&
+          error.message.includes("Group has associated CVs")
+        ) {
+          return {
+            success: false,
+            message: "Group has associated CVs",
+            hasAssociatedData: true,
+          };
+        }
+
         const apiError = handleApiError(error);
         setError(apiError.message);
 
@@ -249,7 +276,9 @@ export const useGroupApi = () => {
         console.log(`📡 Update Group API Response:`, response);
 
         // Transform response to Group interface
-        const transformedGroup = transformGroupData((response.data || response) as Record<string, unknown>);
+        const transformedGroup = transformGroupData(
+          (response.data || response) as Record<string, unknown>
+        );
         console.log(`✅ Successfully updated group:`, transformedGroup);
 
         return transformedGroup;
@@ -288,7 +317,9 @@ export const useGroupApi = () => {
           return null;
         }
 
-        const transformedGroup = transformGroupData((response.data || response) as Record<string, unknown>);
+        const transformedGroup = transformGroupData(
+          (response.data || response) as Record<string, unknown>
+        );
         console.log(`✅ Successfully fetched group:`, transformedGroup);
 
         return transformedGroup;

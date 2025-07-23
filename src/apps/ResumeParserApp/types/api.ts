@@ -17,6 +17,11 @@ export interface Resume {
   status: "uploaded" | "processing" | "completed" | "failed";
   group?: string; // Group/category the resume belongs to
   comment?: ResumeComment; // HR comment on the resume
+  // Additional fields from the new API response
+  cloud_url?: string | null;
+  comment_text?: string | null; // Renamed to avoid conflict with ResumeComment
+  commented_at?: string | null;
+  upload_time?: string; // Alternative field name for uploadedAt
 }
 
 // Comment-related types for HR functionality
@@ -82,7 +87,6 @@ export interface Group {
 
 export interface CreateGroupRequest {
   name: string;
-  description?: string;
 }
 
 export interface CreateGroupResponse extends ApiResponse {

@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useResumeSearch } from "../hooks/useResumeSearch";
+import { useGroupApi } from "../../../hooks/useGroupApi";
 import type { SearchResult } from "../types";
+import type { Group } from "../../../types/api";
 import { BrandColors, TailwindColorClasses } from "../../../theme/colors";
 
 // Icons for the action buttons - Document/Text icon (improved)
@@ -63,15 +65,40 @@ const ResumeSearch: React.FC = () => {
     setQuery,
     setStatusFilter,
     setDateRange,
+    setGroupFilter,
     clearFilters,
     performSearch,
   } = useResumeSearch();
 
+  const { getGroups, isLoading: groupsLoading } = useGroupApi();
   const [searchInput, setSearchInput] = useState("");
   const [selectedGroup, setSelectedGroup] = useState("All Groups");
+  const [groups, setGroups] = useState<Group[]>([]);
+
+  // Fetch groups on component mount
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const fetchedGroups = await getGroups();
+        setGroups(fetchedGroups);
+      } catch (error) {
+        console.error("Failed to fetch groups:", error);
+      }
+    };
+
+    fetchGroups();
+  }, [getGroups]);
 
   const handleSearch = () => {
     setQuery(searchInput);
+
+    // Set group filter based on selection
+    const selectedGroupId =
+      selectedGroup === "All Groups"
+        ? undefined
+        : groups.find((g) => g.name === selectedGroup)?.id.toString();
+
+    setGroupFilter(selectedGroupId);
     performSearch();
   };
 
@@ -179,14 +206,22 @@ const ResumeSearch: React.FC = () => {
                   value={selectedGroup}
                   onChange={(e) => setSelectedGroup(e.target.value)}
                   className="appearance-none bg-transparent pl-10 pr-8 py-3 text-gray-700 font-medium focus:outline-none cursor-pointer"
+                  disabled={groupsLoading}
                 >
                   <option value="All Groups">All Groups</option>
-                  <option value="Engineering">Engineering</option>
-                  <option value="Design">Design</option>
-                  <option value="Marketing">Marketing</option>
+                  {groups.map((group) => (
+                    <option key={group.id} value={group.name}>
+                      {group.name}
+                    </option>
+                  ))}
                 </select>
                 <FolderIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                {groupsLoading && (
+                  <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                  </div>
+                )}
               </div>
 
               {/* Divider */}

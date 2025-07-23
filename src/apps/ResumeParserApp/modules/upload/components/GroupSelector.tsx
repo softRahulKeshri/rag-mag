@@ -34,10 +34,37 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     }
   }, [getGroups]);
 
-  // Fetch groups on component mount
+  const fetchGroupsAndValidateSelection = useCallback(async () => {
+    try {
+      const fetchedGroups = await getGroups();
+      setGroups(fetchedGroups);
+
+      // Check if the currently selected group still exists in the fetched groups
+      if (
+        selectedGroup &&
+        !fetchedGroups.find((group) => group.id === selectedGroup.id)
+      ) {
+        // Selected group no longer exists, clear the selection
+        onGroupSelect(null);
+      }
+    } catch (error) {
+      console.error("Failed to fetch groups:", error);
+    }
+  }, [getGroups, selectedGroup, onGroupSelect]);
+
+  // Fetch groups on component mount only
   useEffect(() => {
-    fetchGroups();
-  }, [fetchGroups]);
+    const initializeGroups = async () => {
+      try {
+        const fetchedGroups = await getGroups();
+        setGroups(fetchedGroups);
+      } catch (error) {
+        console.error("Failed to fetch groups:", error);
+      }
+    };
+
+    initializeGroups();
+  }, [getGroups]); // Only depend on getGroups which is stable
 
   const handleGroupSelect = useCallback(
     (group: Group) => {
@@ -51,19 +78,10 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     async (group: Group, event: React.MouseEvent) => {
       event.stopPropagation(); // Prevent dropdown from closing
 
-      // Check if group has associated data (resumes)
-      const hasResumes = (group.resumeCount || group.resume_count || 0) > 0;
-
-      if (hasResumes) {
-        // Show cannot delete modal
-        setGroupToDelete(group);
-        setShowCannotDeleteModal(true);
-      } else {
-        // Show delete confirmation modal
-        setGroupToDelete(group);
-        setDeleteError(null); // Clear any previous errors
-        setShowDeleteModal(true);
-      }
+      // Show delete confirmation modal - let the API handle validation
+      setGroupToDelete(group);
+      setDeleteError(null); // Clear any previous errors
+      setShowDeleteModal(true);
     },
     []
   );
@@ -78,23 +96,28 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
       const result = await deleteGroup(groupToDelete.id);
 
       if (result.success) {
-        // Refetch groups to ensure we have the latest data
-        await fetchGroups();
-
-        // If this was the selected group, clear selection
-        if (selectedGroup?.id === groupToDelete.id) {
-          onGroupSelect(null);
-        }
+        // Refetch groups and validate selection
+        await fetchGroupsAndValidateSelection();
 
         // Close modal and reset state
         setShowDeleteModal(false);
         setGroupToDelete(null);
         setDeleteError(null);
+
+        // Close dropdown to refresh the UI
+        setIsOpen(false);
       } else {
-        // Handle API error response
-        setDeleteError(
-          result.message || "Failed to delete group. Please try again."
-        );
+        // Check if the group has associated data (CVs)
+        if (result.hasAssociatedData) {
+          // Close delete modal and show cannot delete modal
+          setShowDeleteModal(false);
+          setShowCannotDeleteModal(true);
+        } else {
+          // Handle other API error responses
+          setDeleteError(
+            result.message || "Failed to delete group. Please try again."
+          );
+        }
       }
     } catch (error) {
       console.error("Failed to delete group:", error);
@@ -107,7 +130,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     } finally {
       setIsDeleting(false);
     }
-  }, [groupToDelete, deleteGroup, selectedGroup, onGroupSelect, fetchGroups]);
+  }, [groupToDelete, deleteGroup, fetchGroupsAndValidateSelection]);
 
   const handleDeleteCancel = useCallback(() => {
     setShowDeleteModal(false);
@@ -125,12 +148,13 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
   }, [fetchGroups]);
 
   const handleGroupCreated = useCallback(
-    (newGroup: Group) => {
-      setGroups((prev) => [...prev, newGroup]);
+    async (newGroup: Group) => {
+      // Refetch all groups to ensure we have the latest data
+      await fetchGroups();
       // Auto-select the newly created group
       handleGroupSelect(newGroup);
     },
-    [handleGroupSelect]
+    [fetchGroups, handleGroupSelect]
   );
 
   const toggleDropdown = useCallback(() => {

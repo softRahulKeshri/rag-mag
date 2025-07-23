@@ -124,45 +124,49 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
       }));
 
       try {
-        const uploadPromises = uploadState.selectedFiles.map(async (file) => {
-          const progressCallback = (progress: number) => {
+        // Use the corrected API that handles multiple files in a single request
+        const progressCallback = (progress: number) => {
+          // Update progress for all files since they're uploaded together
+          const progressPerFile = progress / uploadState.selectedFiles.length;
+          uploadState.selectedFiles.forEach((file) => {
             setUploadState((prev) => ({
               ...prev,
-              uploadProgress: { ...prev.uploadProgress, [file.name]: progress },
+              uploadProgress: {
+                ...prev.uploadProgress,
+                [file.name]: progressPerFile,
+              },
             }));
-          };
+          });
+        };
 
-          const uploadResult = await uploadResume(
-            file,
-            groupId,
-            progressCallback
-          );
+        const uploadResult = await uploadResume(
+          uploadState.selectedFiles,
+          groupId,
+          progressCallback
+        );
 
-          // Convert UploadResult to UploadedFile
-          const uploadedFile: UploadedFile = {
-            id: Date.now().toString(),
-            name: file.name,
-            size: file.size,
-            status: uploadResult.successful > 0 ? "success" : "error",
-            uploadedAt: new Date(),
-          };
-
-          setUploadState((prev) => ({
-            ...prev,
-            uploadedFiles: [...prev.uploadedFiles, uploadedFile],
-          }));
-
-          return uploadedFile;
-        });
-
-        await Promise.all(uploadPromises);
+        // Convert UploadResult to UploadedFile array
+        const uploadedFilesArray: UploadedFile[] = uploadResult.results.map(
+          (result) => ({
+            id: result.id.toString(),
+            name: result.original_filename || result.filename,
+            size: result.fileSize,
+            status: "success" as const,
+            uploadedAt: new Date(result.uploadedAt),
+          })
+        );
 
         setUploadState((prev) => ({
           ...prev,
           isUploading: false,
-          uploadStatus: "success",
+          uploadStatus: uploadResult.successful > 0 ? "success" : "error",
           selectedFiles: [],
           uploadProgress: {},
+          uploadedFiles: [...prev.uploadedFiles, ...uploadedFilesArray],
+          errors: uploadResult.errors.reduce(
+            (acc, error) => ({ ...acc, [error.filename]: error.error }),
+            {}
+          ),
         }));
       } catch (error) {
         console.error("Upload failed:", error);

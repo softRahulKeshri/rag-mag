@@ -6,7 +6,7 @@ export interface SearchFilters {
     start: Date | null;
     end: Date | null;
   };
-  group?: string;
+  group?: string | undefined; // Group ID or undefined for "All Groups"
 }
 
 export interface SearchResult {

@@ -3,7 +3,9 @@ import type { Group, UploadResult, Resume as ApiResume } from "../types/api";
 
 // Configure axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api",
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL ||
+    "http://ec2-13-232-75-51.ap-south-1.compute.amazonaws.com/api",
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
@@ -35,6 +37,26 @@ api.interceptors.response.use(
   }
 );
 
+// Add interface for the API response format
+interface UploadApiResponse {
+  errors: Array<{
+    filename?: string;
+    message?: string;
+    error?: string;
+  }>;
+  uploaded: Array<{
+    id: number;
+    cloud_url: string | null;
+    comment: string | null;
+    commented_at: string | null;
+    filepath: string;
+    group: string;
+    original_filename: string;
+    stored_filename: string;
+    upload_time: string;
+  }>;
+}
+
 // Unified upload function using XMLHttpRequest for better progress tracking
 export const uploadResume = async (
   files: File | File[],
@@ -44,11 +66,13 @@ export const uploadResume = async (
   const fileArray = Array.isArray(files) ? files : [files];
 
   const formData = new FormData();
+
+  // Add each file with the 'cv' field name as per API specification
   fileArray.forEach((file) => {
     formData.append("cv", file);
   });
 
-  // Add group ID to the form data
+  // Add group ID to the form data with 'group' field name
   formData.append("group", groupId);
 
   return new Promise((resolve, reject) => {
@@ -64,41 +88,47 @@ export const uploadResume = async (
 
     xhr.addEventListener("load", () => {
       if (xhr.status === 200) {
-        let result: Record<string, unknown> = {};
-        const actualFileCount = formData.getAll("cv").length;
-
         try {
-          result = JSON.parse(xhr.responseText || "{}");
-        } catch {
-          result = {
-            message: "Files uploaded successfully",
-            successful: actualFileCount,
+          const response: UploadApiResponse = JSON.parse(
+            xhr.responseText || "{}"
+          );
+
+          // Handle the new API response format
+          const uploadResult: UploadResult = {
+            successful: response.uploaded?.length || 0,
+            failed: response.errors?.length || 0,
+            total: fileArray.length,
+            message:
+              response.uploaded?.length > 0
+                ? `Successfully uploaded ${response.uploaded.length} file(s)`
+                : "Upload completed",
+            results:
+              response.uploaded?.map((item) => ({
+                id: item.id,
+                filename: item.original_filename || item.stored_filename,
+                original_filename: item.original_filename,
+                stored_filename: item.stored_filename,
+                filepath: item.filepath,
+                fileSize: 0, // Not provided in response
+                fileType: "pdf", // Assuming PDF based on context
+                uploadedAt: item.upload_time,
+                status: "uploaded" as const,
+                group: item.group,
+                cloud_url: item.cloud_url,
+                comment_text: item.comment,
+                commented_at: item.commented_at,
+              })) || [],
+            errors:
+              response.errors?.map((error) => ({
+                filename: error.filename || "Unknown file",
+                error: error.message || error.error || "Upload failed",
+              })) || [],
           };
+
+          resolve(uploadResult);
+        } catch {
+          reject(new Error("Invalid response format from server"));
         }
-
-        const uploadResult: UploadResult = {
-          successful:
-            (result.successful as number) ||
-            (result.files as unknown[])?.length ||
-            (result.count as number) ||
-            actualFileCount,
-          failed: (result.failed as number) || 0,
-          total:
-            (result.total as number) ||
-            (result.files as unknown[])?.length ||
-            (result.count as number) ||
-            actualFileCount,
-          message:
-            (result.message as string) ||
-            (result.status as string) ||
-            "Files uploaded successfully to group!",
-          results:
-            (result.files as ApiResume[]) || (result.data as ApiResume[]) || [],
-          errors:
-            (result.errors as Array<{ filename: string; error: string }>) || [],
-        };
-
-        resolve(uploadResult);
       } else {
         const errorMessage =
           xhr.responseText || `Upload failed: ${xhr.status} ${xhr.statusText}`;
@@ -124,7 +154,6 @@ export const uploadResume = async (
     xhr.open("POST", `${api.defaults.baseURL}/upload_cv`);
     xhr.setRequestHeader("Accept", "application/json");
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-    xhr.setRequestHeader("X-Upload-Group", groupId);
 
     // Add authorization header if available
     const token = localStorage.getItem("authToken");
@@ -161,7 +190,13 @@ export const updateResumeComment = async (
 export const searchResumes = async (
   filters: Record<string, unknown>
 ): Promise<ApiResume[]> => {
-  const response = await api.get("/resumes/search", { params: filters });
+  // Use the new search API endpoint
+  const searchPayload = {
+    group: filters.group || null,
+    query: filters.query || "",
+  };
+
+  const response = await api.post("/search_api", searchPayload);
   return response.data;
 };
 
@@ -229,14 +264,15 @@ export const resumeAPI = {
     query: string,
     filters?: Record<string, unknown>
   ): Promise<ApiResume[]> => {
-    const response = await api.get("/resumes/search", {
-      params: { query, ...filters },
-    });
+    const searchPayload = {
+      group: filters?.group || null,
+      query: query || "",
+    };
+
+    const response = await api.post("/search_api", searchPayload);
     return response.data;
   },
 };
-
-
 
 // Error handling utilities
 export class APIError extends Error {

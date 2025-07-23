@@ -26,6 +26,7 @@ export const useResumeSearch = (): UseResumeSearchReturn => {
       start: null,
       end: null,
     },
+    group: undefined,
   });
 
   const setQuery = useCallback((query: string) => {
@@ -55,6 +56,7 @@ export const useResumeSearch = (): UseResumeSearchReturn => {
         start: null,
         end: null,
       },
+      group: undefined,
     });
   }, []);
 
@@ -68,11 +70,11 @@ export const useResumeSearch = (): UseResumeSearchReturn => {
         query: filters.query,
         status: filters.status,
         dateRange: filters.dateRange,
-        group: filters.group,
+        group: filters.group || null, // Ensure null is passed for "All Groups"
       };
-      
+
       const results = await searchResumes(searchParams);
-      
+
       // Convert API Resume to SearchResult
       const searchResults: SearchResult[] = results.map((resume) => ({
         id: resume.id.toString(),
@@ -83,7 +85,7 @@ export const useResumeSearch = (): UseResumeSearchReturn => {
         status: resume.status === "failed" ? "error" : resume.status,
         group: resume.group,
       }));
-      
+
       setSearchResults(searchResults);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Search failed");
