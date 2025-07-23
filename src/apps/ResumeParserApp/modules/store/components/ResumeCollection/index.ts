@@ -1,6 +1,6 @@
 // ResumeCollection Module - Central export file
 export { default as ResumeCollection } from "./ResumeCollection";
-export { default as NewResumeCollection } from "./NewResumeCollection";
+
 export { default as AnalyticsHeader } from "./AnalyticsHeader";
 export { default as ResumeAnalyticsHeader } from "./ResumeAnalyticsHeader";
 export { default as SearchAndFilter } from "./SearchAndFilter";

@@ -4,67 +4,15 @@ import { useGroupApi } from "../../../hooks/useGroupApi";
 import type { ScoreCard, CandidateDetail } from "../types";
 import type { Group } from "../../../types/api";
 import { BrandColors } from "../../../theme/colors";
-
-// Icons for the action buttons - Document/Text icon (improved)
-const DocumentIcon = () => (
-  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
-    <path d="M14 2v6h6" />
-    <path d="M16 13H8" />
-    <path d="M16 17H8" />
-    <path d="M10 9H8" />
-  </svg>
-);
-
-const FolderIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className || "w-5 h-5"}
-    fill="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" />
-  </svg>
-);
-
-const ChevronDownIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className || "w-4 h-4"}
-    fill="currentColor"
-    viewBox="0 0 20 20"
-  >
-    <path
-      fillRule="evenodd"
-      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
-
-const SearchIcon = () => (
-  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-    <path
-      fillRule="evenodd"
-      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
-
-const StarIcon = () => (
-  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-  </svg>
-);
-
-const UserIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className || "w-6 h-6"}
-    fill="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-  </svg>
-);
+import {
+  DocumentTextIcon,
+  PlusIcon,
+  FolderIcon,
+  ChevronDownIcon,
+  MagnifyingGlassIcon,
+  StarIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 
 // Dummy data for testing the UI
 const dummyCandidates: CandidateDetail[] = [
@@ -205,11 +153,11 @@ const ResumeSearch: React.FC = () => {
       {/* Top Purple Section - AI-Powered Resume Matching */}
       <div
         className="relative px-6 py-12 rounded-b-3xl"
-        style={{ backgroundColor: "rgb(139, 92, 246)" }}
+        style={{ backgroundColor: BrandColors.gradient.purple }}
       >
         {/* Star Icon */}
         <div className="absolute top-8 right-8 text-white opacity-80">
-          <StarIcon />
+          <StarIcon className="w-6 h-6" />
         </div>
 
         {/* Main Content */}
@@ -230,18 +178,19 @@ const ResumeSearch: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             {/* Search by Text Button */}
             <button
-              className="flex flex-col items-center justify-center px-8 py-6 rounded-xl transition-all duration-200 hover:scale-105"
+              className="flex flex-col items-center justify-center px-8 py-6 rounded-xl transition-all duration-200 hover:scale-105 shadow-lg"
               style={{ backgroundColor: BrandColors.gradient.orange }}
             >
-              <DocumentIcon />
+              <DocumentTextIcon className="w-5 h-5 text-white" />
               <span className="mt-2 font-semibold text-white">
                 Search by Text
               </span>
             </button>
 
             {/* Upload JD Button */}
-            <button className="flex flex-col items-center justify-center px-8 py-6 rounded-xl border-2 border-white bg-white bg-opacity-10 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-opacity-20">
-              <DocumentIcon />
+            <button className="flex flex-col items-center justify-center px-8 py-6 rounded-xl border-2 border-white bg-white bg-opacity-10 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-opacity-20 shadow-lg">
+              <PlusIcon className="w-5 h-5 text-white" />
+              <span className="mt-2 font-semibold text-white">Upload JD</span>
             </button>
           </div>
 
@@ -263,8 +212,8 @@ const ResumeSearch: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                <FolderIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                <FolderIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
                 {groupsLoading && (
                   <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
@@ -290,10 +239,10 @@ const ResumeSearch: React.FC = () => {
               {/* Search Button */}
               <button
                 onClick={handleSearch}
-                className="flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200 hover:scale-105"
+                className="flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200 hover:scale-105 shadow-lg"
                 style={{ backgroundColor: BrandColors.gradient.orange }}
               >
-                <SearchIcon />
+                <MagnifyingGlassIcon className="w-5 h-5" />
                 <span>Search</span>
               </button>
             </div>
@@ -387,7 +336,7 @@ const ResumeSearch: React.FC = () => {
                             {/* Candidate Header */}
                             <div className="flex items-center space-x-3 mb-4">
                               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                <UserIcon className="text-blue-600" />
+                                <UserIcon className="w-6 h-6 text-blue-600" />
                               </div>
                               <div>
                                 <h4 className="text-xl font-semibold text-gray-900">

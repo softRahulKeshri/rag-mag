@@ -16,6 +16,7 @@ export * from "./services/api";
 export {
   useApiService,
   useResumeApi,
+  useCommentApi,
   useGroupApi,
   useUploadApi,
   useSearchApi,

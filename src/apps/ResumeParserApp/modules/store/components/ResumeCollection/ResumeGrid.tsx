@@ -17,7 +17,7 @@ interface ResumeGridProps {
   onResumeDeleted: (resumeId: number) => void;
   onCommentAdded: (resumeId: number, comment: ResumeComment) => void;
   onCommentUpdated: (resumeId: number, comment: ResumeComment) => void;
-  onCommentDeleted: (resumeId: number, commentId: number) => void;
+  onCommentDeleted: (resumeId: number) => void;
   onPageChange: (event: React.ChangeEvent<unknown>, value: number) => void;
   isDeleting?: boolean;
   deletingResumeId?: number | null;
@@ -221,6 +221,8 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
             }}
             onDelete={() => handleDeleteClick(resume)}
             onComment={() => handleCommentClick(resume)}
+            onEditComment={() => handleCommentClick(resume)}
+            onDeleteComment={() => handleCommentClick(resume)}
             isDeleting={isDeleting && deletingResumeId === resume.id}
           />
         ))}

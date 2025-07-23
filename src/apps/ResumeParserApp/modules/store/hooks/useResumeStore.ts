@@ -1,5 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
-import type { StoreResume, Group, BackendResumeResponse } from "../types";
+import type {
+  StoreResume,
+  Group,
+  BackendResumeResponse,
+  ResumeComment,
+} from "../types";
 import {
   getResumesFromCVSEndpoint,
   getGroupsFromBackend,
@@ -21,13 +26,12 @@ interface UseResumeStoreReturn {
     resumeId: number,
     updates: Partial<StoreResume>
   ) => Promise<void>;
-  handleAddComment: (resumeId: number, comment: string) => Promise<void>;
+  handleAddComment: (resumeId: number, comment: ResumeComment) => Promise<void>;
   handleUpdateComment: (
     resumeId: number,
-    commentId: number,
-    comment: string
+    comment: ResumeComment
   ) => Promise<void>;
-  handleDeleteComment: (resumeId: number, commentId: number) => Promise<void>;
+  handleDeleteComment: (resumeId: number) => Promise<void>;
 }
 
 // Dummy data to show the beautiful UI instead of error screen
@@ -345,59 +349,45 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   );
 
   const handleAddComment = useCallback(
-    async (resumeId: number, comment: string) => {
+    async (resumeId: number, comment: ResumeComment) => {
       try {
-        const commentData = {
-          id: Date.now(), // Generate a temporary ID
-          resumeId,
-          comment,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          hrName: "Current User", // In real app, get from auth context
-        };
-
-        await handleUpdateResume(resumeId, { comment: commentData });
+        // Update local state immediately for optimistic UI
+        setResumes((prev) =>
+          prev.map((r) => (r.id === resumeId ? { ...r, comment } : r))
+        );
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to add comment");
       }
     },
-    [handleUpdateResume]
+    []
   );
 
   const handleUpdateComment = useCallback(
-    async (resumeId: number, commentId: number, comment: string) => {
+    async (resumeId: number, comment: ResumeComment) => {
       try {
-        const commentData = {
-          id: commentId,
-          resumeId,
-          comment,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          hrName: "Current User", // In real app, get from auth context
-        };
-
-        await handleUpdateResume(resumeId, { comment: commentData });
+        // Update local state immediately for optimistic UI
+        setResumes((prev) =>
+          prev.map((r) => (r.id === resumeId ? { ...r, comment } : r))
+        );
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to update comment"
         );
       }
     },
-    [handleUpdateResume]
+    []
   );
 
-  const handleDeleteComment = useCallback(
-    async (resumeId: number) => {
-      try {
-        await handleUpdateResume(resumeId, { comment: undefined });
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to delete comment"
-        );
-      }
-    },
-    [handleUpdateResume]
-  );
+  const handleDeleteComment = useCallback(async (resumeId: number) => {
+    try {
+      // Update local state immediately for optimistic UI
+      setResumes((prev) =>
+        prev.map((r) => (r.id === resumeId ? { ...r, comment: undefined } : r))
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete comment");
+    }
+  }, []);
 
   // Clear error function
   const clearError = useCallback(() => {

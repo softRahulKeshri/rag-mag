@@ -177,8 +177,8 @@ const ResumeCollection = ({
     }
   };
 
-  const handleCommentDeleted = async (resumeId: number, commentId: number) => {
-    console.log("Deleting comment from resume:", resumeId, commentId);
+  const handleCommentDeleted = async (resumeId: number) => {
+    console.log("Deleting comment from resume:", resumeId);
 
     // Update local state immediately for optimistic UI
     setLocalResumes((prev) => {

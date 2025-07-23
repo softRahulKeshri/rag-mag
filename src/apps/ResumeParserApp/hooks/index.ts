@@ -17,6 +17,7 @@ export { useApiService } from "./useApiService";
 
 // Core API hooks
 export { useResumeApi } from "./useResumeApi";
+export { useCommentApi } from "./useCommentApi";
 export { useGroupApi } from "./useGroupApi";
 export { useUploadApi } from "./useUploadApi";
 export { useSearchApi } from "./useSearchApi";
