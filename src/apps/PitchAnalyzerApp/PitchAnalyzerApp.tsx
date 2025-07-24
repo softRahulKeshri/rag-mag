@@ -61,7 +61,11 @@ const PitchAnalyzerApp = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation activeTab={activeTab} onTabChange={handleTabChange} />
+      <Navigation 
+        activeTab={activeTab} 
+        onTabChange={handleTabChange} 
+        userEmail="member1@company1.com"
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tab Content */}

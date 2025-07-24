@@ -9,6 +9,7 @@ export interface NavigationItem {
 export interface NavigationProps {
   activeTab: string;
   onTabChange: (tabId: TabId) => void;
+  userEmail: string;
 }
 
 export type TabId = "upload" | "bookmarked" | "chat";

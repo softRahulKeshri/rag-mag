@@ -6,8 +6,13 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import type { NavigationProps, TabId } from "../types/navigation";
+import UploadArea from "./UploadArea";
 
-const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
+const Navigation = ({
+  activeTab,
+  onTabChange,
+  userEmail,
+}: NavigationProps) => {
   const navigationItems = [
     {
       id: "upload" as TabId,
@@ -101,9 +106,26 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 bg-white">
-        {/* This is where your main content will be rendered */}
-        <div className="p-6">{/* Your page content goes here */}</div>
+      <div className="flex-1 bg-gray-50">
+        <div className="p-6 max-w-4xl mx-auto">
+          {activeTab === "upload" && (
+            <UploadArea userEmail={userEmail} />
+          )}
+          {activeTab === "bookmarked" && (
+            <div className="text-center py-12">
+              <BookmarkIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Bookmarked Pitches</h2>
+              <p className="mt-2 text-sm text-gray-500">Your bookmarked pitch decks will appear here.</p>
+            </div>
+          )}
+          {activeTab === "chat" && (
+            <div className="text-center py-12">
+              <ChatBubbleLeftRightIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <h2 className="mt-4 text-lg font-medium text-gray-900">Chat & Details</h2>
+              <p className="mt-2 text-sm text-gray-500">Chat with AI about your pitch decks and view detailed analysis.</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
