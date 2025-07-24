@@ -1,7 +1,18 @@
+import { useState } from "react";
+import {
+  ExclamationTriangleIcon,
+  CheckCircleIcon,
+  BookmarkIcon,
+  ChatBubbleLeftRightIcon,
+} from "@heroicons/react/24/outline";
 import { useCompanyPitches } from "./hooks/useCompanyPitches";
 import { useBookmarkPitch } from "./hooks/useBookmarkPitch";
+import { Navigation } from "./components";
+import type { TabId } from "./types/navigation";
 
 const PitchAnalyzerApp = () => {
+  const [activeTab, setActiveTab] = useState<TabId>("upload");
+
   const {
     fetchCompanyPitches,
     pitches,
@@ -17,6 +28,10 @@ const PitchAnalyzerApp = () => {
     lastBookmarkAction,
     clearError: clearBookmarkError,
   } = useBookmarkPitch();
+
+  const handleTabChange = (tabId: TabId) => {
+    setActiveTab(tabId);
+  };
 
   const handleFetchPitches = async () => {
     try {
@@ -45,73 +60,174 @@ const PitchAnalyzerApp = () => {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Pitch Analyzer App</h1>
-      <p className="mb-4">This is the pitch analyzer app landing page.</p>
+    <div className="min-h-screen bg-gray-50">
+      <Navigation activeTab={activeTab} onTabChange={handleTabChange} />
 
-      <div className="space-y-4">
-        <button
-          onClick={handleFetchPitches}
-          disabled={pitchesLoading}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-        >
-          {pitchesLoading ? "Fetching..." : "Fetch Company Pitches"}
-        </button>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Tab Content */}
+        {activeTab === "upload" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Upload Pitch
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Upload your pitch deck for AI-powered analysis
+              </p>
 
+              <button
+                onClick={handleFetchPitches}
+                disabled={pitchesLoading}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 transition-colors"
+              >
+                {pitchesLoading ? "Fetching..." : "Fetch Company Pitches"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "bookmarked" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Bookmarked Pitches
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Your saved pitch decks for quick access
+              </p>
+
+              {/* Bookmarked pitches content will go here */}
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BookmarkIcon className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-500">No bookmarked pitches yet</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "chat" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Chat & Details
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Chat with AI about your pitch decks and view detailed analysis
+              </p>
+
+              {/* Chat interface will go here */}
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ChatBubbleLeftRightIcon className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-500">
+                  Select a pitch to start chatting
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Error Display */}
         {pitchesError && (
-          <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-            <p className="font-bold">Error:</p>
-            <p>{pitchesError}</p>
-            <button
-              onClick={clearPitchesError}
-              className="mt-2 px-2 py-1 bg-red-500 text-white rounded text-sm"
-            >
-              Clear Error
-            </button>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">Error</h3>
+                <p className="text-sm text-red-700 mt-1">{pitchesError}</p>
+                <button
+                  onClick={clearPitchesError}
+                  className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
         {bookmarkError && (
-          <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-            <p className="font-bold">Bookmark Error:</p>
-            <p>{bookmarkError}</p>
-            <button
-              onClick={clearBookmarkError}
-              className="mt-2 px-2 py-1 bg-red-500 text-white rounded text-sm"
-            >
-              Clear Error
-            </button>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">
+                  Bookmark Error
+                </h3>
+                <p className="text-sm text-red-700 mt-1">{bookmarkError}</p>
+                <button
+                  onClick={clearBookmarkError}
+                  className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
+        {/* Success Messages */}
         {lastBookmarkAction && (
           <div
-            className={`p-4 border rounded ${
+            className={`rounded-lg p-4 ${
               lastBookmarkAction.success
-                ? "bg-green-100 border-green-400 text-green-700"
-                : "bg-red-100 border-red-400 text-red-700"
+                ? "bg-green-50 border border-green-200"
+                : "bg-red-50 border border-red-200"
             }`}
           >
-            <p className="font-bold">
-              {lastBookmarkAction.success ? "Success!" : "Failed"}
-            </p>
-            <p>
-              Pitch{" "}
-              {lastBookmarkAction.isBookmarked ? "bookmarked" : "unbookmarked"}
-            </p>
+            <div className="flex">
+              <div className="flex-shrink-0">
+                {lastBookmarkAction.success ? (
+                  <CheckCircleIcon className="h-5 w-5 text-green-400" />
+                ) : (
+                  <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
+                )}
+              </div>
+              <div className="ml-3">
+                <h3
+                  className={`text-sm font-medium ${
+                    lastBookmarkAction.success
+                      ? "text-green-800"
+                      : "text-red-800"
+                  }`}
+                >
+                  {lastBookmarkAction.success ? "Success!" : "Failed"}
+                </h3>
+                <p
+                  className={`text-sm mt-1 ${
+                    lastBookmarkAction.success
+                      ? "text-green-700"
+                      : "text-red-700"
+                  }`}
+                >
+                  Pitch{" "}
+                  {lastBookmarkAction.isBookmarked
+                    ? "bookmarked"
+                    : "unbookmarked"}
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
+        {/* Pitches Display */}
         {pitches.length > 0 && (
-          <div className="mt-6">
-            <h2 className="text-xl font-semibold mb-4">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Company Pitches ({pitches.length})
             </h2>
             <div className="grid gap-4">
               {pitches.map((pitch) => (
                 <div
                   key={pitch.id}
-                  className="p-4 border border-gray-200 rounded-lg shadow-sm"
+                  className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className="flex justify-between items-start">
                     <div>
@@ -189,7 +305,7 @@ const PitchAnalyzerApp = () => {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 };
