@@ -6,7 +6,11 @@ import {
 } from "@heroicons/react/24/outline";
 import { useCompanyPitches } from "./hooks/useCompanyPitches";
 import { useBookmarkPitch } from "./hooks/useBookmarkPitch";
-import { Navigation, ChatInterface, PitchChat } from "./components";
+import {
+  Navigation,
+  ChatInterface,
+  PitchChat,
+} from "./components";
 import UploadArea from "./components/UploadArea";
 import type { TabId } from "./types/navigation";
 import type { Pitch } from "./types/types";
@@ -208,7 +212,7 @@ const PitchAnalyzerApp = () => {
             ) : (
               <ChatInterface
                 userEmail="member1@company1.com"
-                onPitchSelect={(pitch: Pitch) => {
+                onViewDetails={(pitch: Pitch) => {
                   setSelectedPitchForChat(pitch);
                 }}
               />
