@@ -19,17 +19,17 @@ export const ChatMessages = ({ messages }: { messages: IMessage[] }) => {
   }, [messages]);
 
   return (
-    <div className="overflow-y-auto bg-gradient-to-b from-neutral-n50 via-neutral-n100 to-neutral-n50 p-6 space-y-6 min-h-0">
+    <div className="overflow-y-auto bg-gradient-to-b from-gray-50 via-gray-100 to-gray-50 p-6 space-y-6 min-h-0">
       {messages.length === 0 ? (
         <div className="h-full flex items-center justify-center px-4 py-12">
           <div className="text-center max-w-md mx-auto">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary-ui-blue-p100 to-primary-ui-blue-p200 mb-6">
-              <LightBulbIcon className="h-8 w-8 text-primary-ui-blue-p600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 mb-6">
+              <LightBulbIcon className="h-8 w-8 text-blue-600" />
             </div>
-            <h3 className="text-xl font-semibold text-neutral-n-black mb-3">
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">
               How can I help you today?
             </h3>
-            <p className="text-neutral-n600 leading-relaxed">
+            <p className="text-gray-600 leading-relaxed">
               Ask me anything or start a new conversation to get started
             </p>
           </div>
@@ -46,13 +46,13 @@ export const ChatMessages = ({ messages }: { messages: IMessage[] }) => {
               <div
                 className={`relative max-w-[85%] md:max-w-[70%] rounded-2xl p-4 transition-all duration-200 ${
                   message.role === "user"
-                    ? "bg-gradient-to-r from-primary-ui-blue-p500 to-primary-ui-blue-p600 text-neutral-n-white rounded-br-md shadow-lg shadow-primary-ui-blue-p500/20 hover:shadow-primary-ui-blue-p500/30"
-                    : "bg-neutral-n-white text-neutral-n-black rounded-bl-md backdrop-blur-sm hover:bg-neutral-n-white border border-neutral-n200 shadow-sm hover:shadow-md"
+                    ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-md shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30"
+                    : "bg-white text-gray-900 rounded-bl-md backdrop-blur-sm hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md"
                 }`}
               >
                 <div
                   className={`prose max-w-none text-sm leading-relaxed break-words ${
-                    message.role === "user" ? "prose-invert" : "prose-neutral"
+                    message.role === "user" ? "prose-invert" : "prose-gray"
                   }`}
                 >
                   {message.content}
@@ -61,9 +61,7 @@ export const ChatMessages = ({ messages }: { messages: IMessage[] }) => {
                 {/* Consistent timestamp alignment for both user and assistant messages */}
                 <div
                   className={`mt-3 text-xs flex items-center justify-end space-x-2 ${
-                    message.role === "user"
-                      ? "text-neutral-n-white/80"
-                      : "text-neutral-n600"
+                    message.role === "user" ? "text-white/80" : "text-gray-600"
                   }`}
                 >
                   <span className="font-medium">
@@ -77,13 +75,13 @@ export const ChatMessages = ({ messages }: { messages: IMessage[] }) => {
                 {/* Message actions - positioned consistently */}
                 <div className="absolute -top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex space-x-1">
                   <button
-                    className="p-1.5 rounded-full bg-neutral-n200 hover:bg-neutral-n300 text-neutral-n700 hover:text-neutral-n800 transition-colors"
+                    className="p-1.5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 hover:text-gray-800 transition-colors"
                     aria-label="Copy message"
                   >
                     <Square2StackIcon className="h-3.5 w-3.5" />
                   </button>
                   <button
-                    className="p-1.5 rounded-full bg-neutral-n200 hover:bg-neutral-n300 text-neutral-n700 hover:text-neutral-n800 transition-colors"
+                    className="p-1.5 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 hover:text-gray-800 transition-colors"
                     aria-label="Duplicate message"
                   >
                     <DocumentDuplicateIcon className="h-3.5 w-3.5" />

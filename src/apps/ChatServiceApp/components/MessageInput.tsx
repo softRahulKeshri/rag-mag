@@ -79,25 +79,25 @@ export const MessageInput = ({
   };
 
   return (
-    <div className="border-t border-neutral-n200 bg-neutral-n-white px-6 py-4">
+    <div className="border-t border-gray-200 bg-white px-6 py-4">
       {selectedFile && (
-        <div className="flex items-center justify-between bg-primary-ui-blue-p50 rounded-lg px-4 py-3 mb-4 border border-primary-ui-blue-p200">
+        <div className="flex items-center justify-between bg-blue-50 rounded-lg px-4 py-3 mb-4 border border-blue-200">
           <div className="flex items-center space-x-3">
-            <div className="p-1.5 bg-primary-ui-blue-p500/10 rounded-md flex-shrink-0">
-              <PaperClipIcon className="h-4 w-4 text-primary-ui-blue-p600" />
+            <div className="p-1.5 bg-blue-500/10 rounded-md flex-shrink-0">
+              <PaperClipIcon className="h-4 w-4 text-blue-600" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium text-neutral-n-black truncate">
+              <p className="text-sm font-medium text-gray-900 truncate">
                 {selectedFile.name}
               </p>
-              <p className="text-xs text-neutral-n600">
+              <p className="text-xs text-gray-600">
                 {(selectedFile.size / 1024).toFixed(1)} KB
               </p>
             </div>
           </div>
           <button
             onClick={removeFile}
-            className="p-1.5 text-neutral-n500 hover:text-neutral-n700 rounded-full hover:bg-neutral-n200 transition-colors"
+            className="p-1.5 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
             aria-label="Remove file"
           >
             <XMarkIcon className="h-4 w-4" />
@@ -107,7 +107,7 @@ export const MessageInput = ({
 
       <form
         onSubmit={handleSubmit}
-        className="flex items-end gap-3 bg-neutral-n-white rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-primary-ui-blue-p500/50 transition-all border border-neutral-n300 shadow-sm"
+        className="flex items-end gap-3 bg-white rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-blue-500/50 transition-all border border-gray-300 shadow-sm"
       >
         <div className="flex-1 min-w-0">
           <div className="relative">
@@ -122,14 +122,14 @@ export const MessageInput = ({
               onInput={handleInput}
               onKeyDown={handleKeyDown}
               placeholder="Type your message..."
-              className="w-full bg-transparent border-0 text-neutral-n-black placeholder-neutral-n600 focus:ring-0 focus:outline-none resize-none py-2 pl-12 pr-4 max-h-36 min-h-[48px] rounded-lg text-sm leading-relaxed"
+              className="w-full bg-transparent border-0 text-gray-900 placeholder-gray-500 focus:ring-0 focus:outline-none resize-none py-2 pl-12 pr-4 max-h-36 min-h-[48px] rounded-lg text-sm leading-relaxed"
               rows={1}
               style={{ scrollbarWidth: "thin" }}
             />
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="absolute left-3 top-1/2 -translate-y-1/2 p-1.5 text-neutral-n500 hover:text-primary-ui-blue-p600 rounded-full hover:bg-neutral-n200 transition-colors"
+              className="absolute left-3 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-blue-600 rounded-full hover:bg-gray-200 transition-colors"
               aria-label="Attach file"
             >
               <PaperClipIcon className="h-4 w-4" />
@@ -149,8 +149,8 @@ export const MessageInput = ({
           disabled={isSending || (!message.trim() && !selectedFile)}
           className={`p-2.5 rounded-full flex-shrink-0 transition-all duration-200 ${
             !message.trim() && !selectedFile
-              ? "text-neutral-n400 bg-neutral-n150"
-              : "text-neutral-n-white bg-primary-ui-blue-p500 hover:bg-primary-ui-blue-p600 shadow-lg shadow-primary-ui-blue-p500/20"
+              ? "text-gray-400 bg-gray-100"
+              : "text-white bg-blue-500 hover:bg-blue-600 shadow-lg shadow-blue-500/20"
           } disabled:opacity-50 disabled:cursor-not-allowed`}
           aria-label="Send message"
         >
