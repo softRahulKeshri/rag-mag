@@ -6,10 +6,12 @@ import {
 } from "@heroicons/react/24/outline";
 import { useCompanyPitches } from "./hooks/useCompanyPitches";
 import { useBookmarkPitch } from "./hooks/useBookmarkPitch";
+import { usePitchDetails } from "./hooks/usePitchDetails";
 import {
   Navigation,
   ChatInterface,
   PitchChat,
+  PitchDetailsView,
 } from "./components";
 import UploadArea from "./components/UploadArea";
 import type { TabId } from "./types/navigation";
@@ -18,6 +20,8 @@ import type { Pitch } from "./types/types";
 const PitchAnalyzerApp = () => {
   const [activeTab, setActiveTab] = useState<TabId>("upload");
   const [selectedPitchForChat, setSelectedPitchForChat] =
+    useState<Pitch | null>(null);
+  const [selectedPitchForDetails, setSelectedPitchForDetails] =
     useState<Pitch | null>(null);
 
   const {
@@ -43,8 +47,19 @@ const PitchAnalyzerApp = () => {
     clearError: clearBookmarkError,
   } = useBookmarkPitch();
 
+  const {
+    fetchPitchDetails,
+    pitchDetails,
+    isLoading: isLoadingDetails,
+    error: detailsError,
+    clearError: clearDetailsError,
+  } = usePitchDetails();
+
   const handleTabChange = (tabId: TabId) => {
     setActiveTab(tabId);
+    // Clear selected pitches when changing tabs
+    setSelectedPitchForChat(null);
+    setSelectedPitchForDetails(null);
 
     // Fetch bookmarked pitches when switching to bookmarked tab
     if (tabId === "bookmarked") {
@@ -71,6 +86,20 @@ const PitchAnalyzerApp = () => {
     } catch (error) {
       console.error("Failed to toggle bookmark:", error);
     }
+  };
+
+  const handleViewPitchDetails = async (pitch: Pitch) => {
+    setSelectedPitchForDetails(pitch);
+    try {
+      await fetchPitchDetails(pitch.id, "member1@company1.com");
+    } catch (error) {
+      console.error("Failed to fetch pitch details:", error);
+    }
+  };
+
+  const handleBackFromDetails = () => {
+    setSelectedPitchForDetails(null);
+    clearDetailsError();
   };
 
   return (
@@ -143,6 +172,24 @@ const PitchAnalyzerApp = () => {
                             >
                               ⭐
                             </button>
+                            <button
+                              onClick={() => handleViewPitchDetails(pitch)}
+                              className="p-2 rounded-full text-blue-500 hover:text-blue-600"
+                              title="View Details"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="w-5 h-5"
+                              >
+                                <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0-3 3V6a3 3 0 1 0 3-3H18a3 3 0 1 0-3 3" />
+                              </svg>
+                            </button>
                           </div>
                         </div>
 
@@ -212,11 +259,118 @@ const PitchAnalyzerApp = () => {
             ) : (
               <ChatInterface
                 userEmail="member1@company1.com"
-                onViewDetails={(pitch: Pitch) => {
+                onPitchSelect={(pitch: Pitch) => {
                   setSelectedPitchForChat(pitch);
+                }}
+                onViewDetails={(pitch: Pitch) => {
+                  handleViewPitchDetails(pitch);
                 }}
               />
             ))}
+
+          {/* Pitch Details View */}
+          {selectedPitchForDetails && (
+            <div className="space-y-6">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={handleBackFromDetails}
+                      className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                        />
+                      </svg>
+                    </button>
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        Pitch Details
+                      </h2>
+                      <p className="text-gray-600">
+                        {selectedPitchForDetails.title ||
+                          selectedPitchForDetails.filename}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Loading State */}
+                {isLoadingDetails && (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading pitch details...</p>
+                  </div>
+                )}
+
+                {/* Error State */}
+                {detailsError && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-sm font-medium text-red-800">
+                          Error
+                        </h3>
+                        <p className="text-sm text-red-700 mt-1">
+                          {detailsError}
+                        </p>
+                        <button
+                          onClick={clearDetailsError}
+                          className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Pitch Details Content */}
+                {!isLoadingDetails && pitchDetails && (
+                  <PitchDetailsView pitchDetails={pitchDetails} />
+                )}
+
+                {/* No Details Available */}
+                {!isLoadingDetails && !pitchDetails && !detailsError && (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg
+                        className="w-8 h-8 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No details available
+                    </h3>
+                    <p className="text-gray-500">
+                      Detailed analysis for this pitch deck is not available.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Error Display */}
           {pitchesError && (
@@ -376,6 +530,24 @@ const PitchAnalyzerApp = () => {
                           }
                         >
                           ⭐
+                        </button>
+                        <button
+                          onClick={() => handleViewPitchDetails(pitch)}
+                          className="p-2 rounded-full text-blue-500 hover:text-blue-600"
+                          title="View Details"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="w-5 h-5"
+                          >
+                            <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0-3 3V6a3 3 0 1 0 3-3H18a3 3 0 1 0-3 3" />
+                          </svg>
                         </button>
                       </div>
                     </div>

@@ -48,20 +48,20 @@ const Navbar = () => {
     <nav
       className={`sticky top-0 z-50 transition-all duration-300 ease-out ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100/50"
-          : "bg-white/80 backdrop-blur-sm"
+          ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200"
+          : "bg-white/90 backdrop-blur-md border-b border-gray-100"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Left: Logo & Brand */}
           <div className="flex-shrink-0">
             <button
               onClick={() => handleAppChange("/")}
-              className={`relative flex items-center space-x-3 transition-all duration-300 ease-out group ${
+              className={`relative flex items-center space-x-3 px-3 py-2 rounded-xl transition-all duration-300 ease-out group ${
                 currentPath === "/"
-                  ? "text-purple-600"
-                  : "text-gray-900 hover:text-purple-600"
+                  ? "text-purple-600 bg-purple-50/50"
+                  : "text-gray-900 hover:text-purple-600 hover:bg-gray-50/50"
               }`}
             >
               {/* Logo */}
@@ -71,20 +71,20 @@ const Navbar = () => {
                   alt="Magure AI Logo"
                   className="h-8 w-8 transition-all duration-300 group-hover:scale-110"
                 />
-                {/* Subtle glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                {/* Enhanced glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/30 to-blue-400/30 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
 
               {/* Brand Name */}
-              <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight">Magure</span>
-                <span className="text-xs font-medium text-gray-500 group-hover:text-purple-500 transition-colors duration-300">
-                  AI Platform
+              <div className="flex flex-col items-start">
+                <span className="text-xl font-bold tracking-tight leading-tight">Magure</span>
+                <span className="text-xs font-medium text-gray-500 group-hover:text-purple-500 transition-colors duration-300 leading-tight">
+                  AI Labs
                 </span>
               </div>
 
-              {/* Hover background effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+              {/* Enhanced hover background effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-50/80 to-blue-50/80 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
             </button>
           </div>
 
@@ -98,10 +98,10 @@ const Navbar = () => {
                 <button
                   key={app.name}
                   onClick={() => handleAppChange(app.path)}
-                  className={`relative group px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ease-out ${
+                  className={`relative group px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ease-out ${
                     isActive
-                      ? "text-purple-600 bg-purple-50 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      ? "text-purple-600 bg-purple-50/80 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50/80"
                   }`}
                 >
                   <div className="flex items-center space-x-2">
@@ -132,10 +132,10 @@ const Navbar = () => {
             <div className="relative">
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className={`flex items-center space-x-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300 ease-out group ${
+                className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ease-out group ${
                   isProfileOpen
-                    ? "text-purple-600 bg-purple-50"
-                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                    ? "text-purple-600 bg-purple-50/80"
+                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50/80"
                 }`}
               >
                 <div className="relative">
@@ -146,7 +146,6 @@ const Navbar = () => {
                         : "text-gray-400 group-hover:text-gray-600"
                     }`}
                   />
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
                 </div>
                 <span>Profile</span>
                 <ChevronDownIcon

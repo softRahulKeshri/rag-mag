@@ -76,7 +76,7 @@ const FloatingChatBot = ({
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-    } catch (err) {
+    } catch {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: "Sorry, I encountered an error. Please try again.",
