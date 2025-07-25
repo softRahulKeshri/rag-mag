@@ -22,7 +22,7 @@ const ResumeParserApp: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
       <Sidebar
         activeSection={activeSection}
@@ -30,7 +30,7 @@ const ResumeParserApp: React.FC = () => {
       />
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">{renderContent()}</div>
+      <div className="flex-1 overflow-auto min-h-0">{renderContent()}</div>
     </div>
   );
 };
