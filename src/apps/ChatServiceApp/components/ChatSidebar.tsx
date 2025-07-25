@@ -1,4 +1,5 @@
-import { MagnifyingGlassIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid";
+import CommonSidebar from "../../../components/CommonSidebar";
 import ChatListItem from "./ChatListItem";
 import { UserProfile } from "./UserProfile";
 import type { IChat } from "../types/types";
@@ -8,6 +9,7 @@ interface ChatSidebarProps {
   selectedChatId: number | null;
   onSelectChat: (chatId: number) => void;
   onNewChat: () => void;
+  isCreatingSession?: boolean;
 }
 
 export const ChatSidebar = ({
@@ -15,56 +17,73 @@ export const ChatSidebar = ({
   selectedChatId,
   onSelectChat,
   onNewChat,
+  isCreatingSession = false,
 }: ChatSidebarProps) => {
   return (
-    <div className="w-72 bg-gray-900/95 backdrop-blur-sm border-r border-gray-800 text-white h-full flex flex-col">
+    <CommonSidebar className="bg-neutral-n-white/95 backdrop-blur-sm border-neutral-n200 text-neutral-n-black">
       {/* Sidebar Header */}
-      <div className="p-4 border-b border-gray-800">
-        <button 
+      <div className="flex-shrink-0 p-6 border-b border-neutral-n200 bg-gradient-to-b from-neutral-n-white to-neutral-n50">
+        <button
           onClick={onNewChat}
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-medium py-2.5 px-4 rounded-lg mb-2 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-blue-500/10 hover:shadow-blue-500/20"
+          disabled={isCreatingSession}
+          className={`w-full bg-gradient-to-r from-primary-ui-blue-p500 to-primary-ui-blue-p600 hover:from-primary-ui-blue-p600 hover:to-primary-ui-blue-p700 text-neutral-n-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-3 shadow-lg shadow-primary-ui-blue-p500/20 hover:shadow-primary-ui-blue-p500/30 ${
+            isCreatingSession ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
-          <PlusIcon className="h-5 w-5" />
-          <span>New Chat</span>
+          {isCreatingSession ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+          ) : (
+            <PlusIcon className="h-5 w-5" />
+          )}
+          <span>{isCreatingSession ? "Creating..." : "New Chat"}</span>
         </button>
       </div>
 
       {/* Search Bar */}
-      <div className="px-4 py-3">
+      <div className="flex-shrink-0 px-6 py-4 border-b border-neutral-n200 bg-neutral-n-white">
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon className="h-4 w-4 text-gray-500" />
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <MagnifyingGlassIcon className="h-4 w-4 text-neutral-n500" />
           </div>
           <input
             type="text"
             placeholder="Search chats..."
-            className="w-full bg-gray-800/50 border border-gray-700 text-white rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent placeholder-gray-500"
+            className="w-full bg-neutral-n100 border border-neutral-n300 text-neutral-n-black rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-ui-blue-p500/50 focus:border-transparent placeholder-neutral-n600 transition-all duration-200"
           />
         </div>
       </div>
 
       {/* Chat List */}
-      <div className="flex-1 overflow-y-auto py-2 px-2">
-        <div className="space-y-1">
-          {chats.map((chat: IChat) => (
-            <ChatListItem
-              key={chat.id}
-              chat={chat}
-              isSelected={chat.id === selectedChatId}
-              onClick={() => onSelectChat(chat.id)}
-            />
-          ))}
+      <div className="flex-1 overflow-y-auto py-4 px-3 min-h-0">
+        <div className="space-y-2">
+          {chats.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="text-neutral-n500 text-sm">
+                No chats yet. Create your first chat to get started.
+              </div>
+            </div>
+          ) : (
+            chats.map((chat: IChat) => (
+              <ChatListItem
+                key={chat.id}
+                chat={chat}
+                isSelected={chat.id === selectedChatId}
+                onClick={() => onSelectChat(chat.id)}
+              />
+            ))
+          )}
         </div>
       </div>
 
       {/* User Profile */}
-      <UserProfile 
-        name="John Doe"
-        email="john@example.com"
-        plan="Free Plan"
-        onSettingsClick={() => console.log('Settings clicked')}
-      />
-    </div>
+      <div className="flex-shrink-0">
+        <UserProfile
+          name="John Doe"
+          email="john@example.com"
+          plan="Free Plan"
+          onSettingsClick={() => console.log("Settings clicked")}
+        />
+      </div>
+    </CommonSidebar>
   );
 };
-

@@ -38,7 +38,7 @@ const UploadCenter: React.FC = () => {
   }, [selectedGroup, selectedFiles.length, uploadFiles]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-full bg-gray-50 overflow-y-auto">
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="mb-8">

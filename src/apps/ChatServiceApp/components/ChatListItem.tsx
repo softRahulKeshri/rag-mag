@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import type { IChat } from "../types/types";
 
 interface IChatListItemProps {
@@ -15,11 +15,10 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
 }) => {
   const lastMessage = chat.messages[chat.messages.length - 1];
   const previewText = lastMessage?.content
-  ? lastMessage.content.length > 40
-    ? lastMessage.content.substring(0, 40) + "..."
-    : lastMessage.content
-  : "New chat";
-
+    ? lastMessage.content.length > 40
+      ? lastMessage.content.substring(0, 40) + "..."
+      : lastMessage.content
+    : "New chat";
 
   // Handle timestamp - use last message timestamp or chat creation timestamp
   const timestamp =
@@ -31,50 +30,54 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`group relative flex items-center p-3 space-x-3 rounded-lg mx-2 transition-all duration-200 cursor-pointer ${
+      className={`group relative flex items-center p-4 space-x-3 rounded-xl mx-1 transition-all duration-200 cursor-pointer ${
         isSelected
-          ? "bg-gray-800/80 shadow-lg shadow-blue-500/5 border border-gray-700/50"
-          : "hover:bg-gray-800/50 hover:border-gray-700/30 border border-transparent"
+          ? "bg-gradient-to-r from-primary-ui-blue-p50 to-primary-ui-blue-p100 shadow-md shadow-primary-ui-blue-p500/10 border border-primary-ui-blue-p200"
+          : "hover:bg-neutral-n100 hover:border-neutral-n300 border border-transparent"
       }`}
     >
       <div
-        className={`flex-shrink-0 w-2 h-2 rounded-full ${
-          isSelected ? "bg-blue-500" : "bg-transparent group-hover:bg-gray-600"
+        className={`flex-shrink-0 w-2.5 h-2.5 rounded-full transition-all duration-200 ${
+          isSelected
+            ? "bg-primary-ui-blue-p500 shadow-sm"
+            : "bg-transparent group-hover:bg-neutral-n400"
         }`}
       ></div>
 
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between space-x-2">
+        <div className="flex items-center justify-between space-x-3">
           <h3
-            className={`text-sm font-medium truncate ${
-              isSelected ? "text-white" : "text-gray-200 group-hover:text-white cursor-pointer"
+            className={`text-sm font-semibold truncate ${
+              isSelected
+                ? "text-neutral-n-black"
+                : "text-neutral-n800 group-hover:text-neutral-n-black"
             }`}
           >
             {chat.title || "New Chat"}
           </h3>
           <span
-            className={`text-xs cursor-pointer ${
+            className={`text-xs font-medium ${
               isSelected
-                ? "text-blue-400"
-                : "text-gray-500 group-hover:text-gray-400 cursor-pointer"
+                ? "text-primary-ui-blue-p600"
+                : "text-neutral-n600 group-hover:text-neutral-n700"
             }`}
           >
             {timeAgo}
           </span>
         </div>
         <p
-          className={`text-xs mt-0.5 truncate ${
+          className={`text-xs mt-1 truncate leading-relaxed ${
             isSelected
-              ? "text-gray-400"
-              : "text-gray-500 group-hover:text-gray-400 cursor-pointer"
+              ? "text-neutral-n700"
+              : "text-neutral-n600 group-hover:text-neutral-n700"
           }`}
         >
           {previewText}
         </p>
       </div>
 
-      <button 
-        className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-gray-300 p-1 -mr-1 rounded-full hover:bg-gray-700/50 transition-opacity cursor-pointer"
+      <button
+        className="opacity-0 group-hover:opacity-100 text-neutral-n500 hover:text-neutral-n700 p-1.5 rounded-full hover:bg-neutral-n200 transition-all duration-200"
         aria-label="More options"
       >
         <EllipsisVerticalIcon className="h-4 w-4" />
