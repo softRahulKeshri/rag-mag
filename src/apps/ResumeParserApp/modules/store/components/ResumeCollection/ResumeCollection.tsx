@@ -239,7 +239,7 @@ const ResumeCollection = ({
   };
 
   return (
-    <div className="w-full min-h-screen bg-white cursor-default px-4 py-4 md:px-8 md:py-6">
+    <div className="w-full h-full bg-white cursor-default px-4 py-4 md:px-8 md:py-6 overflow-y-auto">
       {/* Analytics Header */}
       <AnalyticsHeader
         totalFiles={stats.totalFiles}

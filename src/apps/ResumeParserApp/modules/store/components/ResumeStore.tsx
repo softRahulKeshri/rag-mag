@@ -65,7 +65,7 @@ const ResumeStore: React.FC = () => {
   // Show error state if there's an error
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="h-full bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
           <ErrorDisplay
             error={error}

@@ -180,7 +180,7 @@ const ResumeSearch: React.FC = () => {
     : summary;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-full bg-gray-50 overflow-y-auto">
       {/* Top Purple Section - AI-Powered Resume Matching */}
       <div
         className="relative px-6 py-12 rounded-b-3xl"
