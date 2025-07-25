@@ -46,6 +46,7 @@ export interface Pitch {
 export interface CompanyPitchesRequest {
   userEmail: string;
   filterBy: string[];
+  show_only_bookmarked?: boolean;
 }
 
 export interface CompanyPitchesResponse {

@@ -12,7 +12,11 @@ export const useCompanyPitches = () => {
   const [pitches, setPitches] = useState<Pitch[]>([]);
 
   const fetchCompanyPitches = useCallback(
-    async (userEmail: string, filterBy: string[] = []) => {
+    async (
+      userEmail: string,
+      filterBy: string[] = [],
+      showOnlyBookmarked: boolean = false
+    ) => {
       setIsLoading(true);
       setError(null);
 
@@ -20,6 +24,7 @@ export const useCompanyPitches = () => {
         const payload: CompanyPitchesRequest = {
           userEmail,
           filterBy,
+          show_only_bookmarked: showOnlyBookmarked,
         };
 
         const response = await fetch(
@@ -57,8 +62,12 @@ export const useCompanyPitches = () => {
   );
 
   const refreshPitches = useCallback(
-    async (userEmail: string, filterBy: string[] = []) => {
-      return await fetchCompanyPitches(userEmail, filterBy);
+    async (
+      userEmail: string,
+      filterBy: string[] = [],
+      showOnlyBookmarked: boolean = false
+    ) => {
+      return await fetchCompanyPitches(userEmail, filterBy, showOnlyBookmarked);
     },
     [fetchCompanyPitches]
   );
