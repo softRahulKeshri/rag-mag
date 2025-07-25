@@ -1,4 +1,10 @@
 import { Link } from "react-router-dom";
+import {
+  DocumentTextIcon,
+  CheckCircleIcon,
+  ChatBubbleLeftRightIcon,
+  ArrowRightIcon,
+} from "@heroicons/react/24/outline";
 
 const Home = () => {
   const apps = [
@@ -7,12 +13,7 @@ const Home = () => {
       title: "Resume Parser",
       description:
         "Intelligent resume analysis and parsing with advanced AI capabilities",
-      icon: (
-        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1v5h5v10H6V3h7z" />
-          <path d="M9 12h6v2H9zm0 4h6v2H9z" />
-        </svg>
-      ),
+      icon: <DocumentTextIcon className="w-8 h-8" />,
       gradient: "from-purple-500 to-indigo-600",
       bgGradient: "from-purple-50 to-indigo-50",
     },
@@ -20,11 +21,7 @@ const Home = () => {
       id: "pitch-analyzer",
       title: "Pitch Analyzer",
       description: "Comprehensive pitch analysis and feedback system",
-      icon: (
-        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-        </svg>
-      ),
+      icon: <CheckCircleIcon className="w-8 h-8" />,
       gradient: "from-emerald-500 to-teal-600",
       bgGradient: "from-emerald-50 to-teal-50",
     },
@@ -32,11 +29,7 @@ const Home = () => {
       id: "chat-service",
       title: "Chat Service",
       description: "Advanced AI-powered chat and communication platform",
-      icon: (
-        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
-        </svg>
-      ),
+      icon: <ChatBubbleLeftRightIcon className="w-8 h-8" />,
       gradient: "from-blue-500 to-cyan-600",
       bgGradient: "from-blue-50 to-cyan-50",
     },
@@ -55,9 +48,9 @@ const Home = () => {
           <div className="max-w-4xl mx-auto">
             {/* Logo */}
             <div className="flex justify-center mb-8">
-              <img 
-                src="/magure_ai_logo.svg" 
-                alt="Magure AI Logo" 
+              <img
+                src="/magure_ai_logo.svg"
+                alt="Magure AI Logo"
                 className="h-20 w-auto md:h-24"
               />
             </div>
@@ -102,19 +95,7 @@ const Home = () => {
                     {/* Arrow indicator */}
                     <div className="mt-6 flex items-center text-purple-600 font-medium group-hover:text-purple-700 transition-colors">
                       <span>Get Started</span>
-                      <svg
-                        className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
-                      </svg>
+                      <ArrowRightIcon className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" />
                     </div>
                   </div>
 

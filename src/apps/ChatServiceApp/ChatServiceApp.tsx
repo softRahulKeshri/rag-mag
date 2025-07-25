@@ -159,11 +159,11 @@ const ChatServiceApp = () => {
   // Show loading state while fetching sessions
   if (isLoadingSessions) {
     return (
-      <div className="flex h-screen bg-neutral-n100 text-neutral-n-black overflow-hidden">
+      <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-ui-blue-p500 mx-auto mb-4"></div>
-            <p className="text-neutral-n600">Loading chat sessions...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading chat sessions...</p>
           </div>
         </div>
       </div>
@@ -173,7 +173,7 @@ const ChatServiceApp = () => {
   // Show error state if sessions fail to load
   if (sessionsError) {
     return (
-      <div className="flex h-screen bg-neutral-n100 text-neutral-n-black overflow-hidden">
+      <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden">
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="text-red-500 mb-4">
@@ -191,13 +191,13 @@ const ChatServiceApp = () => {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-neutral-n-black mb-2">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
               Failed to load chat sessions
             </h3>
-            <p className="text-neutral-n600 mb-4">{sessionsError.message}</p>
+            <p className="text-gray-600 mb-4">{sessionsError.message}</p>
             <button
               onClick={() => refetchSessions()}
-              className="px-4 py-2 bg-primary-ui-blue-p500 text-white rounded-lg hover:bg-primary-ui-blue-p600 transition-colors"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
               Retry
             </button>
@@ -208,7 +208,7 @@ const ChatServiceApp = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-neutral-n50 via-neutral-n100 to-neutral-n50 text-neutral-n-black overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-30 w-72 transform ${
@@ -227,13 +227,13 @@ const ChatServiceApp = () => {
       {/* Overlay for mobile */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-neutral-n-black bg-opacity-50 md:hidden"
+          className="fixed inset-0 z-20 bg-black bg-opacity-50 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-neutral-n-white shadow-lg">
+      <div className="flex-1 flex flex-col overflow-hidden bg-white shadow-lg">
         <ChatHeader
           onMenuToggle={toggleSidebar}
           title={selectedChat?.title || "New Chat"}
@@ -248,11 +248,11 @@ const ChatServiceApp = () => {
               <ChatMessages messages={selectedChat.messages} />
             </>
           ) : (
-            <div className="flex items-center justify-center h-full bg-gradient-to-b from-neutral-n50 to-neutral-n100">
-              <div className="text-center text-neutral-n600 max-w-md mx-auto px-6">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-primary-ui-blue-p100 to-primary-ui-blue-p200 mb-6">
+            <div className="flex items-center justify-center h-full bg-gradient-to-b from-gray-50 to-gray-100">
+              <div className="text-center text-gray-600 max-w-md mx-auto px-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 mb-6">
                   <svg
-                    className="h-8 w-8 text-primary-ui-blue-p600"
+                    className="h-8 w-8 text-blue-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -265,10 +265,10 @@ const ChatServiceApp = () => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-neutral-n-black mb-3">
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Welcome to Chat Service
                 </h3>
-                <p className="text-neutral-n600 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed">
                   Select a chat from the sidebar or create a new one to start
                   your conversation
                 </p>
@@ -279,7 +279,7 @@ const ChatServiceApp = () => {
 
         {/* Message Input */}
         {selectedChat && (
-          <div className="flex-shrink-0 w-full bg-neutral-n-white border-t border-neutral-n200">
+          <div className="flex-shrink-0 w-full bg-white border-t border-gray-200">
             <MessageInput
               onSendMessage={handleSendMessage}
               isSending={isSending}
