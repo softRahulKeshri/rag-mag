@@ -3,16 +3,18 @@ import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
   BookmarkIcon,
-  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 import { useCompanyPitches } from "./hooks/useCompanyPitches";
 import { useBookmarkPitch } from "./hooks/useBookmarkPitch";
-import { Navigation } from "./components";
+import { Navigation, ChatInterface, PitchChat } from "./components";
 import UploadArea from "./components/UploadArea";
 import type { TabId } from "./types/navigation";
+import type { Pitch } from "./types/types";
 
 const PitchAnalyzerApp = () => {
   const [activeTab, setActiveTab] = useState<TabId>("upload");
+  const [selectedPitchForChat, setSelectedPitchForChat] =
+    useState<Pitch | null>(null);
 
   const {
     pitches,
@@ -39,11 +41,12 @@ const PitchAnalyzerApp = () => {
 
   const handleTabChange = (tabId: TabId) => {
     setActiveTab(tabId);
-    
+
     // Fetch bookmarked pitches when switching to bookmarked tab
     if (tabId === "bookmarked") {
       fetchBookmarkedPitches("member1@company1.com", [], true);
     }
+    // Note: Chat tab will fetch pitches automatically via ChatInterface component
   };
 
   const handleToggleBookmark = async (
@@ -56,7 +59,7 @@ const PitchAnalyzerApp = () => {
         pitchId,
         currentBookmarkState
       );
-      
+
       // Refresh the bookmarked pitches list if we're on the bookmarked tab
       if (activeTab === "bookmarked") {
         await fetchBookmarkedPitches("member1@company1.com", [], true);
@@ -95,7 +98,9 @@ const PitchAnalyzerApp = () => {
                 {isLoadingBookmarked && (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mx-auto mb-4"></div>
-                    <p className="text-gray-500">Loading bookmarked pitches...</p>
+                    <p className="text-gray-500">
+                      Loading bookmarked pitches...
+                    </p>
                   </div>
                 )}
 
@@ -123,7 +128,10 @@ const PitchAnalyzerApp = () => {
                           <div className="flex items-center space-x-2">
                             <button
                               onClick={() =>
-                                handleToggleBookmark(pitch.id, pitch.is_bookmarked)
+                                handleToggleBookmark(
+                                  pitch.id,
+                                  pitch.is_bookmarked
+                                )
                               }
                               disabled={bookmarkLoading}
                               className="p-2 rounded-full transition-colors text-yellow-500 hover:text-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -190,28 +198,21 @@ const PitchAnalyzerApp = () => {
             </div>
           )}
 
-          {activeTab === "chat" && (
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Chat & Details
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Chat with AI about your pitch decks and view detailed analysis
-                </p>
-
-                {/* Chat interface will go here */}
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <ChatBubbleLeftRightIcon className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <p className="text-gray-500">
-                    Select a pitch to start chatting
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+          {activeTab === "chat" &&
+            (selectedPitchForChat ? (
+              <PitchChat
+                pitch={selectedPitchForChat}
+                userEmail="member1@company1.com"
+                onBack={() => setSelectedPitchForChat(null)}
+              />
+            ) : (
+              <ChatInterface
+                userEmail="member1@company1.com"
+                onPitchSelect={(pitch: Pitch) => {
+                  setSelectedPitchForChat(pitch);
+                }}
+              />
+            ))}
 
           {/* Error Display */}
           {pitchesError && (
@@ -244,7 +245,9 @@ const PitchAnalyzerApp = () => {
                   <h3 className="text-sm font-medium text-red-800">
                     Bookmarked Pitches Error
                   </h3>
-                  <p className="text-sm text-red-700 mt-1">{bookmarkedPitchesError}</p>
+                  <p className="text-sm text-red-700 mt-1">
+                    {bookmarkedPitchesError}
+                  </p>
                   <button
                     onClick={clearBookmarkedPitchesError}
                     className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
