@@ -1,3 +1,5 @@
+// Note: This service uses dummy data simulation and doesn't need real API calls
+// import { chatApi } from "../../../lib/axios"; // Uncomment when switching to real API
 import type {
   CreateChatSessionRequest,
   CreateChatSessionResponse,

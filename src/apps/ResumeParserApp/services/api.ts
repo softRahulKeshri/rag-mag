@@ -1,42 +1,9 @@
-import axios from "axios";
+import { resumeApi } from "../../../lib/axios";
 import type { Group, UploadResult, Resume as ApiResume } from "../types/api";
 import type { BackendResumeResponse } from "../modules/store/types";
 
-// Configure axios instance
-const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_BASE_URL ||
-    "http://ec2-13-232-75-51.ap-south-1.compute.amazonaws.com/api",
-  timeout: 30000,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-// Request interceptor for authentication
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Response interceptor for error handling
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem("authToken");
-      window.location.href = "/login";
-    }
-    return Promise.reject(error);
-  }
-);
+// Use centralized API configuration from lib/axios
+const api = resumeApi;
 
 // Add interface for the API response format
 interface UploadApiResponse {

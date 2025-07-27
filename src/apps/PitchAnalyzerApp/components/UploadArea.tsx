@@ -35,10 +35,8 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
 
   // Fetch recent pitches on component mount
   useEffect(() => {
-    if (userEmail) {
-      fetchCompanyPitches(userEmail);
-    }
-  }, [userEmail, fetchCompanyPitches]);
+    fetchCompanyPitches();
+  }, [fetchCompanyPitches]);
 
   const loadingMessages = useMemo(
     () => [
@@ -113,7 +111,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
     }, 2000);
 
     try {
-      const results = await uploadMultiplePitches(selectedFiles, userEmail);
+      const results = await uploadMultiplePitches(selectedFiles);
       const successfulUploads = results
         .filter((result) => result.status === 200)
         .map((result) => result.message);
@@ -122,7 +120,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
       setSelectedFiles([]);
 
       // Refresh the pitches list
-      await fetchCompanyPitches(userEmail);
+      await fetchCompanyPitches();
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {

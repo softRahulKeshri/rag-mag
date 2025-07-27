@@ -30,8 +30,8 @@ const PitchChat = ({ pitch, userEmail, onBack }: PitchChatProps) => {
 
   // Fetch pitch details when component mounts
   useEffect(() => {
-    fetchPitchDetails(pitch.id, userEmail);
-  }, [pitch.id, userEmail, fetchPitchDetails]);
+    fetchPitchDetails(pitch.id);
+  }, [pitch.id, fetchPitchDetails]);
 
   const handleToggleChat = useCallback(() => {
     setIsChatOpen((prev) => !prev);

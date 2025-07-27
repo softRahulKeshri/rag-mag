@@ -1,31 +1,60 @@
 import { useState, useCallback } from "react";
+import { pitchApi } from "../../../lib/axios";
+
+// Types for the new API response
+interface AnalyzePitchResult {
+  filename: string;
+  pitch_id?: string;
+  status: "queued" | "error";
+  detail?: string;
+}
+
+interface AnalyzePitchResponse {
+  results: AnalyzePitchResult[];
+}
 
 export const usePitchUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const uploadPitch = useCallback(async (file: File, userEmail: string) => {
+  const uploadPitch = useCallback(async (file: File) => {
     setIsUploading(true);
     setError(null);
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
-      formData.append("userEmail", userEmail);
+      formData.append("files", file);
 
-      const response = await fetch(
-        "https://api.magure.ai/api/v1/pitch/updated-analyse-pitch",
+      const response = await pitchApi.post<AnalyzePitchResponse>(
+        "/analyze-pitches",
+        formData,
         {
-          method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.statusText}`);
+      // Handle the new API response format
+      const result = response.data;
+
+      // The API returns { results: [{ filename, pitch_id, status }] }
+      if (result.results && result.results.length > 0) {
+        const fileResult = result.results[0];
+
+        if (fileResult.status === "error") {
+          throw new Error(fileResult.detail || "Upload failed");
+        }
+
+        return {
+          data: fileResult,
+          message: `Successfully queued ${fileResult.filename} for analysis`,
+          status: 200,
+          pitch_id: fileResult.pitch_id,
+          filename: fileResult.filename,
+        };
       }
 
-      const result = await response.json();
       return result;
     } catch (error) {
       const errorMessage =
@@ -38,27 +67,53 @@ export const usePitchUpload = () => {
   }, []);
 
   const uploadMultiplePitches = useCallback(
-    async (files: File[], userEmail: string) => {
+    async (files: File[]) => {
       setIsUploading(true);
       setError(null);
 
       try {
-        const results = [];
+        // Upload all files at once using FormData
+        const formData = new FormData();
 
-        for (const file of files) {
-          try {
-            const result = await uploadPitch(file, userEmail);
-            results.push(result);
-          } catch {
-            results.push({
-              data: null,
-              message: `Failed to upload ${file.name}`,
-              status: 500,
-            });
+        files.forEach((file) => {
+          formData.append("files", file);
+        });
+
+        const response = await pitchApi.post<AnalyzePitchResponse>(
+          "/analyze-pitches",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           }
+        );
+
+        const result = response.data;
+
+        // Transform the API response to match expected format
+        if (result.results && Array.isArray(result.results)) {
+          return result.results.map((fileResult: AnalyzePitchResult) => {
+            if (fileResult.status === "error") {
+              return {
+                data: null,
+                message: `Failed to upload ${fileResult.filename}: ${fileResult.detail}`,
+                status: 500,
+                filename: fileResult.filename,
+              };
+            }
+
+            return {
+              data: fileResult,
+              message: `Successfully queued ${fileResult.filename} for analysis`,
+              status: 200,
+              pitch_id: fileResult.pitch_id,
+              filename: fileResult.filename,
+            };
+          });
         }
 
-        return results;
+        return [];
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Upload failed";
@@ -68,7 +123,7 @@ export const usePitchUpload = () => {
         setIsUploading(false);
       }
     },
-    [uploadPitch]
+    []
   );
 
   const clearError = useCallback(() => {
