@@ -23,7 +23,7 @@ export const useBookmarkPitch = () => {
           isBookmarked,
         };
 
-        const response = await pitchApi.post("/pitch/bookmark-pitch", payload);
+        const response = await pitchApi.post("/bookmark-pitch", payload);
 
         const result: BookmarkPitchResponse = response.data;
 

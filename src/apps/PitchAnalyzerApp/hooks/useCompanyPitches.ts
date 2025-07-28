@@ -19,7 +19,7 @@ export const useCompanyPitches = () => {
           show_only_bookmarked: showOnlyBookmarked,
         };
 
-        const response = await pitchApi.post("/pitch/company-pitches", payload);
+        const response = await pitchApi.post("/company-pitches", payload);
 
         const result: CompanyPitchesResponse = response.data;
 

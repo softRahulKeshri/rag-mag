@@ -14,7 +14,7 @@ export const usePitchDetails = () => {
 
     try {
       const response = await pitchApi.post(
-        `/pitch/company-pitch/${pitchId}`,
+        `/company-pitch/${pitchId}`,
         {}
       );
 
