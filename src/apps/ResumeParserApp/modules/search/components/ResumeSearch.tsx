@@ -106,10 +106,11 @@ const ResumeSearch: React.FC = () => {
     clearError();
 
     try {
-      const result = await searchByText(
-        searchQuery,
-        selectedGroup || undefined
-      );
+      // Only pass group if it's not empty
+      const groupParam =
+        selectedGroup && selectedGroup.trim() ? selectedGroup : undefined;
+
+      const result = await searchByText(searchQuery, groupParam);
       setSearchResults(result.results);
       setSearchSummary(result.summary);
     } catch (error) {
@@ -130,11 +131,23 @@ const ResumeSearch: React.FC = () => {
     setUploadError(null);
     clearError();
 
+    // Debug logging for group parameter
+    const groupParam = selectedGroup && selectedGroup.trim() ? selectedGroup : undefined;
+    console.log("🔍 JD Upload - Group parameter:", {
+      selectedGroup,
+      type: typeof selectedGroup,
+      isEmpty: selectedGroup === "",
+      isUndefined: selectedGroup === undefined,
+      trimmed: selectedGroup?.trim(),
+      finalGroupParam: groupParam,
+    });
+
     try {
-      const result = await searchByJobDescription(
-        selectedFile,
-        selectedGroup || undefined
-      );
+      // Only pass group if it's not empty
+      const groupParam =
+        selectedGroup && selectedGroup.trim() ? selectedGroup : undefined;
+
+      const result = await searchByJobDescription(selectedFile, groupParam);
       setSearchResults(result.results);
       setSearchSummary(result.summary);
       setSelectedFile(null); // Clear file after successful upload

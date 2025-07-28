@@ -189,18 +189,44 @@ export const useSearchApi = () => {
           size: file.size,
           type: file.type,
         });
+        console.log(`🏷️ Group filter:`, group || "No group selected");
 
+        // Create FormData with exact field names expected by API
         const formData = new FormData();
+        
+        // Append file with 'file' field name (binary data)
         formData.append("file", file);
-        if (group) {
-          formData.append("group", group);
+        
+        // Append group with 'group' field name if provided and not empty
+        // Only add group parameter if it has a meaningful value
+        if (group && typeof group === 'string' && group.trim() && group.trim() !== "") {
+          formData.append("group", group.trim());
+          console.log(`✅ Group parameter added: "${group.trim()}"`);
+        } else {
+          console.log(`ℹ️ No group parameter added (group: "${group}", type: ${typeof group})`);
+        }
+
+        // Log FormData contents for debugging (development only)
+        if (import.meta.env.DEV) {
+          console.log("📤 FormData contents:");
+          for (const [key, value] of formData.entries()) {
+            if (value instanceof File) {
+              console.log(`  ${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+            } else {
+              console.log(`  ${key}: ${value}`);
+            }
+          }
+          
+          // Log the expected payload format
+          console.log("📋 Expected API payload format:");
+          console.log("  file: (binary data)");
+          console.log(`  group: ${group || "not provided"}`);
         }
 
         const response = await fetchWithRetry<SearchApiResponse>(url, {
           method: "POST",
           body: formData,
-          // Don't set Content-Type header for FormData - browser will set it automatically
-          headers: {},
+          // Don't set any headers for FormData - browser will set Content-Type automatically
         });
 
         console.log(`📡 Upload JD API Response:`, response);
