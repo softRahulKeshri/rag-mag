@@ -24,7 +24,7 @@ export const ChatSidebar = ({
       {/* Brand Section */}
       <div className="flex-shrink-0 p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+          {/* <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <svg
               className="w-6 h-6 text-white"
               fill="none"
@@ -38,7 +38,7 @@ export const ChatSidebar = ({
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
-          </div>
+          </div> */}
           <div>
             <h1 className="text-xl font-bold text-gray-900">ChatAI</h1>
             <p className="text-sm text-gray-500">AI-Powered Chat Platform</p>

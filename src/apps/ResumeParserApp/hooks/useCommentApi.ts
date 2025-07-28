@@ -88,7 +88,7 @@ export const useCommentApi = () => {
 
   /**
    * Delete a comment for a resume
-   * DELETE /cv/{cvId}/comment
+   * POST /api/cv/{cvId}/comment
    *
    * @param cvId - The resume ID
    * @returns Promise<boolean> - Success status
@@ -105,7 +105,11 @@ export const useCommentApi = () => {
         );
 
         const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "DELETE",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action: "delete" }),
         });
 
         console.log(`📡 Delete Comment API Response:`, response);

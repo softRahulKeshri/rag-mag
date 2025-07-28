@@ -2,7 +2,6 @@ import {
   CloudArrowUpIcon,
   BookmarkIcon,
   ChatBubbleLeftRightIcon,
-  ChartBarIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
 import type { NavigationProps, TabId } from "../types/navigation";
@@ -34,9 +33,9 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
       {/* Brand Section */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
-          <div className="w-20 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+          {/* <div className="w-20 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <ChartBarIcon className="w-6 h-6 text-white" />
-          </div>
+          </div> */}
           <div>
             <h1 className="text-xl font-bold text-gray-900">Pitch-analyzer</h1>
             <p className="text-sm text-gray-500">

@@ -85,8 +85,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                 disabled={isLoading || groupsLoading}
               >
                 <option value="">
-                  All Groups (
-                  {groupStats.reduce((sum, stat) => sum + stat.count, 0)})
+                  All Groups ({groupStats.length})
                 </option>
                 {groupStats.map((stat) => (
                   <option key={stat.groupId} value={stat.group}>
