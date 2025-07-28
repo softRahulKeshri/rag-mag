@@ -63,7 +63,7 @@ const PitchAnalyzerApp = () => {
 
     // Fetch bookmarked pitches when switching to bookmarked tab
     if (tabId === "bookmarked") {
-      fetchBookmarkedPitches("member1@company1.com", [], true);
+      fetchBookmarkedPitches([], true);
     }
     // Note: Chat tab will fetch pitches automatically via ChatInterface component
   };
@@ -73,15 +73,11 @@ const PitchAnalyzerApp = () => {
     currentBookmarkState: boolean
   ) => {
     try {
-      await toggleBookmark(
-        "member1@company1.com",
-        pitchId,
-        currentBookmarkState
-      );
+      await toggleBookmark(pitchId, currentBookmarkState);
 
       // Refresh the bookmarked pitches list if we're on the bookmarked tab
       if (activeTab === "bookmarked") {
-        await fetchBookmarkedPitches("member1@company1.com", [], true);
+        await fetchBookmarkedPitches([], true);
       }
     } catch (error) {
       console.error("Failed to toggle bookmark:", error);
@@ -91,7 +87,7 @@ const PitchAnalyzerApp = () => {
   const handleViewPitchDetails = async (pitch: Pitch) => {
     setSelectedPitchForDetails(pitch);
     try {
-      await fetchPitchDetails(pitch.id, "member1@company1.com");
+      await fetchPitchDetails(pitch.id);
     } catch (error) {
       console.error("Failed to fetch pitch details:", error);
     }
@@ -258,7 +254,6 @@ const PitchAnalyzerApp = () => {
               />
             ) : (
               <ChatInterface
-                userEmail="member1@company1.com"
                 onPitchSelect={(pitch: Pitch) => {
                   setSelectedPitchForChat(pitch);
                 }}

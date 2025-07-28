@@ -155,7 +155,7 @@ export const useResumeApi = () => {
 
   /**
    * Delete a resume by ID
-   * POST /delete/{id}
+   * DELETE /delete/{id}
    */
   const deleteResume = useCallback(
     async (id: number): Promise<{ success: boolean; message?: string }> => {
@@ -167,7 +167,7 @@ export const useResumeApi = () => {
         console.log(`🗑️ Resume API: Deleting resume with ID ${id} at: ${url}`);
 
         const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "POST",
+          method: "DELETE",
         });
 
         console.log(`📡 Delete API Response:`, response);
@@ -242,7 +242,7 @@ export const useResumeApi = () => {
 
   /**
    * Delete a comment for a CV
-   * DELETE /api/cv/{cvId}/comment
+   * POST /api/cv/{cvId}/comment
    */
   const deleteComment = useCallback(
     async (cvId: number): Promise<boolean> => {
@@ -256,7 +256,11 @@ export const useResumeApi = () => {
         );
 
         const response = await fetch(url, {
-          method: "DELETE",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action: "delete" }),
         });
 
         console.log(`📡 Delete Comment API Status:`, response.status);

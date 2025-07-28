@@ -1,9 +1,7 @@
 import { useState, useCallback } from "react";
+import { pitchApi } from "../../../lib/axios";
 
-import type {
-  BookmarkPitchRequest,
-  BookmarkPitchResponse,
-} from "../types/types";
+import type { BookmarkPitchResponse } from "../types/types";
 
 export const useBookmarkPitch = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,33 +13,19 @@ export const useBookmarkPitch = () => {
   } | null>(null);
 
   const bookmarkPitch = useCallback(
-    async (userEmail: string, pitchId: string, isBookmarked: boolean) => {
+    async (pitchId: string, isBookmarked: boolean) => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const payload: BookmarkPitchRequest = {
-          userEmail,
+        const payload = {
           pitchId,
           isBookmarked,
         };
 
-        const response = await fetch(
-          "https://api.magure.ai/api/v1/pitch/bookmark-pitch",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          }
-        );
+        const response = await pitchApi.post("/bookmark-pitch", payload);
 
-        if (!response.ok) {
-          throw new Error(`Bookmark operation failed: ${response.statusText}`);
-        }
-
-        const result: BookmarkPitchResponse = await response.json();
+        const result: BookmarkPitchResponse = response.data;
 
         // Update last bookmark action for potential UI feedback
         setLastBookmarkAction({
@@ -73,25 +57,24 @@ export const useBookmarkPitch = () => {
 
   const toggleBookmark = useCallback(
     async (
-      userEmail: string,
       pitchId: string,
       currentBookmarkState: boolean
     ) => {
-      return await bookmarkPitch(userEmail, pitchId, !currentBookmarkState);
+      return await bookmarkPitch(pitchId, !currentBookmarkState);
     },
     [bookmarkPitch]
   );
 
   const addBookmark = useCallback(
-    async (userEmail: string, pitchId: string) => {
-      return await bookmarkPitch(userEmail, pitchId, true);
+    async (pitchId: string) => {
+      return await bookmarkPitch(pitchId, true);
     },
     [bookmarkPitch]
   );
 
   const removeBookmark = useCallback(
-    async (userEmail: string, pitchId: string) => {
-      return await bookmarkPitch(userEmail, pitchId, false);
+    async (pitchId: string) => {
+      return await bookmarkPitch(pitchId, false);
     },
     [bookmarkPitch]
   );

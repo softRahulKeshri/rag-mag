@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useGroupApi } from "../../../hooks/useGroupApi";
 import type { CreateGroupRequest, Group } from "../../../types/api";
+import { UserGroupIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface AddGroupModalProps {
   open: boolean;
@@ -93,95 +95,176 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
 
   if (!open) return null;
 
-  return (
+  const modalContent = (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Gray backdrop that feels like on top of other content */}
-      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 backdrop-blur-sm transition-opacity" />
+      {/* Enhanced backdrop with blur */}
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
 
       {/* Modal Container */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative w-full max-w-md transform overflow-hidden rounded-lg bg-white shadow-2xl transition-all">
-          {/* Modal Header */}
-          <div className="relative px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
-              {/* Blue accent line */}
-              <div className="w-1 h-6 bg-blue-500 rounded-full"></div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Add New Group
-              </h3>
+        <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all border border-gray-100">
+          {/* Close Button */}
+          <button
+            onClick={handleCancel}
+            disabled={isCreating}
+            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed z-10"
+          >
+            <XMarkIcon className="w-5 h-5" />
+          </button>
+
+          {/* Enhanced Modal Header */}
+          <div
+            className="relative px-8 py-6 border-b border-gray-100"
+            style={{ backgroundColor: "#F5F5F5" }}
+          >
+            <div className="flex items-center space-x-4">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+                style={{ backgroundColor: "#3077F3" }}
+              >
+                <UserGroupIcon className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold" style={{ color: "#2E3141" }}>
+                  Create New Group
+                </h3>
+                <p className="text-sm mt-1" style={{ color: "#6D6F7A" }}>
+                  Organize your CVs into manageable categories
+                </p>
+              </div>
             </div>
-            <p className="mt-2 text-sm text-gray-600">
-              Create a new group to organize your CVs
-            </p>
           </div>
 
-          {/* Modal Body */}
-          <form onSubmit={handleSubmit} className="px-6 py-4">
+          {/* Enhanced Modal Body */}
+          <form onSubmit={handleSubmit} className="px-8 py-6">
             {/* Group Name Input */}
-            <div className="mb-6">
+            <div className="mb-8">
               <label
                 htmlFor="groupName"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-semibold text-gray-800 mb-3"
               >
                 Group Name
               </label>
-              <input
-                id="groupName"
-                type="text"
-                placeholder="Enter group name"
-                value={groupName}
-                onChange={(e) => handleInputChange(e.target.value)}
-                disabled={isCreating}
-                maxLength={MAX_LENGTH}
-                className={`w-full px-4 py-3 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
-                  error ? "border-red-300 focus:ring-red-500" : ""
-                } ${isCreating ? "bg-gray-50 cursor-not-allowed" : "bg-white"}`}
-                autoFocus
-              />
-              {/* Character count and validation */}
-              <div className="flex items-center justify-between mt-2">
-                <div className="text-xs text-gray-500">
-                  {groupName.length}/{MAX_LENGTH} characters
+              <div className="relative">
+                <input
+                  id="groupName"
+                  type="text"
+                  placeholder="Enter a descriptive group name..."
+                  value={groupName}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  disabled={isCreating}
+                  maxLength={MAX_LENGTH}
+                  className={`w-full px-4 py-4 border-2 border-gray-200 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
+                    error
+                      ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                      : ""
+                  } ${
+                    isCreating ? "bg-gray-50 cursor-not-allowed" : "bg-white"
+                  }`}
+                  autoFocus
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+                  <span
+                    className={`text-xs font-medium ${
+                      groupName.length > MAX_LENGTH * 0.8
+                        ? "text-orange-500"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    {groupName.length}/{MAX_LENGTH}
+                  </span>
                 </div>
-                {groupName.length > 0 && (
-                  <div className="text-xs">
-                    {groupName.length < MIN_LENGTH ? (
-                      <span className="text-orange-600">
-                        Min {MIN_LENGTH} characters
-                      </span>
-                    ) : groupName.length > MAX_LENGTH ? (
-                      <span className="text-red-600">
-                        Max {MAX_LENGTH} characters
-                      </span>
-                    ) : (
-                      <span className="text-green-600">✓ Valid</span>
-                    )}
-                  </div>
-                )}
               </div>
-              {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+
+              {/* Enhanced validation feedback */}
+              <div className="flex items-center justify-between mt-3">
+                <div className="flex items-center space-x-2">
+                  {groupName.length > 0 && (
+                    <div className="flex items-center space-x-1">
+                      {groupName.length < MIN_LENGTH ? (
+                        <>
+                          <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                          <span className="text-xs text-orange-600 font-medium">
+                            Min {MIN_LENGTH} characters required
+                          </span>
+                        </>
+                      ) : groupName.length > MAX_LENGTH ? (
+                        <>
+                          <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                          <span className="text-xs text-red-600 font-medium">
+                            Exceeds maximum length
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                          <span className="text-xs text-green-600 font-medium">
+                            Valid group name
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {error && (
+                <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-700 font-medium">{error}</p>
+                </div>
+              )}
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex space-x-3">
+            {/* Enhanced Action Buttons */}
+            <div className="flex space-x-4">
               <button
                 type="button"
                 onClick={handleCancel}
                 disabled={isCreating}
-                className={`flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors ${
+                className={`flex-1 px-6 py-3 text-sm font-semibold rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
                   isCreating ? "opacity-50 cursor-not-allowed" : ""
                 }`}
+                style={{
+                  color: "#6D6F7A",
+                  backgroundColor: "#FFFFFF",
+                  borderColor: "#D5D6D9",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isCreating) {
+                    e.currentTarget.style.backgroundColor = "#F5F5F5";
+                    e.currentTarget.style.borderColor = "#C0C1C6";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#FFFFFF";
+                  e.currentTarget.style.borderColor = "#D5D6D9";
+                }}
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!isFormValid || isCreating}
-                className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                className={`flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-lg ${
                   isFormValid && !isCreating
-                    ? "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm"
-                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    ? "hover:shadow-xl transform hover:-translate-y-0.5"
+                    : "cursor-not-allowed"
                 }`}
+                style={{
+                  backgroundColor:
+                    isFormValid && !isCreating ? "#3077F3" : "#C0C1C6",
+                  color: isFormValid && !isCreating ? "#FFFFFF" : "#82838D",
+                }}
+                onMouseEnter={(e) => {
+                  if (isFormValid && !isCreating) {
+                    e.currentTarget.style.backgroundColor = "#1E50A8";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (isFormValid && !isCreating) {
+                    e.currentTarget.style.backgroundColor = "#3077F3";
+                  }
+                }}
               >
                 {isCreating ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -207,7 +290,10 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
                     <span>Creating...</span>
                   </div>
                 ) : (
-                  "Add Group"
+                  <span className="flex items-center justify-center space-x-2">
+                    <UserGroupIcon className="w-4 h-4" />
+                    <span>Create Group</span>
+                  </span>
                 )}
               </button>
             </div>
@@ -216,6 +302,9 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
       </div>
     </div>
   );
+
+  // Render modal at body level using portal
+  return createPortal(modalContent, document.body);
 };
 
 export default AddGroupModal;

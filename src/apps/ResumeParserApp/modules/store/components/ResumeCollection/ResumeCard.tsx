@@ -175,25 +175,30 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
 
       {/* Comment Section */}
       {resume.comment ? (
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-gradient-to-br from-blue-50/80 to-indigo-50/80 backdrop-blur-sm border border-blue-200/50 rounded-xl p-4 shadow-sm">
           <div className="flex items-start space-x-3">
             {/* User Avatar */}
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm">
                 <span className="text-white text-xs font-bold">HR</span>
               </div>
             </div>
 
             {/* Comment Content */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm font-medium text-gray-900">
-                  HR Team
-                </span>
-                <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex flex-col">
+                  <span className="text-sm font-semibold text-gray-900">
+                    HR Team
+                  </span>
+                  <span className="text-xs text-blue-600 font-medium">
+                    {formatDate(resume.comment.createdAt)}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-1">
                   <button
                     onClick={onEditComment}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-100/50 transition-all duration-200"
                     title="Edit Comment"
                   >
                     <svg
@@ -212,7 +217,7 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
                   </button>
                   <button
                     onClick={onDeleteComment}
-                    className="text-gray-400 hover:text-red-600"
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-100/50 transition-all duration-200"
                     title="Delete Comment"
                   >
                     <svg
@@ -232,11 +237,9 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
                 </div>
               </div>
 
-              <p className="text-xs text-gray-500 mb-2">
-                {formatDate(resume.comment.createdAt)}
-              </p>
-
-              <p className="text-sm text-gray-700">{resume.comment.comment}</p>
+              <div className="bg-white/60 rounded-lg p-3 border border-blue-200/30">
+                <p className="text-sm text-gray-700 leading-relaxed">{resume.comment.comment}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -244,10 +247,10 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
         /* Add Comment Button */
         <button
           onClick={onAddComment}
-          className="w-full inline-flex items-center justify-center px-3 py-2 border border-orange-300 shadow-sm text-xs font-medium rounded-md text-orange-700 bg-white hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          className="w-full inline-flex items-center justify-center px-4 py-3 border-2 border-dashed border-orange-300 shadow-sm text-sm font-medium rounded-xl text-orange-700 bg-gradient-to-br from-orange-50/50 to-amber-50/50 hover:from-orange-100/60 hover:to-amber-100/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 group"
         >
           <svg
-            className="w-4 h-4 mr-1"
+            className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-200"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -260,29 +263,6 @@ const ResumeCard: React.FC<ResumeCardProps> = ({
             />
           </svg>
           Add Comment
-        </button>
-      )}
-
-      {/* Edit Comment Button (shown when comment exists) */}
-      {resume.comment && (
-        <button
-          onClick={onEditComment}
-          className="w-full mt-3 inline-flex items-center justify-center px-3 py-2 border border-orange-300 shadow-sm text-xs font-medium rounded-md text-orange-700 bg-white hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-        >
-          <svg
-            className="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-            />
-          </svg>
-          Edit Comment
         </button>
       )}
     </div>

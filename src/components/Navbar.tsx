@@ -1,5 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { apps } from "../constants";
+import { ROUTES } from "../constants";
+
+// Apps configuration for navbar
+const apps = [
+  { name: "Resume Parser", path: ROUTES.RESUME_PARSER },
+  { name: "Pitch Analyzer", path: ROUTES.PITCH_ANALYZER },
+  { name: "Chat Service", path: ROUTES.CHAT_SERVICE },
+];
 import {
   UserCircleIcon,
   ChevronDownIcon,
@@ -77,7 +84,9 @@ const Navbar = () => {
 
               {/* Brand Name */}
               <div className="flex flex-col items-start">
-                <span className="text-xl font-bold tracking-tight leading-tight">Magure</span>
+                <span className="text-xl font-bold tracking-tight leading-tight">
+                  Magure
+                </span>
                 <span className="text-xs font-medium text-gray-500 group-hover:text-purple-500 transition-colors duration-300 leading-tight">
                   AI Labs
                 </span>

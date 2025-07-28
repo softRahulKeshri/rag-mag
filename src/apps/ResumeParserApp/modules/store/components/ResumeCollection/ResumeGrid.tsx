@@ -3,6 +3,13 @@ import type { StoreResume as Resume, ResumeComment } from "../../types";
 import FileCard from "./FileCard";
 import CommentDialog from "./CommentDialog";
 import DeleteConfirmModal from "./DeleteConfirmModal";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  DocumentTextIcon,
+  FunnelIcon,
+} from "@heroicons/react/24/outline";
+import { API_CONFIG } from "../../../../theme/constants";
 
 interface ResumeGridProps {
   filteredResumes: Resume[];
@@ -74,43 +81,81 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
     setResumeToDelete(null);
   };
 
+  // Enhanced file URL builder function
+  const getFileUrl = (resume: Resume): string => {
+    // First priority: use cloud_url if available
+    if (resume.cloud_url) {
+      return resume.cloud_url;
+    }
+
+    // Fallback: construct URL using filepath and base API URL
+    if (resume.filepath) {
+      // Remove any leading slashes and construct full URL
+      const cleanPath = resume.filepath.startsWith("/")
+        ? resume.filepath.substring(1)
+        : resume.filepath;
+      return `${API_CONFIG.baseURL}/${cleanPath}`;
+    }
+
+    // Last resort: return empty string (will show error)
+    return "";
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Results Summary */}
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-600">
-          Showing {startIndex + 1} to{" "}
-          {Math.min(endIndex, filteredResumes.length)} of{" "}
-          {filteredResumes.length} results
-          {(selectedGroup || searchQuery) && (
-            <span className="ml-2">
-              (filtered from {filteredResumes.length} total resumes)
-            </span>
+    <div className="space-y-8">
+      {/* Enhanced Results Summary */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <DocumentTextIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <div className="text-lg font-semibold text-gray-900">
+                Showing {startIndex + 1}-
+                {Math.min(endIndex, filteredResumes.length)} of{" "}
+                {filteredResumes.length} results
+              </div>
+              {(selectedGroup || searchQuery) && (
+                <div className="flex items-center space-x-2 mt-1">
+                  <FunnelIcon className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-600">
+                    Filtered from {paginatedResumes.length} total resumes
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-600">Page</span>
+              <div className="px-3 py-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold rounded-lg">
+                {currentPage}
+              </div>
+              <span className="text-sm text-gray-600">of {totalPages}</span>
+            </div>
           )}
         </div>
-
-        {totalPages > 1 && (
-          <div className="text-sm text-gray-600">
-            Page {currentPage} of {totalPages}
-          </div>
-        )}
       </div>
 
-      {/* Resume Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Enhanced Resume Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {paginatedResumes.map((resume) => (
           <FileCard
             key={resume.id}
             resume={resume}
             onView={() => {
-              if (resume.cloud_url) {
+              const fileUrl = getFileUrl(resume);
+
+              if (fileUrl) {
                 try {
-                  // Open the cloud URL in a new tab for viewing
-                  window.open(resume.cloud_url, "_blank");
+                  // Open the file URL in a new tab for viewing
+                  window.open(fileUrl, "_blank");
                   console.log(
                     `✅ Opened resume "${
                       resume.original_filename || resume.filename
-                    }" in new tab`
+                    }" in new tab using URL: ${fileUrl}`
                   );
                 } catch (error) {
                   console.error(
@@ -126,29 +171,28 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
                   );
                 }
               } else {
-                console.warn(
-                  "No cloud URL available for viewing resume:",
-                  resume
-                );
+                console.warn("No URL available for viewing resume:", resume);
                 alert(
                   `Unable to view resume "${
                     resume.original_filename || resume.filename
-                  }" - no cloud URL available`
+                  }" - no file URL available`
                 );
               }
             }}
             onDownload={() => {
-              if (resume.cloud_url) {
+              const fileUrl = getFileUrl(resume);
+
+              if (fileUrl) {
                 const downloadFile = async () => {
                   try {
                     console.log(
                       `🔄 Starting download for "${
                         resume.original_filename || resume.filename
-                      }"`
+                      }" from URL: ${fileUrl}`
                     );
 
-                    // Fetch the file from the cloud URL
-                    const response = await fetch(resume.cloud_url!);
+                    // Fetch the file from the URL (cloud_url or constructed filepath URL)
+                    const response = await fetch(fileUrl);
                     if (!response.ok) {
                       throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -180,121 +224,128 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
                     );
                   } catch (error) {
                     console.error(
-                      `❌ Download failed for "${
+                      `❌ Failed to download resume "${
                         resume.original_filename || resume.filename
                       }":`,
                       error
                     );
 
-                    // Fallback: try to open in new tab
+                    // Try direct download as fallback
                     try {
-                      window.open(resume.cloud_url, "_blank");
-                      alert(
-                        `Download failed. Opened resume "${
+                      const link = document.createElement("a");
+                      link.href = fileUrl;
+                      link.download =
+                        resume.original_filename || resume.filename;
+                      link.target = "_blank";
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+
+                      console.log(
+                        `✅ Fallback download initiated for "${
                           resume.original_filename || resume.filename
-                        }" in new tab. You can save it manually using Ctrl+S (or Cmd+S on Mac).`
+                        }"`
                       );
                     } catch (fallbackError) {
-                      console.error(`❌ Fallback also failed:`, fallbackError);
+                      console.error(
+                        "❌ Fallback download also failed:",
+                        fallbackError
+                      );
                       alert(
-                        `Unable to download or open resume "${
+                        `Unable to download resume "${
                           resume.original_filename || resume.filename
-                        }". Please try again or contact support.`
+                        }" - please try again or contact support`
                       );
                     }
                   }
                 };
 
-                // Execute the download
                 downloadFile();
               } else {
                 console.warn(
-                  "No cloud URL available for downloading resume:",
+                  "No URL available for downloading resume:",
                   resume
                 );
                 alert(
                   `Unable to download resume "${
                     resume.original_filename || resume.filename
-                  }" - no cloud URL available`
+                  }" - no file URL available`
                 );
               }
             }}
             onDelete={() => handleDeleteClick(resume)}
             onComment={() => handleCommentClick(resume)}
             onEditComment={() => handleCommentClick(resume)}
-            onDeleteComment={() => handleCommentClick(resume)}
+            onDeleteComment={() => {
+              console.log(`Deleting comment for resume ID: ${resume.id}`);
+              onCommentDeleted(resume.id);
+            }}
             isDeleting={isDeleting && deletingResumeId === resume.id}
           />
         ))}
       </div>
 
-      {/* Pagination */}
+      {/* Enhanced Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center">
-          <nav className="flex items-center space-x-2">
-            {/* Previous Button */}
-            <button
-              onClick={() =>
-                onPageChange({} as React.ChangeEvent<unknown>, currentPage - 1)
-              }
-              disabled={currentPage === 1}
-              className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-
-            {/* Page Numbers */}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <div className="flex justify-center mt-12">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-4">
+            <nav className="flex items-center space-x-2">
+              {/* Previous Button */}
               <button
-                key={page}
                 onClick={() =>
-                  onPageChange({} as React.ChangeEvent<unknown>, page)
+                  onPageChange(
+                    {} as React.ChangeEvent<unknown>,
+                    currentPage - 1
+                  )
                 }
-                className={`px-3 py-2 text-sm font-medium rounded-md ${
-                  currentPage === page
-                    ? "text-white bg-blue-600 border border-blue-600"
-                    : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+                disabled={currentPage === 1}
+                className={`flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-200 ${
+                  currentPage === 1
+                    ? "text-gray-300 bg-gray-50 border-gray-200 cursor-not-allowed"
+                    : "text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 }`}
               >
-                {page}
+                <ChevronLeftIcon className="w-5 h-5" />
               </button>
-            ))}
 
-            {/* Next Button */}
-            <button
-              onClick={() =>
-                onPageChange({} as React.ChangeEvent<unknown>, currentPage + 1)
-              }
-              disabled={currentPage === totalPages}
-              className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+              {/* Page Numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() =>
+                      onPageChange({} as React.ChangeEvent<unknown>, page)
+                    }
+                    className={`flex items-center justify-center w-10 h-10 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                      currentPage === page
+                        ? "text-white bg-gradient-to-r from-indigo-500 to-purple-600 border border-indigo-500 shadow-lg"
+                        : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+
+              {/* Next Button */}
+              <button
+                onClick={() =>
+                  onPageChange(
+                    {} as React.ChangeEvent<unknown>,
+                    currentPage + 1
+                  )
+                }
+                disabled={currentPage === totalPages}
+                className={`flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-200 ${
+                  currentPage === totalPages
+                    ? "text-gray-300 bg-gray-50 border-gray-200 cursor-not-allowed"
+                    : "text-gray-600 bg-white border-gray-300 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                }`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </nav>
+                <ChevronRightIcon className="w-5 h-5" />
+              </button>
+            </nav>
+          </div>
         </div>
       )}
 

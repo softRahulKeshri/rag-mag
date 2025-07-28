@@ -14,7 +14,6 @@ import { useBookmarkPitch } from "../hooks/useBookmarkPitch";
 import type { Pitch } from "../types/types";
 
 interface ChatInterfaceProps {
-  userEmail: string;
   onPitchSelect?: (pitch: Pitch) => void;
   onViewDetails?: (pitch: Pitch) => void;
 }
@@ -22,7 +21,6 @@ interface ChatInterfaceProps {
 const ITEMS_PER_PAGE = 8;
 
 const ChatInterface = ({
-  userEmail,
   onPitchSelect,
   onViewDetails,
 }: ChatInterfaceProps) => {
@@ -42,10 +40,8 @@ const ChatInterface = ({
 
   // Fetch pitches on component mount
   useEffect(() => {
-    if (userEmail) {
-      fetchCompanyPitches(userEmail, [], showOnlyBookmarked);
-    }
-  }, [userEmail, showOnlyBookmarked, fetchCompanyPitches]);
+    fetchCompanyPitches([], showOnlyBookmarked);
+  }, [showOnlyBookmarked, fetchCompanyPitches]);
 
   // Filter and search pitches
   const filteredPitches = useMemo(() => {
@@ -90,14 +86,14 @@ const ChatInterface = ({
   const handleToggleBookmark = useCallback(
     async (pitchId: string, currentBookmarkState: boolean) => {
       try {
-        await toggleBookmark(userEmail, pitchId, currentBookmarkState);
+        await toggleBookmark(pitchId, currentBookmarkState);
         // Refresh the pitches list
-        await fetchCompanyPitches(userEmail, [], showOnlyBookmarked);
+        await fetchCompanyPitches([], showOnlyBookmarked);
       } catch (error) {
         console.error("Failed to toggle bookmark:", error);
       }
     },
-    [userEmail, toggleBookmark, fetchCompanyPitches, showOnlyBookmarked]
+    [toggleBookmark, fetchCompanyPitches, showOnlyBookmarked]
   );
 
   const handlePageChange = useCallback((page: number) => {
@@ -325,7 +321,7 @@ const ChatInterface = ({
                   </div>
                 )}
 
-                                {/* Action Button */}
+                {/* Action Button */}
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   {onViewDetails && (
                     <button

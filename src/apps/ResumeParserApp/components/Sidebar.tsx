@@ -77,11 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex items-center space-x-3">
           {/* Magure.AI Logo */}
           <div className="flex-shrink-0">
-            <img
-              src="/magure_ai_logo.svg"
-              alt="Magure.AI Logo"
-              className="w-8 h-8"
-            />
+           
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900">ResumeAI</h1>

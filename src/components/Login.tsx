@@ -6,6 +6,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const handleSignupRedirect = () => {
+    navigate("/signup");
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem("token", "mock-jwt-token");
@@ -132,8 +136,11 @@ const Login = () => {
 
         <p className="text-center text-sm text-gray-500">
           Don't have an account?{" "}
-          <span className="text-indigo-600 hover:text-indigo-700 hover:underline cursor-pointer transition-colors duration-200">
-            Contact Admin
+          <span 
+            onClick={handleSignupRedirect}
+            className="text-indigo-600 hover:text-indigo-700 hover:underline cursor-pointer transition-colors duration-200"
+          >
+            Sign up
           </span>
         </p>
       </div>

@@ -4,6 +4,24 @@ import type { Group } from "../../../types/api";
 import AddGroupModal from "./AddGroupModal";
 import DeleteGroupModal from "./DeleteGroupModal";
 import CannotDeleteGroupModal from "./CannotDeleteGroupModal";
+import {
+  ChevronDownIcon,
+  PlusIcon,
+  ArrowPathIcon,
+  UserGroupIcon,
+  TrashIcon,
+  CheckIcon,
+  BriefcaseIcon,
+  AcademicCapIcon,
+  BuildingOfficeIcon,
+  CodeBracketIcon,
+  HeartIcon,
+  LightBulbIcon,
+  RocketLaunchIcon,
+  ShieldCheckIcon,
+  StarIcon,
+  CpuChipIcon,
+} from "@heroicons/react/24/outline";
 
 interface GroupSelectorProps {
   onGroupSelect: (group: Group | null) => void;
@@ -24,6 +42,63 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const { getGroups, deleteGroup, isLoading, clearError } = useGroupApi();
+
+  // Function to get varied icons for different groups
+  const getGroupIcon = useCallback((groupName: string, index: number) => {
+    const iconMap = [
+      UserGroupIcon,
+      BriefcaseIcon,
+      AcademicCapIcon,
+      BuildingOfficeIcon,
+      CodeBracketIcon,
+      HeartIcon,
+      LightBulbIcon,
+      RocketLaunchIcon,
+      ShieldCheckIcon,
+      StarIcon,
+      CpuChipIcon,
+    ];
+
+    // Use a combination of group name hash and index for consistent but varied icons
+    const nameHash = groupName.split("").reduce((a, b) => {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+
+    const iconIndex = Math.abs(nameHash + index) % iconMap.length;
+    return iconMap[iconIndex];
+  }, []);
+
+  // Professional color scheme using brand colors
+  const getGroupColor = useCallback((groupName: string, index: number) => {
+    const colorMap = [
+      // Primary UI Blue variations
+      { bg: "#EFF5FF", text: "#1E50A8", selectedBg: "#E3EDFF" }, // p100 bg, p600 text, p200 selected
+      { bg: "#E3EDFF", text: "#11397E", selectedBg: "#BFD6FF" }, // p200 bg, p700 text, p300 selected
+
+      // Brand gradient colors with neutral backgrounds
+      { bg: "#F5F5F5", text: "#FDA052", selectedBg: "#EAEAEC" }, // Orange with neutral
+      { bg: "#F5F5F5", text: "#B96AF7", selectedBg: "#EAEAEC" }, // Purple with neutral
+      { bg: "#F5F5F5", text: "#3077F3", selectedBg: "#EAEAEC" }, // Blue with neutral
+      { bg: "#F5F5F5", text: "#41E6F8", selectedBg: "#EAEAEC" }, // Cyan with neutral
+
+      // Neutral palette variations
+      { bg: "#EAEAEC", text: "#2E3141", selectedBg: "#D5D6D9" }, // n150 bg, n1000 text, n200 selected
+      { bg: "#D5D6D9", text: "#434654", selectedBg: "#C0C1C6" }, // n200 bg, n900 text, n300 selected
+      { bg: "#C0C1C6", text: "#585A67", selectedBg: "#ABADB3" }, // n300 bg, n800 text, n400 selected
+
+      // Additional professional combinations
+      { bg: "#ECECEC", text: "#414141", selectedBg: "#D9D9D9" }, // Greyscale combination
+    ];
+
+    const nameHash = groupName.split("").reduce((a, b) => {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+
+    const colorIndex = Math.abs(nameHash + index) % colorMap.length;
+    return colorMap[colorIndex];
+  }, []);
 
   const fetchGroups = useCallback(async () => {
     try {
@@ -173,190 +248,246 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     setShowAddModal(false);
   }, []);
 
+  // Get icon and color for selected group using professional colors
+  const selectedGroupIcon = selectedGroup
+    ? getGroupIcon(selectedGroup.name, 0)
+    : UserGroupIcon;
+  const selectedGroupColor = selectedGroup
+    ? getGroupColor(selectedGroup.name, 0)
+    : { bg: "#F5F5F5", text: "#6D6F7A", selectedBg: "#EAEAEC" };
+
   return (
     <div className="relative">
-      {/* Main Select Button */}
+      {/* Enhanced Main Select Button */}
       <button
         onClick={toggleDropdown}
         disabled={isLoading}
-        className={`w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-left text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
-          selectedGroup ? "border-blue-300 bg-blue-50" : ""
+        className={`w-full flex items-center justify-between px-6 py-4 border-2 rounded-xl shadow-sm bg-white text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
+          selectedGroup
+            ? "border-blue-300 hover:bg-blue-100"
+            : "border-gray-200 hover:border-gray-300"
         }`}
+        style={{
+          backgroundColor: selectedGroup
+            ? selectedGroupColor.selectedBg
+            : undefined,
+        }}
       >
-        <span className="truncate">
-          {isLoading
-            ? "Loading groups..."
-            : selectedGroup
-            ? selectedGroup.name
-            : "Select Group"}
-        </span>
+        <div className="flex items-center space-x-4 flex-1 min-w-0">
+          {/* Dynamic Icon with Professional Colors */}
+          <div
+            className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{
+              backgroundColor: selectedGroup
+                ? selectedGroupColor.bg
+                : "#F5F5F5",
+            }}
+          >
+            {React.createElement(selectedGroupIcon, {
+              className: "w-6 h-6",
+              style: {
+                color: selectedGroup ? selectedGroupColor.text : "#6D6F7A",
+              },
+            })}
+          </div>
+
+          {/* Text Content */}
+          <div className="flex-1 min-w-0">
+            {isLoading ? (
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-3 bg-gray-100 rounded w-3/4 animate-pulse"></div>
+              </div>
+            ) : selectedGroup ? (
+              <div>
+                <span className="block text-base font-semibold text-gray-900 truncate">
+                  {selectedGroup.name}
+                </span>
+                {selectedGroup.description && (
+                  <span className="block text-sm text-gray-500 truncate">
+                    {selectedGroup.description}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div>
+                <span className="block text-base font-medium text-gray-700">
+                  Select Group
+                </span>
+                <span className="block text-sm text-gray-500">
+                  Choose a group to organize your files
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Dropdown Arrow or Loading Spinner */}
-        {isLoading ? (
-          <svg
-            className="animate-spin w-5 h-5 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-        ) : (
-          <svg
-            className={`w-5 h-5 text-gray-400 transition-transform ${
-              isOpen ? "transform rotate-180" : ""
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
+        <div className="flex-shrink-0 ml-4">
+          {isLoading ? (
+            <div className="w-5 w-5 text-gray-400 animate-spin">
+              <ArrowPathIcon className="w-5 h-5" />
+            </div>
+          ) : (
+            <ChevronDownIcon
+              className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+                isOpen ? "transform rotate-180" : ""
+              }`}
             />
-          </svg>
-        )}
+          )}
+        </div>
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Enhanced Dropdown Menu with Maximum Z-Index */}
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-80 overflow-y-auto">
-          <div className="py-1">
-            {/* Header Actions */}
-            <div className="px-3 py-2 border-b border-gray-100">
+        <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-96 overflow-hidden">
+          <div className="py-2">
+            {/* Header Actions with Professional Colors */}
+            <div
+              className="px-4 py-3 border-b border-gray-100"
+              style={{ backgroundColor: "#F5F5F5" }}
+            >
               <div className="flex space-x-2">
                 <button
                   onClick={openAddModal}
-                  className="flex-1 flex items-center justify-center space-x-2 px-3 py-2.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium"
+                  className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border"
+                  style={{
+                    color: "#1E50A8",
+                    backgroundColor: "#EFF5FF",
+                    borderColor: "#BFD6FF",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#E3EDFF";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#EFF5FF";
+                  }}
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                    />
-                  </svg>
+                  <PlusIcon className="w-4 h-4" />
                   <span>Create New Group</span>
                 </button>
                 <button
                   onClick={handleRefreshGroups}
                   disabled={isLoading}
-                  className="flex items-center justify-center px-3 py-2.5 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    color: "#585A67",
+                    backgroundColor: "#F5F5F5",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isLoading) {
+                      e.currentTarget.style.backgroundColor = "#EAEAEC";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#F5F5F5";
+                  }}
                   title="Refresh groups"
                 >
-                  <svg
+                  <ArrowPathIcon
                     className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
-                  </svg>
+                  />
                 </button>
               </div>
             </div>
 
-            {/* Groups List */}
-            {isLoading ? (
-              <div className="px-4 py-3">
-                <div className="flex items-center justify-center space-x-2">
-                  <svg
-                    className="animate-spin w-4 h-4 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  <span className="text-sm text-gray-500">
-                    Loading groups...
-                  </span>
-                </div>
-              </div>
-            ) : groups.length === 0 ? (
-              <div className="px-4 py-3 text-sm text-gray-500 text-center">
-                No groups available
-              </div>
-            ) : (
-              groups.map((group) => (
-                <button
-                  key={group.id}
-                  onClick={() => handleGroupSelect(group)}
-                  className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-colors ${
-                    selectedGroup?.id === group.id
-                      ? "bg-blue-50 text-blue-700"
-                      : "text-gray-700"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium truncate">{group.name}</div>
-                      {group.description && (
-                        <div className="text-xs text-gray-500 mt-1 truncate">
-                          {group.description}
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex items-center ml-2">
-                      <button
-                        onClick={(e) => handleDeleteGroup(group, e)}
-                        className="text-gray-400 hover:text-red-500 transition-colors"
-                        title="Delete group"
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                    </div>
+            {/* Enhanced Groups List */}
+            <div className="max-h-80 overflow-y-auto">
+              {isLoading ? (
+                <div className="px-4 py-6">
+                  <div className="flex items-center justify-center space-x-3">
+                    <ArrowPathIcon className="animate-spin w-5 h-5 text-gray-400" />
+                    <span className="text-sm text-gray-500">
+                      Loading groups...
+                    </span>
                   </div>
-                </button>
-              ))
-            )}
+                </div>
+              ) : groups.length === 0 ? (
+                <div className="px-4 py-8 text-center">
+                  <UserGroupIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500 font-medium mb-1">
+                    No groups available
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Create your first group to get started
+                  </p>
+                </div>
+              ) : (
+                groups.map((group, index) => {
+                  const GroupIcon = getGroupIcon(group.name, index);
+                  const groupColor = getGroupColor(group.name, index);
+                  const isSelected = selectedGroup?.id === group.id;
+
+                  return (
+                    <button
+                      key={group.id}
+                      onClick={() => handleGroupSelect(group)}
+                      className={`w-full text-left px-4 py-4 hover:bg-gray-50 transition-all duration-200 border-l-4 ${
+                        isSelected
+                          ? "text-blue-900 border-l-blue-500"
+                          : "border-l-transparent text-gray-700 hover:border-l-gray-300"
+                      }`}
+                      style={{
+                        backgroundColor: isSelected ? "#EFF5FF" : undefined,
+                      }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3 flex-1 min-w-0">
+                          <div
+                            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                            style={{
+                              backgroundColor: isSelected
+                                ? "#E3EDFF"
+                                : groupColor.bg,
+                            }}
+                          >
+                            <GroupIcon
+                              className="w-4 h-4"
+                              style={{
+                                color: isSelected ? "#1E50A8" : groupColor.text,
+                              }}
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium truncate">
+                                {group.name}
+                              </span>
+                              {isSelected && (
+                                <CheckIcon
+                                  className="w-4 h-4 flex-shrink-0"
+                                  style={{ color: "#1E50A8" }}
+                                />
+                              )}
+                            </div>
+                            {group.description && (
+                              <p className="text-xs text-gray-500 mt-1 truncate">
+                                {group.description}
+                              </p>
+                            )}
+                            {group.resumeCount !== undefined && (
+                              <p className="text-xs text-gray-400 mt-1">
+                                {group.resumeCount}{" "}
+                                {group.resumeCount === 1 ? "resume" : "resumes"}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center ml-3">
+                          <button
+                            onClick={(e) => handleDeleteGroup(group, e)}
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
+                            title="Delete group"
+                          >
+                            <TrashIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
       )}

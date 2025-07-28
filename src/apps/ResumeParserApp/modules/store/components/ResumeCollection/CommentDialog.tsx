@@ -2,6 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useCommentApi } from "../../../../hooks/useCommentApi";
 import type { StoreResume, ResumeComment } from "../../types";
 import { formatDate } from "./utils";
+import {
+  XMarkIcon,
+  ExclamationTriangleIcon,
+  ChatBubbleLeftRightIcon,
+  DocumentTextIcon,
+  TrashIcon,
+  SparklesIcon,
+} from "@heroicons/react/24/outline";
 
 interface CommentDialogProps {
   open: boolean;
@@ -103,129 +111,127 @@ const CommentDialog: React.FC<CommentDialogProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {resume.comment ? "Edit Comment" : "Add Comment"}
-          </h2>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl max-w-lg w-full mx-4 border border-gray-200/50">
+        {/* Enhanced Header */}
+        <div className="relative px-8 py-6 border-b border-gray-200/50">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <ChatBubbleLeftRightIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                {resume.comment ? "Edit Comment" : "Add Comment"}
+              </h2>
+              <p className="text-sm text-gray-600">
+                Share your thoughts and feedback
+              </p>
+            </div>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all duration-200"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
 
-        {/* Error Display */}
+        {/* Enhanced Error Display */}
         {error && (
-          <div className="px-6 py-3 bg-red-50 border-b border-red-200">
-            <div className="flex items-center">
-              <svg
-                className="w-5 h-5 text-red-400 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span className="text-sm text-red-700">{error}</span>
+          <div className="mx-8 mt-6 p-4 bg-gradient-to-r from-red-50 to-rose-50 border border-red-200 rounded-xl">
+            <div className="flex items-start space-x-3">
+              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />
+              </div>
+              <div>
+                <h4 className="text-sm font-semibold text-red-800 mb-1">
+                  Error occurred
+                </h4>
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Content */}
-        <div className="p-6">
-          {/* Resume Info */}
-          <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white text-xs font-bold">PDF</span>
+        {/* Enhanced Content */}
+        <div className="p-8">
+          {/* Enhanced Resume Info */}
+          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200/50">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <DocumentTextIcon className="w-6 h-6 text-white" />
               </div>
-              <div>
-                <h3 className="text-sm font-medium text-gray-900">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-semibold text-gray-900 truncate">
                   {resume.filename}
                 </h3>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-blue-600 font-medium">
                   Uploaded {formatDate(resume.uploadedAt)}
                 </p>
+              </div>
+              <div className="flex items-center space-x-1">
+                <SparklesIcon className="w-4 h-4 text-blue-500" />
+                <span className="text-xs font-medium text-blue-600">
+                  AI Ready
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Comment Form */}
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
+          {/* Enhanced Comment Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
               <label
                 htmlFor="comment"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-semibold text-gray-800 mb-3"
               >
-                Comment
+                Your Comment
               </label>
-              <textarea
-                id="comment"
-                rows={4}
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your comment here..."
-                disabled={isLoading}
-              />
+              <div className="relative">
+                <textarea
+                  id="comment"
+                  rows={5}
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm bg-white/90 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none"
+                  placeholder="Share your insights, feedback, or notes about this resume..."
+                  disabled={isLoading}
+                />
+                <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+                  {commentText.length}/500
+                </div>
+                {/* Textarea glow effect */}
+                <div className="absolute inset-0 rounded-xl border-2 border-blue-300 opacity-0 peer-focus:opacity-20 transition-opacity duration-200 pointer-events-none"></div>
+              </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center justify-between">
-              <div className="flex space-x-2">
+            {/* Enhanced Action Buttons */}
+            <div className="flex items-center justify-between pt-4">
+              <div className="flex space-x-3">
                 <button
                   type="submit"
                   disabled={isLoading || !commentText.trim()}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
+                    isLoading || !commentText.trim()
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 focus:ring-blue-500 transform hover:-translate-y-0.5 hover:shadow-xl"
+                  }`}
                 >
                   {isLoading ? (
                     <>
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
                       Saving...
                     </>
                   ) : resume.comment ? (
-                    "Update Comment"
+                    <>
+                      <SparklesIcon className="w-4 h-4 mr-2" />
+                      Update Comment
+                    </>
                   ) : (
-                    "Add Comment"
+                    <>
+                      <ChatBubbleLeftRightIcon className="w-4 h-4 mr-2" />
+                      Add Comment
+                    </>
                   )}
                 </button>
 
@@ -234,8 +240,13 @@ const CommentDialog: React.FC<CommentDialogProps> = ({
                     type="button"
                     onClick={handleDelete}
                     disabled={isLoading}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={`inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold border transition-all duration-200 ${
+                      isLoading
+                        ? "border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed"
+                        : "border-red-300 text-red-700 bg-red-50 hover:bg-red-100 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    }`}
                   >
+                    <TrashIcon className="w-4 h-4 mr-2" />
                     Delete
                   </button>
                 )}
@@ -245,7 +256,11 @@ const CommentDialog: React.FC<CommentDialogProps> = ({
                 type="button"
                 onClick={onClose}
                 disabled={isLoading}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold border transition-all duration-200 ${
+                  isLoading
+                    ? "border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed"
+                    : "border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                }`}
               >
                 Cancel
               </button>
@@ -254,76 +269,58 @@ const CommentDialog: React.FC<CommentDialogProps> = ({
         </div>
       </div>
 
-      {/* Delete Confirmation Modal */}
+      {/* Enhanced Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-            <div className="p-6">
-              <div className="flex items-center mb-4">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="w-6 h-6 text-red-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                    />
-                  </svg>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
+          <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl max-w-md w-full mx-4 border border-gray-200/50">
+            <div className="p-8">
+              <div className="flex items-start space-x-4 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                  <ExclamationTriangleIcon className="w-6 h-6 text-white" />
                 </div>
-                <div className="ml-3">
-                  <h3 className="text-lg font-medium text-gray-900">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
                     Delete Comment
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-600 leading-relaxed">
                     Are you sure you want to delete this comment? This action
-                    cannot be undone.
+                    cannot be undone and all associated data will be permanently
+                    removed.
                   </p>
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3">
+              <div className="flex justify-end space-x-3 pt-4">
                 <button
                   onClick={handleDeleteCancel}
                   disabled={isLoading}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold border transition-all duration-200 ${
+                    isLoading
+                      ? "border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed"
+                      : "border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  }`}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteConfirm}
                   disabled={isLoading}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold shadow-lg transition-all duration-200 ${
+                    isLoading
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-red-600 to-rose-600 text-white hover:from-red-700 hover:to-rose-700 focus:outline-none focus:ring-2 focus:ring-red-500 transform hover:-translate-y-0.5 hover:shadow-xl"
+                  }`}
                 >
                   {isLoading ? (
                     <>
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
                       Deleting...
                     </>
                   ) : (
-                    "Delete"
+                    <>
+                      <TrashIcon className="w-4 h-4 mr-2" />
+                      Delete Comment
+                    </>
                   )}
                 </button>
               </div>
