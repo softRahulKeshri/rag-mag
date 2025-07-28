@@ -53,10 +53,10 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`sticky top-0 z-50 transition-all duration-300 ease-out ${
+      className={`sticky top-0 z-50 transition-all duration-500 ease-out ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200"
-          : "bg-white/90 backdrop-blur-md border-b border-gray-100"
+          ? "bg-white/95 backdrop-blur-xl shadow-2xl border-b border-gray-200/50"
+          : "bg-white/90 backdrop-blur-lg border-b border-gray-100/50"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,10 +65,10 @@ const Navbar = () => {
           <div className="flex-shrink-0">
             <button
               onClick={() => handleAppChange("/")}
-              className={`relative flex items-center space-x-3 px-3 py-2 rounded-xl transition-all duration-300 ease-out group ${
+              className={`relative flex items-center space-x-3 px-4 py-2.5 rounded-2xl transition-all duration-300 ease-out group ${
                 currentPath === "/"
-                  ? "text-purple-600 bg-purple-50/50"
-                  : "text-gray-900 hover:text-purple-600 hover:bg-gray-50/50"
+                  ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg"
+                  : "text-gray-900 hover:text-purple-600 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-indigo-50/50"
               }`}
             >
               {/* Logo */}
@@ -76,15 +76,15 @@ const Navbar = () => {
                 <img
                   src="/magure_ai_logo.svg"
                   alt="Magure AI Logo"
-                  className="h-8 w-8 transition-all duration-300 group-hover:scale-110"
+                  className="h-8 w-8 transition-all duration-300 group-hover:scale-110 drop-shadow-sm"
                 />
                 {/* Enhanced glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/30 to-blue-400/30 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/40 to-blue-400/40 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
 
               {/* Brand Name */}
               <div className="flex flex-col items-start">
-                <span className="text-xl font-bold tracking-tight leading-tight">
+                <span className="text-xl font-bold tracking-tight leading-tight bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
                   Magure
                 </span>
                 <span className="text-xs font-medium text-gray-500 group-hover:text-purple-500 transition-colors duration-300 leading-tight">
@@ -93,12 +93,12 @@ const Navbar = () => {
               </div>
 
               {/* Enhanced hover background effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-50/80 to-blue-50/80 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-50/80 to-blue-50/80 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
             </button>
           </div>
 
           {/* Center: App Links */}
-          <div className="hidden sm:ml-6 sm:flex space-x-1">
+          <div className="hidden sm:ml-6 sm:flex space-x-2">
             {apps.map((app) => {
               const IconComponent = appIcons[app.name as keyof typeof appIcons];
               const isActive = currentPath.startsWith(app.path);
@@ -107,13 +107,13 @@ const Navbar = () => {
                 <button
                   key={app.name}
                   onClick={() => handleAppChange(app.path)}
-                  className={`relative group px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ease-out ${
+                  className={`relative group px-5 py-3 rounded-2xl text-sm font-medium transition-all duration-300 ease-out ${
                     isActive
-                      ? "text-purple-600 bg-purple-50/80 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50/80"
+                      ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80"
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2.5">
                     <IconComponent
                       className={`h-4 w-4 transition-all duration-300 ${
                         isActive
@@ -126,11 +126,11 @@ const Navbar = () => {
 
                   {/* Active indicator */}
                   {isActive && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-600 rounded-full animate-pulse"></div>
+                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full animate-pulse shadow-sm"></div>
                   )}
 
                   {/* Hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-purple-100 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
                 </button>
               );
             })}
@@ -141,10 +141,10 @@ const Navbar = () => {
             <div className="relative">
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ease-out group ${
+                className={`flex items-center space-x-3 px-4 py-2.5 rounded-2xl text-sm font-medium transition-all duration-300 ease-out group ${
                   isProfileOpen
-                    ? "text-purple-600 bg-purple-50/80"
-                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50/80"
+                    ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg"
+                    : "text-gray-700 hover:text-gray-900 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80"
                 }`}
               >
                 <div className="relative">
@@ -155,6 +155,8 @@ const Navbar = () => {
                         : "text-gray-400 group-hover:text-gray-600"
                     }`}
                   />
+                  {/* Status indicator */}
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
                 </div>
                 <span>Profile</span>
                 <ChevronDownIcon
@@ -166,53 +168,65 @@ const Navbar = () => {
 
               {/* Dropdown menu */}
               <div
-                className={`absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100/50 backdrop-blur-sm transition-all duration-300 ease-out ${
+                className={`absolute right-0 mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/50 transition-all duration-300 ease-out ${
                   isProfileOpen
                     ? "opacity-100 translate-y-0 scale-100"
                     : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
                 }`}
               >
-                <div className="py-2">
-                  <div className="px-4 py-3 border-b border-gray-100">
-                    <p className="text-sm font-medium text-gray-900">
-                      User Account
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Manage your profile and settings
-                    </p>
+                <div className="py-3">
+                  {/* User info section */}
+                  <div className="px-4 py-4 border-b border-gray-100/50">
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <UserCircleIcon className="h-10 w-10 text-purple-500" />
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">
+                          User Account
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Manage your profile and settings
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      handleAppChange("/profile");
-                      setIsProfileOpen(false);
-                    }}
-                    className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all duration-200 ease-out group"
-                  >
-                    <UserCircleIcon className="h-4 w-4 mr-3 text-gray-400 group-hover:text-purple-600 transition-colors duration-200" />
-                    <span>View Profile</span>
-                  </button>
+                  {/* Menu items */}
+                  <div className="py-2">
+                    <button
+                      onClick={() => {
+                        handleAppChange("/profile");
+                        setIsProfileOpen(false);
+                      }}
+                      className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 transition-all duration-200 ease-out group"
+                    >
+                      <UserCircleIcon className="h-4 w-4 mr-3 text-gray-400 group-hover:text-purple-600 transition-colors duration-200" />
+                      <span>View Profile</span>
+                    </button>
 
-                  <button
-                    onClick={() => {
-                      // Handle settings
-                      setIsProfileOpen(false);
-                    }}
-                    className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-all duration-200 ease-out group"
-                  >
-                    <Cog6ToothIcon className="h-4 w-4 mr-3 text-gray-400 group-hover:text-purple-600 transition-colors duration-200" />
-                    <span>Settings</span>
-                  </button>
+                    <button
+                      onClick={() => {
+                        // Handle settings
+                        setIsProfileOpen(false);
+                      }}
+                      className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 transition-all duration-200 ease-out group"
+                    >
+                      <Cog6ToothIcon className="h-4 w-4 mr-3 text-gray-400 group-hover:text-purple-600 transition-colors duration-200" />
+                      <span>Settings</span>
+                    </button>
 
-                  <div className="border-t border-gray-100 my-1"></div>
+                    <div className="border-t border-gray-100/50 my-2"></div>
 
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-all duration-200 ease-out group"
-                  >
-                    <ArrowRightOnRectangleIcon className="h-4 w-4 mr-3 text-red-400 group-hover:text-red-600 transition-colors duration-200" />
-                    <span>Logout</span>
-                  </button>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all duration-200 ease-out group"
+                    >
+                      <ArrowRightOnRectangleIcon className="h-4 w-4 mr-3 text-red-400 group-hover:text-red-600 transition-colors duration-200" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

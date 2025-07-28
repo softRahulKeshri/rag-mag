@@ -2,14 +2,14 @@ import { models } from "../constant";
 
 const ModelSelector = () => {
   return (
-    <div className="flex items-center space-x-4 px-4 py-2">
-      <span className="text-sm text-neutral-n700">Model:</span>
-      <select className="bg-neutral-n-white text-neutral-n-black rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-ui-blue-p500 border border-neutral-n300">
+    <div className="flex items-center space-x-3 px-4 py-2">
+      <span className="text-sm font-medium text-[#6D6F7A]">Model:</span>
+      <select className="bg-white text-[#2E3141] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#3077F3]/20 border border-[#D5D6D9] hover:border-[#C0C1C6] transition-colors">
         {models.map((model) => (
           <option
             key={model.id}
             value={model.name}
-            className="bg-neutral-n-white text-neutral-n-black"
+            className="bg-white text-[#2E3141]"
           >
             {model.name}
           </option>

@@ -32,13 +32,23 @@ export const useApiService = () => {
       );
 
       try {
+        // Prepare headers - don't set Content-Type for FormData
+        const headers: Record<string, string> = {};
+        
+        // Only add Content-Type if it's not FormData and not already set
+        if (!(options.body instanceof FormData)) {
+          headers["Content-Type"] = "application/json";
+        }
+        
+        // Add any custom headers
+        if (options.headers) {
+          Object.assign(headers, options.headers);
+        }
+
         const response = await fetch(url, {
           ...options,
           signal: controller.signal,
-          headers: {
-            "Content-Type": "application/json",
-            ...options.headers,
-          },
+          headers,
         });
 
         clearTimeout(timeoutId);
