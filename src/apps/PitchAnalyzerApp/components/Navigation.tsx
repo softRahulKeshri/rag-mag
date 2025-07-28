@@ -30,11 +30,11 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   ];
 
   return (
-    <div className="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col h-full">
+    <div className="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col h-screen">
       {/* Brand Section */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-20 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
             <ChartBarIcon className="w-6 h-6 text-white" />
           </div>
           <div>

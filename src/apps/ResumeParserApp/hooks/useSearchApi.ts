@@ -1,252 +1,230 @@
 import { useState, useCallback } from "react";
 import { useApiService } from "./useApiService";
-import type { Resume, SearchFilters, SearchResponse } from "../types/api";
+import type {
+  SearchApiResponse,
+  CandidateResult,
+  CandidateDetail,
+  SearchResult,
+} from "../modules/search/types";
 
 /**
  * Search API Hook
  *
- * Handles resume search operations including:
- * - Text-based search
- * - Filter-based search
- * - Advanced search with multiple criteria
- * - Pagination support
+ * Handles all search-related API operations including:
+ * - Text-based resume search
+ * - Job description upload and matching
+ * - Result transformation and caching
  * - Error handling and loading states
+ *
+ * API Endpoints:
+ * - POST /search_api - Text-based search
+ * - POST /upload_jd - Job description upload and search
  */
 export const useSearchApi = () => {
   const { fetchWithRetry, handleApiError, buildUrl } = useApiService();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchResults, setSearchResults] = useState<Resume[]>([]);
-  const [totalResults, setTotalResults] = useState(0);
 
   /**
-   * Transform search result to frontend format
+   * Transform API response to frontend-optimized candidate results
    */
-  const transformSearchResult = useCallback(
-    (result: Record<string, unknown>): Resume => {
-      const comment = result.comment as Record<string, unknown> | undefined;
+  const transformApiResponse = useCallback(
+    (data: SearchApiResponse): CandidateResult[] => {
+      if (!data.answer?.candidate_details) {
+        console.warn("No candidate details in API response:", data);
+        return [];
+      }
 
-      return {
-        id:
-          typeof result.id === "string"
-            ? parseInt(result.id, 10)
-            : (result.id as number) || 0,
-        filename:
-          (result.filename as string) ||
-          (result.fileName as string) ||
-          (result.name as string) ||
-          "Unknown File",
-        original_filename:
-          (result.original_filename as string) ||
-          (result.originalFileName as string),
-        stored_filename:
-          (result.stored_filename as string) ||
-          (result.storedFileName as string),
-        filepath: (result.filepath as string) || (result.filePath as string),
-        fileSize: (result.fileSize as number) || (result.size as number) || 0,
-        fileType:
-          (result.fileType as string) ||
-          (result.type as string) ||
-          "application/pdf",
-        uploadedAt:
-          (result.uploadedAt as string) ||
-          (result.uploadDate as string) ||
-          (result.createdAt as string) ||
-          new Date().toISOString(),
-        status: ((result.status as string) || "uploaded") as "uploaded" | "processing" | "completed" | "failed",
-        group: (result.group as string) || (result.groupName as string),
-        comment: comment
-          ? {
-              id: (comment.id as number) || 0,
-              resumeId:
-                (comment.resumeId as number) || (result.id as number) || 0,
-              comment: (comment.comment as string) || "",
-              createdAt:
-                (comment.createdAt as string) || new Date().toISOString(),
-              updatedAt:
-                (comment.updatedAt as string) || new Date().toISOString(),
-              hrName: comment.hrName as string,
-            }
-          : undefined,
-      };
+      return data.answer.candidate_details
+        .map((detail: CandidateDetail, index: number) => {
+          // Find matching chunk data for additional context
+          const matchingChunk = data.results?.find(
+            (chunk: SearchResult) => chunk.source_file === detail.file_name
+          );
+
+          const scoreCard = detail.score_card;
+          const averageScore = scoreCard
+            ? (scoreCard.clarity_score +
+                scoreCard.experience_score +
+                scoreCard.loyalty_score +
+                scoreCard.reputation_score) /
+              4
+            : 0;
+
+          // Extract highlights from details string
+          const highlights = detail.details
+            .split("*")
+            .filter((item) => item.trim())
+            .map((item) => item.trim().replace(/^,\s*/, ""))
+            .slice(0, 3);
+
+          return {
+            id: matchingChunk?.id || `candidate-${index}`,
+            name: detail.candidate_name,
+            filename: detail.file_name,
+            details: detail.details,
+            clarityScore: scoreCard?.clarity_score || 0,
+            experienceScore: scoreCard?.experience_score || 0,
+            loyaltyScore: scoreCard?.loyalty_score || 0,
+            reputationScore: scoreCard?.reputation_score || 0,
+            averageScore,
+            matchScore: matchingChunk?.score || averageScore / 10,
+            highlights,
+            rawText: matchingChunk?.text,
+            group: matchingChunk?.group,
+            comment: detail.comment || null,
+            commentedAt: detail.commented_at || null,
+          };
+        })
+        .sort((a, b) => (b.averageScore || 0) - (a.averageScore || 0));
     },
     []
-  );
-
-  /**
-   * Build search parameters for API request
-   */
-  const buildSearchParams = useCallback(
-    (filters: SearchFilters): URLSearchParams => {
-      const params = new URLSearchParams();
-
-      if (filters.query) {
-        params.append("q", filters.query);
-      }
-
-      if (filters.status && filters.status.length > 0) {
-        filters.status.forEach((status) => {
-          params.append("status", status);
-        });
-      }
-
-      if (filters.group) {
-        params.append("group", filters.group);
-      }
-
-      if (filters.dateRange?.start) {
-        params.append("start_date", filters.dateRange.start.toISOString());
-      }
-
-      if (filters.dateRange?.end) {
-        params.append("end_date", filters.dateRange.end.toISOString());
-      }
-
-      return params;
-    },
-    []
-  );
-
-  /**
-   * Search resumes with filters
-   * GET /search with query parameters
-   */
-  const searchResumes = useCallback(
-    async (filters: SearchFilters): Promise<SearchResponse> => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const params = buildSearchParams(filters);
-        const url = buildUrl(`/search?${params.toString()}`);
-
-        console.log(`🔍 Search API: Searching resumes at: ${url}`);
-
-        const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "GET",
-        });
-
-        console.log(`📡 Search API Response:`, response);
-
-        let results: Record<string, unknown>[] = [];
-        let total = 0;
-
-        // Handle different response structures
-        if (response) {
-          if (response.data && Array.isArray(response.data)) {
-            // Direct data array
-            results = response.data;
-            total = (response.total as number) || response.data.length;
-          } else if (response.results && Array.isArray(response.results)) {
-            // Paginated response
-            results = response.results;
-            total =
-              (response.total as number) ||
-              (response.count as number) ||
-              response.results.length;
-          }
-        }
-
-        // Transform results to frontend format
-        const transformedResults: Resume[] = results.map(transformSearchResult);
-
-        const searchResponse: SearchResponse = {
-          results: transformedResults,
-          total,
-          page: (response.page as number) || 1,
-          limit: (response.limit as number) || results.length,
-        };
-
-        setSearchResults(transformedResults);
-        setTotalResults(total);
-
-        console.log(
-          `✅ Search completed: ${transformedResults.length} results found`
-        );
-        return searchResponse;
-      } catch (error) {
-        console.error("❌ Error searching resumes:", error);
-        const apiError = handleApiError(error);
-        setError(apiError.message);
-
-        // Return empty results instead of throwing
-        const emptyResponse: SearchResponse = {
-          results: [],
-          total: 0,
-          page: 1,
-          limit: 0,
-        };
-
-        setSearchResults([]);
-        setTotalResults(0);
-        return emptyResponse;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [
-      fetchWithRetry,
-      buildUrl,
-      buildSearchParams,
-      transformSearchResult,
-      handleApiError,
-    ]
   );
 
   /**
    * Search resumes by text query
+   * POST /search_api
+   *
+   * @param query - Search query string
+   * @param group - Optional group filter
+   * @returns Promise<{results: CandidateResult[], summary: string}> - Search results and summary
    */
-  const searchByQuery = useCallback(
-    async (query: string): Promise<Resume[]> => {
-      const response = await searchResumes({ query });
-      return response.results;
+  const searchByText = useCallback(
+    async (
+      query: string,
+      group?: string
+    ): Promise<{ results: CandidateResult[]; summary: string }> => {
+      if (!query.trim() || query.trim().length < 5) {
+        throw new Error(
+          "Please enter at least 5 characters for your search query."
+        );
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const url = buildUrl("/search_api");
+        console.log(`🔍 Search API: Performing text search at: ${url}`);
+        console.log(`📝 Search query:`, {
+          query: query.trim(),
+          group: group || null,
+        });
+
+        const response = await fetchWithRetry<SearchApiResponse>(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: query.trim(),
+            group: group || null,
+          }),
+        });
+
+        console.log(`📡 Search API Response:`, response);
+
+        const candidates = transformApiResponse(response);
+        const summary =
+          response.answer?.summary || "Search completed successfully.";
+
+        console.log(
+          `✅ Search successful: ${candidates.length} candidates found`
+        );
+        return { results: candidates, summary };
+      } catch (error) {
+        console.error("❌ Error in text search:", error);
+        const apiError = handleApiError(error);
+        setError(apiError.message);
+        throw new Error(`Search failed: ${apiError.message}`);
+      } finally {
+        setIsLoading(false);
+      }
     },
-    [searchResumes]
+    [fetchWithRetry, buildUrl, transformApiResponse, handleApiError]
   );
 
   /**
-   * Search resumes by status
+   * Search resumes by uploading job description
+   * POST /upload_jd
+   *
+   * @param file - Job description file
+   * @param group - Optional group filter
+   * @returns Promise<{results: CandidateResult[], summary: string}> - Search results and summary
    */
-  const searchByStatus = useCallback(
-    async (statuses: string[]): Promise<Resume[]> => {
-      const response = await searchResumes({ status: statuses });
-      return response.results;
-    },
-    [searchResumes]
-  );
+  const searchByJobDescription = useCallback(
+    async (
+      file: File,
+      group?: string
+    ): Promise<{ results: CandidateResult[]; summary: string }> => {
+      if (!file) {
+        throw new Error("Please select a file first");
+      }
 
-  /**
-   * Search resumes by group
-   */
-  const searchByGroup = useCallback(
-    async (group: string): Promise<Resume[]> => {
-      const response = await searchResumes({ group });
-      return response.results;
-    },
-    [searchResumes]
-  );
+      // Validate file type
+      const allowedTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "text/plain",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error("Please upload a PDF, DOC, DOCX, or TXT file");
+      }
 
-  /**
-   * Search resumes by date range
-   */
-  const searchByDateRange = useCallback(
-    async (startDate: Date, endDate: Date): Promise<Resume[]> => {
-      const response = await searchResumes({
-        dateRange: { start: startDate, end: endDate },
-      });
-      return response.results;
-    },
-    [searchResumes]
-  );
+      // Validate file size (10MB limit)
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        throw new Error("File size must be less than 10MB");
+      }
 
-  /**
-   * Clear search results
-   */
-  const clearSearch = useCallback(() => {
-    setSearchResults([]);
-    setTotalResults(0);
-    setError(null);
-  }, []);
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const url = buildUrl("/upload_jd");
+        console.log(`📄 Upload JD API: Uploading job description at: ${url}`);
+        console.log(`📁 File details:`, {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        });
+
+        const formData = new FormData();
+        formData.append("file", file);
+        if (group) {
+          formData.append("group", group);
+        }
+
+        const response = await fetchWithRetry<SearchApiResponse>(url, {
+          method: "POST",
+          body: formData,
+          // Don't set Content-Type header for FormData - browser will set it automatically
+          headers: {},
+        });
+
+        console.log(`📡 Upload JD API Response:`, response);
+
+        const candidates = transformApiResponse(response);
+        const summary =
+          response.answer?.summary ||
+          "Job description analysis completed successfully.";
+
+        console.log(
+          `✅ JD upload successful: ${candidates.length} candidates found`
+        );
+        return { results: candidates, summary };
+      } catch (error) {
+        console.error("❌ Error in JD upload:", error);
+        const apiError = handleApiError(error);
+        setError(apiError.message);
+        throw new Error(`Upload failed: ${apiError.message}`);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchWithRetry, buildUrl, transformApiResponse, handleApiError]
+  );
 
   /**
    * Clear error state
@@ -255,23 +233,26 @@ export const useSearchApi = () => {
     setError(null);
   }, []);
 
+  /**
+   * Reset all states
+   */
+  const reset = useCallback(() => {
+    setIsLoading(false);
+    setError(null);
+  }, []);
+
   return {
     // State
     isLoading,
     error,
-    searchResults,
-    totalResults,
 
     // Actions
-    searchResumes,
-    searchByQuery,
-    searchByStatus,
-    searchByGroup,
-    searchByDateRange,
-    clearSearch,
+    searchByText,
+    searchByJobDescription,
     clearError,
+    reset,
 
     // Utilities
-    transformSearchResult,
+    transformApiResponse,
   };
 };

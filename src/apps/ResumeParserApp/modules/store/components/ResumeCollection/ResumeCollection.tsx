@@ -5,7 +5,7 @@
  * Matches the modern dark theme design with essential metrics only.
  */
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 
 // Import all components
 import AnalyticsHeader from "./AnalyticsHeader";
@@ -23,17 +23,7 @@ import type {
   Group,
 } from "../../types";
 import { calculateGroupStats, filterResumes } from "./utils";
-
-// Inline useGroups hook (minimal, no API calls)
-function useGroups() {
-  return {
-    groups: [] as Group[],
-    loading: false,
-    error: null as string | null,
-    refreshGroups: () => {},
-    clearError: () => {},
-  };
-}
+import { useGroupApi } from "../../../../hooks/useGroupApi";
 
 const ResumeCollection = ({
   resumes,
@@ -59,14 +49,33 @@ const ResumeCollection = ({
     setLocalResumes(resumes);
   }, [resumes]);
 
-  // Fetch groups using the useGroups hook
+  // Fetch groups using the useGroupApi hook
   const {
-    groups,
-    loading: groupsLoading,
+    getGroups,
+    isLoading: groupsLoading,
     error: groupsError,
-    refreshGroups,
     clearError: clearGroupsError,
-  } = useGroups();
+  } = useGroupApi();
+  
+  // State for managing groups
+  const [groups, setGroups] = useState<Group[]>([]);
+
+  // Function to refresh groups
+  const refreshGroups = useCallback(async () => {
+    try {
+      console.log("🔄 Refreshing groups in ResumeCollection...");
+      const fetchedGroups = await getGroups();
+      setGroups(fetchedGroups);
+      console.log(`✅ Successfully refreshed ${fetchedGroups.length} groups`);
+    } catch (error) {
+      console.error("❌ Failed to refresh groups in ResumeCollection:", error);
+    }
+  }, [getGroups]);
+
+  // Load groups on component mount
+  useEffect(() => {
+    refreshGroups();
+  }, [refreshGroups]);
 
   // Group statistics - now uses fetched groups and counts resumes in each
   const groupStats = useMemo(() => {
