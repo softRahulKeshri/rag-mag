@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useGroupApi } from "../../../hooks/useGroupApi";
 import type { Group } from "../../../types/api";
 import AddGroupModal from "./AddGroupModal";
@@ -33,6 +33,7 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
   selectedGroup,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCannotDeleteModal, setShowCannotDeleteModal] = useState(false);
@@ -239,6 +240,35 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     }
   }, [isOpen, clearError]);
 
+  // Handle click outside to close dropdown and window resize
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isOpen &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleResize = () => {
+      if (isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      window.addEventListener("resize", handleResize);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isOpen]);
+
   const openAddModal = useCallback(() => {
     setShowAddModal(true);
     setIsOpen(false); // Close dropdown when opening modal
@@ -257,9 +287,10 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     : { bg: "#F5F5F5", text: "#6D6F7A", selectedBg: "#EAEAEC" };
 
   return (
-    <div className="relative">
+    <div className="relative z-10">
       {/* Enhanced Main Select Button */}
       <button
+        ref={buttonRef}
         onClick={toggleDropdown}
         disabled={isLoading}
         className={`w-full flex items-center justify-between px-6 py-4 border-2 rounded-xl shadow-sm bg-white text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
@@ -338,156 +369,160 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
         </div>
       </button>
 
-      {/* Enhanced Dropdown Menu with Maximum Z-Index */}
+      {/* Enhanced Dropdown Menu */}
       {isOpen && (
-        <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-96 overflow-hidden">
-          <div className="py-2">
-            {/* Header Actions with Professional Colors */}
-            <div
-              className="px-4 py-3 border-b border-gray-100"
-              style={{ backgroundColor: "#F5F5F5" }}
-            >
-              <div className="flex space-x-2">
-                <button
-                  onClick={openAddModal}
-                  className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border"
-                  style={{
-                    color: "#1E50A8",
-                    backgroundColor: "#EFF5FF",
-                    borderColor: "#BFD6FF",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#E3EDFF";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "#EFF5FF";
-                  }}
-                >
-                  <PlusIcon className="w-4 h-4" />
-                  <span>Create New Group</span>
-                </button>
-                <button
-                  onClick={handleRefreshGroups}
-                  disabled={isLoading}
-                  className="flex items-center justify-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{
-                    color: "#585A67",
-                    backgroundColor: "#F5F5F5",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isLoading) {
-                      e.currentTarget.style.backgroundColor = "#EAEAEC";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "#F5F5F5";
-                  }}
-                  title="Refresh groups"
-                >
-                  <ArrowPathIcon
-                    className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
-                  />
-                </button>
+        <div className="absolute z-[99999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-96 overflow-hidden">
+            <div className="py-2">
+              {/* Header Actions with Professional Colors */}
+              <div
+                className="px-4 py-3 border-b border-gray-100"
+                style={{ backgroundColor: "#F5F5F5" }}
+              >
+                <div className="flex space-x-2">
+                  <button
+                    onClick={openAddModal}
+                    className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border"
+                    style={{
+                      color: "#1E50A8",
+                      backgroundColor: "#EFF5FF",
+                      borderColor: "#BFD6FF",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#E3EDFF";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "#EFF5FF";
+                    }}
+                  >
+                    <PlusIcon className="w-4 h-4" />
+                    <span>Create New Group</span>
+                  </button>
+                  <button
+                    onClick={handleRefreshGroups}
+                    disabled={isLoading}
+                    className="flex items-center justify-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                      color: "#585A67",
+                      backgroundColor: "#F5F5F5",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isLoading) {
+                        e.currentTarget.style.backgroundColor = "#EAEAEC";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "#F5F5F5";
+                    }}
+                    title="Refresh groups"
+                  >
+                    <ArrowPathIcon
+                      className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
+                    />
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Enhanced Groups List */}
-            <div className="max-h-80 overflow-y-auto">
-              {isLoading ? (
-                <div className="px-4 py-6">
-                  <div className="flex items-center justify-center space-x-3">
-                    <ArrowPathIcon className="animate-spin w-5 h-5 text-gray-400" />
-                    <span className="text-sm text-gray-500">
-                      Loading groups...
-                    </span>
+              {/* Enhanced Groups List */}
+              <div className="max-h-80 overflow-y-auto">
+                {isLoading ? (
+                  <div className="px-4 py-6">
+                    <div className="flex items-center justify-center space-x-3">
+                      <ArrowPathIcon className="animate-spin w-5 h-5 text-gray-400" />
+                      <span className="text-sm text-gray-500">
+                        Loading groups...
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ) : groups.length === 0 ? (
-                <div className="px-4 py-8 text-center">
-                  <UserGroupIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-sm text-gray-500 font-medium mb-1">
-                    No groups available
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Create your first group to get started
-                  </p>
-                </div>
-              ) : (
-                groups.map((group, index) => {
-                  const GroupIcon = getGroupIcon(group.name, index);
-                  const groupColor = getGroupColor(group.name, index);
-                  const isSelected = selectedGroup?.id === group.id;
+                ) : groups.length === 0 ? (
+                  <div className="px-4 py-8 text-center">
+                    <UserGroupIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-sm text-gray-500 font-medium mb-1">
+                      No groups available
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      Create your first group to get started
+                    </p>
+                  </div>
+                ) : (
+                  groups.map((group, index) => {
+                    const GroupIcon = getGroupIcon(group.name, index);
+                    const groupColor = getGroupColor(group.name, index);
+                    const isSelected = selectedGroup?.id === group.id;
 
-                  return (
-                    <button
-                      key={group.id}
-                      onClick={() => handleGroupSelect(group)}
-                      className={`w-full text-left px-4 py-4 hover:bg-gray-50 transition-all duration-200 border-l-4 ${
-                        isSelected
-                          ? "text-blue-900 border-l-blue-500"
-                          : "border-l-transparent text-gray-700 hover:border-l-gray-300"
-                      }`}
-                      style={{
-                        backgroundColor: isSelected ? "#EFF5FF" : undefined,
-                      }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3 flex-1 min-w-0">
-                          <div
-                            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                            style={{
-                              backgroundColor: isSelected
-                                ? "#E3EDFF"
-                                : groupColor.bg,
-                            }}
-                          >
-                            <GroupIcon
-                              className="w-4 h-4"
+                    return (
+                      <button
+                        key={group.id}
+                        onClick={() => handleGroupSelect(group)}
+                        className={`w-full text-left px-4 py-4 hover:bg-gray-50 transition-all duration-200 border-l-4 ${
+                          isSelected
+                            ? "text-blue-900 border-l-blue-500"
+                            : "border-l-transparent text-gray-700 hover:border-l-gray-300"
+                        }`}
+                        style={{
+                          backgroundColor: isSelected ? "#EFF5FF" : undefined,
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3 flex-1 min-w-0">
+                            <div
+                              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                               style={{
-                                color: isSelected ? "#1E50A8" : groupColor.text,
+                                backgroundColor: isSelected
+                                  ? "#E3EDFF"
+                                  : groupColor.bg,
                               }}
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2">
-                              <span className="font-medium truncate">
-                                {group.name}
-                              </span>
-                              {isSelected && (
-                                <CheckIcon
-                                  className="w-4 h-4 flex-shrink-0"
-                                  style={{ color: "#1E50A8" }}
-                                />
+                            >
+                              <GroupIcon
+                                className="w-4 h-4"
+                                style={{
+                                  color: isSelected
+                                    ? "#1E50A8"
+                                    : groupColor.text,
+                                }}
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center space-x-2">
+                                <span className="font-medium truncate">
+                                  {group.name}
+                                </span>
+                                {isSelected && (
+                                  <CheckIcon
+                                    className="w-4 h-4 flex-shrink-0"
+                                    style={{ color: "#1E50A8" }}
+                                  />
+                                )}
+                              </div>
+                              {group.description && (
+                                <p className="text-xs text-gray-500 mt-1 truncate">
+                                  {group.description}
+                                </p>
+                              )}
+                              {group.resumeCount !== undefined && (
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {group.resumeCount}{" "}
+                                  {group.resumeCount === 1
+                                    ? "resume"
+                                    : "resumes"}
+                                </p>
                               )}
                             </div>
-                            {group.description && (
-                              <p className="text-xs text-gray-500 mt-1 truncate">
-                                {group.description}
-                              </p>
-                            )}
-                            {group.resumeCount !== undefined && (
-                              <p className="text-xs text-gray-400 mt-1">
-                                {group.resumeCount}{" "}
-                                {group.resumeCount === 1 ? "resume" : "resumes"}
-                              </p>
-                            )}
+                          </div>
+                          <div className="flex items-center ml-3">
+                            <button
+                              onClick={(e) => handleDeleteGroup(group, e)}
+                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
+                              title="Delete group"
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
                           </div>
                         </div>
-                        <div className="flex items-center ml-3">
-                          <button
-                            onClick={(e) => handleDeleteGroup(group, e)}
-                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
-                            title="Delete group"
-                          >
-                            <TrashIcon className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })
-              )}
-            </div>
+                      </button>
+                    );
+                  })
+                )}
+                          </div>
           </div>
         </div>
       )}

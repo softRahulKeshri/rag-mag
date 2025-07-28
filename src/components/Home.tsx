@@ -259,7 +259,7 @@ const Home = () => {
 
             {/* Additional footer content */}
             <div className="flex justify-center space-x-8 mt-6 text-sm text-gray-500">
-              <span>© 2024 Magure.ai</span>
+              <span>© 2025 Magure.ai</span>
               <span>•</span>
               <span>Privacy Policy</span>
               <span>•</span>

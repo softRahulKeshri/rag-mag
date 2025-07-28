@@ -39,53 +39,62 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   };
 
   return (
-    <div className="sticky top-0 z-20 flex items-center justify-between bg-white/95 backdrop-blur-sm border-b border-gray-200 px-6 py-4 shadow-sm">
-      <div className="flex items-center space-x-3">
-        <button
-          onClick={onMenuToggle}
-          className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all duration-200 md:hidden"
-          aria-label="Toggle menu"
-        >
-          <Bars3Icon className="h-5 w-5" />
-        </button>
-        <div className="flex-1 min-w-0">
-          <h2 className="text-lg font-semibold text-gray-900 truncate">
-            {title}
-          </h2>
-          {subtitle && (
-            <p className="text-sm text-gray-600 mt-0.5">{subtitle}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="relative">
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-800 transition-all duration-200"
-          aria-label="Chat options"
-        >
-          <EllipsisVerticalIcon className="h-5 w-5" />
-        </button>
-
-        {isMenuOpen && (
-          <div
-            ref={menuRef}
-            className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-10"
+    <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm">
+      <div className="flex items-center justify-between h-16 px-6">
+        {/* Left Section */}
+        <div className="flex items-center space-x-4 flex-1 min-w-0">
+          <button
+            onClick={onMenuToggle}
+            className="p-2 rounded-lg text-[#6D6F7A] hover:bg-[#F5F5F5] hover:text-[#434654] transition-colors md:hidden flex-shrink-0"
+            aria-label="Toggle menu"
           >
-            <button
-              onClick={handleRename}
-              className="w-full text-left px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 transition-colors font-medium"
-            >
-              Rename Chat
-            </button>
-            <button
-              onClick={handleClearChat}
-              className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-gray-100 transition-colors font-medium"
-            >
-              Clear Chat
-            </button>
+            <Bars3Icon className="h-5 w-5" />
+          </button>
+
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg font-semibold text-[#2E3141] truncate">
+              {title}
+            </h1>
+            {subtitle && (
+              <p className="text-sm text-[#6D6F7A] mt-0.5 truncate">
+                {subtitle}
+              </p>
+            )}
           </div>
-        )}
+        </div>
+
+        {/* Right Section */}
+        <div className="flex items-center space-x-2 flex-shrink-0">
+          <div className="relative">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-2 rounded-lg text-[#6D6F7A] hover:bg-[#F5F5F5] hover:text-[#434654] transition-colors"
+              aria-label="Chat options"
+            >
+              <EllipsisVerticalIcon className="h-5 w-5" />
+            </button>
+
+            {isMenuOpen && (
+              <div
+                ref={menuRef}
+                className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-[#EAEAEC] overflow-hidden z-10"
+              >
+                <button
+                  onClick={handleRename}
+                  className="w-full text-left px-4 py-3 text-sm text-[#434654] hover:bg-[#F5F5F5] transition-colors font-medium"
+                >
+                  Rename Chat
+                </button>
+                <button
+                  onClick={handleClearChat}
+                  className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium"
+                >
+                  Clear Chat
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Click outside to close menu */}
@@ -95,6 +104,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           onClick={() => setIsMenuOpen(false)}
         />
       )}
-    </div>
+    </header>
   );
 };

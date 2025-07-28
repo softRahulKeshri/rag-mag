@@ -1,5 +1,25 @@
-import { useState } from 'react';
-import { UserCircleIcon, PencilIcon, CheckIcon, XMarkIcon, EnvelopeIcon, BriefcaseIcon, CalendarIcon, ShieldCheckIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useState } from "react";
+import {
+  UserCircleIcon,
+  PencilIcon,
+  CheckIcon,
+  XMarkIcon,
+  EnvelopeIcon,
+  BriefcaseIcon,
+  CalendarIcon,
+  ShieldCheckIcon,
+  ArrowLeftIcon,
+  CameraIcon,
+  MapPinIcon,
+  BuildingOfficeIcon,
+  CreditCardIcon,
+  KeyIcon,
+  TrashIcon,
+  DevicePhoneMobileIcon,
+  UserIcon,
+  InformationCircleIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline";
 
 interface ProfileFieldProps {
   label: string;
@@ -8,36 +28,52 @@ interface ProfileFieldProps {
   onChange?: (value: string) => void;
   type?: string;
   className?: string;
+  icon?: React.ReactNode;
 }
 
-const ProfileField = ({ label, value, isEditing, onChange, type = 'text', className = '' }: ProfileFieldProps) => {
+const ProfileField = ({
+  label,
+  value,
+  isEditing,
+  onChange,
+  type = "text",
+  className = "",
+  icon,
+}: ProfileFieldProps) => {
   return (
-    <div className={`mb-4 ${className}`}>
-      <label className="block text-sm font-medium text-gray-400 mb-1">{label}</label>
+    <div className={`mb-6 ${className}`}>
+      <label className="flex items-center text-sm font-medium text-neutral-n600 mb-2">
+        {icon && <span className="mr-2 text-neutral-n500">{icon}</span>}
+        {label}
+      </label>
       {isEditing ? (
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange?.(e.target.value)}
-          className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="relative">
+          <input
+            type={type}
+            value={value}
+            onChange={(e) => onChange?.(e.target.value)}
+            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-neutral-n900 placeholder-neutral-n500 focus:outline-none focus:ring-2 focus:ring-primary-ui-blue-p500/50 focus:border-primary-ui-blue-p500 hover:border-gray-300 transition-all duration-200"
+            placeholder={`Enter your ${label.toLowerCase()}`}
+          />
+        </div>
       ) : (
-        <p className="text-white">{value}</p>
+        <p className="text-neutral-n900 py-3 px-1 text-base">{value}</p>
       )}
     </div>
   );
 };
+
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: 'Alex Johnson',
-    email: 'alex.johnson@example.com',
-    jobTitle: 'Senior Software Engineer',
-    company: 'Tech Innovations Inc.',
-    location: 'San Francisco, CA',
-    bio: 'Passionate about building great products and solving complex problems with clean, efficient code.',
-    memberSince: 'January 2023',
-    plan: 'Pro'
+    name: "Alex Johnson",
+    email: "alex.johnson@example.com",
+    jobTitle: "Senior Software Engineer",
+    company: "Tech Innovations Inc.",
+    location: "San Francisco, CA",
+    bio: "Passionate about building great products and solving complex problems with clean, efficient code.",
+    memberSince: "January 2023",
+    plan: "Pro",
   });
 
   const [tempData, setTempData] = useState({ ...formData });
@@ -54,166 +90,232 @@ const ProfilePage = () => {
   };
 
   const handleCancel = () => {
+    setTempData({ ...formData });
     setIsEditing(false);
   };
 
   const handleChange = (field: string, value: string) => {
-    setTempData(prev => ({
+    setTempData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-neutral-n100">
+      <div className="max-w-5xl mx-auto px-6 py-8">
+        {/* Header */}
         <div className="flex items-center mb-8">
-          <button className="mr-4 p-2 hover:bg-gray-800 rounded-full">
-            <ArrowLeftIcon className="h-6 w-6" />
+          <button
+            className="mr-4 p-3 hover:bg-white rounded-2xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-ui-blue-p500/50"
+            aria-label="Go back"
+            onClick={() => window.history.length > 1 ? window.history.back() : window.location.assign('/')}
+            
+          >
+            <ArrowLeftIcon className="h-6 w-6 text-neutral-n700" />
           </button>
-          <h1 className="text-2xl font-bold">Profile Settings</h1>
+          <div className="flex items-center">
+            <UserIcon className="h-8 w-8 text-primary-ui-blue-p600 mr-3" />
+            <h1 className="text-3xl font-bold text-neutral-n900">
+              Profile Settings
+            </h1>
+          </div>
         </div>
-        
-        <div className="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-          {/* Header with cover photo and profile picture */}
-          <div className="h-32 bg-gradient-to-r from-blue-600 to-purple-600 relative">
-            <div className="absolute -bottom-12 left-6">
-              <div className="h-24 w-24 rounded-full border-4 border-gray-800 bg-gray-700 flex items-center justify-center overflow-hidden">
-                <UserCircleIcon className="h-20 w-20 text-gray-400" />
+
+        {/* Main Profile Card */}
+        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300">
+          {/* Cover Photo Section */}
+          <div className="h-40 bg-gradient-to-br from-brand-gradient-blue via-brand-gradient-purple to-brand-gradient-cyan relative group">
+            <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-all duration-300"></div>
+            <button className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm rounded-xl hover:bg-white/30 transition-all duration-200 opacity-0 group-hover:opacity-100">
+              <CameraIcon className="h-5 w-5 text-white" />
+            </button>
+
+            {/* Profile Picture */}
+            <div className="absolute -bottom-16 left-8">
+              <div className="relative group/avatar">
+                <div className="h-32 w-32 rounded-3xl border-4 border-white bg-gradient-to-br from-neutral-n300 to-neutral-n400 flex items-center justify-center overflow-hidden shadow-2xl">
+                  <UserCircleIcon className="h-28 w-28 text-neutral-n600" />
+                </div>
+                <button className="absolute inset-0 bg-black/50 rounded-3xl flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-all duration-200">
+                  <CameraIcon className="h-8 w-8 text-white" />
+                </button>
               </div>
             </div>
           </div>
-          
-          {/* Profile actions */}
-          <div className="pt-16 px-6">
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h2 className="text-2xl font-bold">{formData.name}</h2>
-                <div className="flex items-center text-gray-400 text-sm mt-1">
-                  <EnvelopeIcon className="h-4 w-4 mr-1" />
+
+          {/* Profile Content */}
+          <div className="pt-20 px-8 pb-8">
+            {/* Profile Header */}
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-8">
+              <div className="mb-6 lg:mb-0">
+                <h2 className="text-3xl font-bold text-neutral-n900 mb-2">
+                  {formData.name}
+                </h2>
+                <div className="flex items-center text-neutral-n600 text-base mb-2">
+                  <EnvelopeIcon className="h-5 w-5 mr-2 text-neutral-n500" />
                   {formData.email}
                 </div>
-                <div className="flex items-center text-gray-400 text-sm mt-1">
-                  <BriefcaseIcon className="h-4 w-4 mr-1" />
+                <div className="flex items-center text-neutral-n600 text-base">
+                  <BriefcaseIcon className="h-5 w-5 mr-2 text-neutral-n500" />
                   {formData.jobTitle} at {formData.company}
                 </div>
               </div>
-              
-              <div className="flex space-x-2">
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3">
                 {isEditing ? (
                   <>
-                    <button 
+                    <button
                       onClick={handleSave}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md flex items-center text-sm font-medium"
+                      className="px-6 py-3 bg-primary-ui-blue-p500 hover:bg-primary-ui-blue-p600 text-white rounded-2xl flex items-center justify-center font-medium shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-ui-blue-p500/50"
                     >
-                      <CheckIcon className="h-4 w-4 mr-1" /> Save
+                      <CheckIcon className="h-5 w-5 mr-2" /> Save Changes
                     </button>
-                    <button 
+                    <button
                       onClick={handleCancel}
-                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md flex items-center text-sm font-medium"
+                      className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-neutral-n900 rounded-2xl flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400/50"
                     >
-                      <XMarkIcon className="h-4 w-4 mr-1" /> Cancel
+                      <XMarkIcon className="h-5 w-5 mr-2" /> Cancel
                     </button>
                   </>
                 ) : (
-                  <button 
+                  <button
                     onClick={handleEdit}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md flex items-center text-sm font-medium"
+                    className="px-6 py-3 bg-white border border-gray-200 hover:border-primary-ui-blue-p500 hover:bg-primary-ui-blue-p50 text-neutral-n900 hover:text-primary-ui-blue-p600 rounded-2xl flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-ui-blue-p500/50"
                   >
-                    <PencilIcon className="h-4 w-4 mr-1" /> Edit Profile
+                    <PencilIcon className="h-5 w-5 mr-2" /> Edit Profile
                   </button>
                 )}
               </div>
             </div>
-            
-            {/* Account Status */}
-            <div className="bg-gray-700/50 rounded-lg p-4 mb-6">
+
+            {/* Account Status Card */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 mb-8 border border-green-100">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <ShieldCheckIcon className="h-5 w-5 text-green-400 mr-2" />
+                  <div className="p-3 bg-green-100 rounded-2xl mr-4">
+                    <ShieldCheckIcon className="h-6 w-6 text-green-600" />
+                  </div>
                   <div>
-                    <p className="font-medium">{formData.plan} Plan</p>
-                    <p className="text-sm text-gray-400">Active • Next billing: Aug 22, 2023</p>
+                    <div className="flex items-center">
+                      <CreditCardIcon className="h-5 w-5 text-green-600 mr-2" />
+                      <p className="font-semibold text-neutral-n900 text-lg">
+                        {formData.plan} Plan
+                      </p>
+                    </div>
+                    <p className="text-neutral-n600">
+                      Active • Next billing: Aug 22, 2024
+                    </p>
                   </div>
                 </div>
-                <button className="text-blue-400 hover:text-blue-300 text-sm font-medium">
+                <button className="px-4 py-2 text-primary-ui-blue-p600 hover:text-primary-ui-blue-p700 hover:bg-primary-ui-blue-p100 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-ui-blue-p500/50">
                   Manage Subscription
                 </button>
               </div>
             </div>
-            
-            {/* Profile Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div>
-                <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-gray-700">Personal Information</h3>
-                <ProfileField 
-                  label="Full Name" 
-                  value={tempData.name} 
+
+            {/* Profile Information Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              {/* Personal Information */}
+              <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                <h3 className="flex items-center text-xl font-semibold text-neutral-n900 mb-6 pb-3 border-b border-gray-200">
+                  <UserIcon className="h-6 w-6 text-primary-ui-blue-p600 mr-2" />
+                  Personal Information
+                </h3>
+                <ProfileField
+                  label="Full Name"
+                  value={tempData.name}
                   isEditing={isEditing}
-                  onChange={(value) => handleChange('name', value)}
+                  onChange={(value) => handleChange("name", value)}
+                  icon={<UserCircleIcon className="h-4 w-4" />}
                 />
-                <ProfileField 
-                  label="Email Address" 
-                  value={tempData.email} 
+                <ProfileField
+                  label="Email Address"
+                  value={tempData.email}
                   isEditing={isEditing}
                   type="email"
-                  onChange={(value) => handleChange('email', value)}
+                  onChange={(value) => handleChange("email", value)}
+                  icon={<EnvelopeIcon className="h-4 w-4" />}
                 />
-                <ProfileField 
-                  label="Location" 
-                  value={tempData.location} 
+                <ProfileField
+                  label="Location"
+                  value={tempData.location}
                   isEditing={isEditing}
-                  onChange={(value) => handleChange('location', value)}
+                  onChange={(value) => handleChange("location", value)}
+                  icon={<MapPinIcon className="h-4 w-4" />}
                 />
               </div>
-              
-              <div>
-                <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-gray-700">Professional Information</h3>
-                <ProfileField 
-                  label="Job Title" 
-                  value={tempData.jobTitle} 
+
+              {/* Professional Information */}
+              <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                <h3 className="flex items-center text-xl font-semibold text-neutral-n900 mb-6 pb-3 border-b border-gray-200">
+                  <BriefcaseIcon className="h-6 w-6 text-primary-ui-blue-p600 mr-2" />
+                  Professional Information
+                </h3>
+                <ProfileField
+                  label="Job Title"
+                  value={tempData.jobTitle}
                   isEditing={isEditing}
-                  onChange={(value) => handleChange('jobTitle', value)}
+                  onChange={(value) => handleChange("jobTitle", value)}
+                  icon={<BriefcaseIcon className="h-4 w-4" />}
                 />
-                <ProfileField 
-                  label="Company" 
-                  value={tempData.company} 
+                <ProfileField
+                  label="Company"
+                  value={tempData.company}
                   isEditing={isEditing}
-                  onChange={(value) => handleChange('company', value)}
+                  onChange={(value) => handleChange("company", value)}
+                  icon={<BuildingOfficeIcon className="h-4 w-4" />}
                 />
-                <div className="flex items-center text-gray-400 text-sm mt-6">
-                  <CalendarIcon className="h-4 w-4 mr-2" />
-                  Member since {formData.memberSince}
+                <div className="flex items-center text-neutral-n600 mt-6 px-1">
+                  <CalendarIcon className="h-5 w-5 mr-3 text-neutral-n500" />
+                  <span className="font-medium">
+                    Member since {formData.memberSince}
+                  </span>
                 </div>
               </div>
             </div>
-            
-            {/* Bio */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-gray-700">About</h3>
+
+            {/* Bio Section */}
+            <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100 mb-8">
+              <h3 className="flex items-center text-xl font-semibold text-neutral-n900 mb-6 pb-3 border-b border-gray-200">
+                <DocumentTextIcon className="h-6 w-6 text-primary-ui-blue-p600 mr-2" />
+                About Me
+              </h3>
               {isEditing ? (
-                <textarea
-                  value={tempData.bio}
-                  onChange={(e) => handleChange('bio', e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
-                  placeholder="Tell us about yourself..."
-                />
+                <div className="relative">
+                  <textarea
+                    value={tempData.bio}
+                    onChange={(e) => handleChange("bio", e.target.value)}
+                    className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-neutral-n900 placeholder-neutral-n500 focus:outline-none focus:ring-2 focus:ring-primary-ui-blue-p500/50 focus:border-primary-ui-blue-p500 hover:border-gray-300 transition-all duration-200 h-32 resize-none"
+                    placeholder="Tell us about yourself..."
+                  />
+                  <InformationCircleIcon className="absolute top-3 right-3 h-5 w-5 text-neutral-n400" />
+                </div>
               ) : (
-                <p className="text-gray-300 whitespace-pre-line">{formData.bio}</p>
+                <p className="text-neutral-n700 leading-relaxed text-base px-1">
+                  {formData.bio}
+                </p>
               )}
             </div>
-            
+
             {/* Account Actions */}
-            <div className="border-t border-gray-700 pt-6">
-              <h3 className="text-lg font-semibold mb-4">Account Actions</h3>
+            <div className="bg-red-50 rounded-2xl p-6 border border-red-100">
+              <h3 className="flex items-center text-xl font-semibold text-neutral-n900 mb-6 pb-3 border-b border-red-200">
+                <ShieldCheckIcon className="h-6 w-6 text-red-600 mr-2" />
+                Security & Account Actions
+              </h3>
               <div className="space-y-3">
-                <button className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-md text-red-400 hover:text-red-300 transition-colors">
+                <button className="w-full text-left px-6 py-4 bg-white hover:bg-red-50 border border-gray-200 hover:border-red-300 rounded-2xl text-red-600 hover:text-red-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50 flex items-center">
+                  <KeyIcon className="h-5 w-5 mr-3" />
                   Change Password
                 </button>
-                <button className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-md text-red-400 hover:text-red-300 transition-colors">
+                <button className="w-full text-left px-6 py-4 bg-white hover:bg-red-50 border border-gray-200 hover:border-red-300 rounded-2xl text-red-600 hover:text-red-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50 flex items-center">
+                  <TrashIcon className="h-5 w-5 mr-3" />
                   Delete Account
                 </button>
-                <button className="w-full text-left px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-md text-red-400 hover:text-red-300 transition-colors">
+                <button className="w-full text-left px-6 py-4 bg-white hover:bg-red-50 border border-gray-200 hover:border-red-300 rounded-2xl text-red-600 hover:text-red-700 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50 flex items-center">
+                  <DevicePhoneMobileIcon className="h-5 w-5 mr-3" />
                   Logout All Devices
                 </button>
               </div>
