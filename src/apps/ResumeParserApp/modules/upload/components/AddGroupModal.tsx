@@ -113,16 +113,22 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
           </button>
 
           {/* Enhanced Modal Header */}
-          <div className="relative px-8 py-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-100">
+          <div
+            className="relative px-8 py-6 border-b border-gray-100"
+            style={{ backgroundColor: "#F5F5F5" }}
+          >
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+                style={{ backgroundColor: "#3077F3" }}
+              >
                 <UserGroupIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold" style={{ color: "#2E3141" }}>
                   Create New Group
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm mt-1" style={{ color: "#6D6F7A" }}>
                   Organize your CVs into manageable categories
                 </p>
               </div>
@@ -149,21 +155,27 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
                   disabled={isCreating}
                   maxLength={MAX_LENGTH}
                   className={`w-full px-4 py-4 border-2 border-gray-200 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
-                    error ? "border-red-300 focus:ring-red-500 focus:border-red-500" : ""
-                  } ${isCreating ? "bg-gray-50 cursor-not-allowed" : "bg-white"}`}
+                    error
+                      ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                      : ""
+                  } ${
+                    isCreating ? "bg-gray-50 cursor-not-allowed" : "bg-white"
+                  }`}
                   autoFocus
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-4">
-                  <span className={`text-xs font-medium ${
-                    groupName.length > MAX_LENGTH * 0.8 
-                      ? "text-orange-500" 
-                      : "text-gray-400"
-                  }`}>
+                  <span
+                    className={`text-xs font-medium ${
+                      groupName.length > MAX_LENGTH * 0.8
+                        ? "text-orange-500"
+                        : "text-gray-400"
+                    }`}
+                  >
                     {groupName.length}/{MAX_LENGTH}
                   </span>
                 </div>
               </div>
-              
+
               {/* Enhanced validation feedback */}
               <div className="flex items-center justify-between mt-3">
                 <div className="flex items-center space-x-2">
@@ -195,7 +207,7 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
                   )}
                 </div>
               </div>
-              
+
               {error && (
                 <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-sm text-red-700 font-medium">{error}</p>
@@ -209,20 +221,50 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
                 type="button"
                 onClick={handleCancel}
                 disabled={isCreating}
-                className={`flex-1 px-6 py-3 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 ${
+                className={`flex-1 px-6 py-3 text-sm font-semibold rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
                   isCreating ? "opacity-50 cursor-not-allowed" : ""
                 }`}
+                style={{
+                  color: "#6D6F7A",
+                  backgroundColor: "#FFFFFF",
+                  borderColor: "#D5D6D9",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isCreating) {
+                    e.currentTarget.style.backgroundColor = "#F5F5F5";
+                    e.currentTarget.style.borderColor = "#C0C1C6";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#FFFFFF";
+                  e.currentTarget.style.borderColor = "#D5D6D9";
+                }}
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!isFormValid || isCreating}
-                className={`flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                className={`flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-lg ${
                   isFormValid && !isCreating
-                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 focus:ring-blue-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    ? "hover:shadow-xl transform hover:-translate-y-0.5"
+                    : "cursor-not-allowed"
                 }`}
+                style={{
+                  backgroundColor:
+                    isFormValid && !isCreating ? "#3077F3" : "#C0C1C6",
+                  color: isFormValid && !isCreating ? "#FFFFFF" : "#82838D",
+                }}
+                onMouseEnter={(e) => {
+                  if (isFormValid && !isCreating) {
+                    e.currentTarget.style.backgroundColor = "#1E50A8";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (isFormValid && !isCreating) {
+                    e.currentTarget.style.backgroundColor = "#3077F3";
+                  }
+                }}
               >
                 {isCreating ? (
                   <div className="flex items-center justify-center space-x-2">

@@ -69,39 +69,26 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     return iconMap[iconIndex];
   }, []);
 
-  // Function to get varied colors for different groups
+  // Professional color scheme using brand colors
   const getGroupColor = useCallback((groupName: string, index: number) => {
     const colorMap = [
-      { bg: "bg-blue-100", text: "text-blue-600", selectedBg: "bg-blue-100" },
-      {
-        bg: "bg-green-100",
-        text: "text-green-600",
-        selectedBg: "bg-green-100",
-      },
-      {
-        bg: "bg-purple-100",
-        text: "text-purple-600",
-        selectedBg: "bg-purple-100",
-      },
-      {
-        bg: "bg-orange-100",
-        text: "text-orange-600",
-        selectedBg: "bg-orange-100",
-      },
-      { bg: "bg-pink-100", text: "text-pink-600", selectedBg: "bg-pink-100" },
-      {
-        bg: "bg-indigo-100",
-        text: "text-indigo-600",
-        selectedBg: "bg-indigo-100",
-      },
-      { bg: "bg-teal-100", text: "text-teal-600", selectedBg: "bg-teal-100" },
-      { bg: "bg-red-100", text: "text-red-600", selectedBg: "bg-red-100" },
-      {
-        bg: "bg-yellow-100",
-        text: "text-yellow-600",
-        selectedBg: "bg-yellow-100",
-      },
-      { bg: "bg-cyan-100", text: "text-cyan-600", selectedBg: "bg-cyan-100" },
+      // Primary UI Blue variations
+      { bg: "#EFF5FF", text: "#1E50A8", selectedBg: "#E3EDFF" }, // p100 bg, p600 text, p200 selected
+      { bg: "#E3EDFF", text: "#11397E", selectedBg: "#BFD6FF" }, // p200 bg, p700 text, p300 selected
+
+      // Brand gradient colors with neutral backgrounds
+      { bg: "#F5F5F5", text: "#FDA052", selectedBg: "#EAEAEC" }, // Orange with neutral
+      { bg: "#F5F5F5", text: "#B96AF7", selectedBg: "#EAEAEC" }, // Purple with neutral
+      { bg: "#F5F5F5", text: "#3077F3", selectedBg: "#EAEAEC" }, // Blue with neutral
+      { bg: "#F5F5F5", text: "#41E6F8", selectedBg: "#EAEAEC" }, // Cyan with neutral
+
+      // Neutral palette variations
+      { bg: "#EAEAEC", text: "#2E3141", selectedBg: "#D5D6D9" }, // n150 bg, n1000 text, n200 selected
+      { bg: "#D5D6D9", text: "#434654", selectedBg: "#C0C1C6" }, // n200 bg, n900 text, n300 selected
+      { bg: "#C0C1C6", text: "#585A67", selectedBg: "#ABADB3" }, // n300 bg, n800 text, n400 selected
+
+      // Additional professional combinations
+      { bg: "#ECECEC", text: "#414141", selectedBg: "#D9D9D9" }, // Greyscale combination
     ];
 
     const nameHash = groupName.split("").reduce((a, b) => {
@@ -261,13 +248,13 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     setShowAddModal(false);
   }, []);
 
-  // Get icon and color for selected group
+  // Get icon and color for selected group using professional colors
   const selectedGroupIcon = selectedGroup
     ? getGroupIcon(selectedGroup.name, 0)
     : UserGroupIcon;
   const selectedGroupColor = selectedGroup
     ? getGroupColor(selectedGroup.name, 0)
-    : { bg: "bg-gray-100", text: "text-gray-500" };
+    : { bg: "#F5F5F5", text: "#6D6F7A", selectedBg: "#EAEAEC" };
 
   return (
     <div className="relative">
@@ -275,23 +262,32 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
       <button
         onClick={toggleDropdown}
         disabled={isLoading}
-        className={`w-full flex items-center justify-between px-6 py-4 border-2 border-gray-200 rounded-xl shadow-sm bg-white text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
+        className={`w-full flex items-center justify-between px-6 py-4 border-2 rounded-xl shadow-sm bg-white text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
           selectedGroup
-            ? "border-blue-300 bg-blue-50 hover:bg-blue-100"
-            : "hover:border-gray-300"
+            ? "border-blue-300 hover:bg-blue-100"
+            : "border-gray-200 hover:border-gray-300"
         }`}
+        style={{
+          backgroundColor: selectedGroup
+            ? selectedGroupColor.selectedBg
+            : undefined,
+        }}
       >
         <div className="flex items-center space-x-4 flex-1 min-w-0">
-          {/* Dynamic Icon */}
+          {/* Dynamic Icon with Professional Colors */}
           <div
-            className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-              selectedGroup ? selectedGroupColor.bg : "bg-gray-100"
-            }`}
+            className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={{
+              backgroundColor: selectedGroup
+                ? selectedGroupColor.bg
+                : "#F5F5F5",
+            }}
           >
             {React.createElement(selectedGroupIcon, {
-              className: `w-6 h-6 ${
-                selectedGroup ? selectedGroupColor.text : "text-gray-500"
-              }`,
+              className: "w-6 h-6",
+              style: {
+                color: selectedGroup ? selectedGroupColor.text : "#6D6F7A",
+              },
             })}
           </div>
 
@@ -342,16 +338,30 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
         </div>
       </button>
 
-      {/* Enhanced Dropdown Menu with Higher Z-Index */}
+      {/* Enhanced Dropdown Menu with Maximum Z-Index */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-96 overflow-hidden">
+        <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-96 overflow-hidden">
           <div className="py-2">
-            {/* Header Actions with enhanced styling */}
-            <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+            {/* Header Actions with Professional Colors */}
+            <div
+              className="px-4 py-3 border-b border-gray-100"
+              style={{ backgroundColor: "#F5F5F5" }}
+            >
               <div className="flex space-x-2">
                 <button
                   onClick={openAddModal}
-                  className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-200 border border-blue-200 hover:border-blue-300"
+                  className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border"
+                  style={{
+                    color: "#1E50A8",
+                    backgroundColor: "#EFF5FF",
+                    borderColor: "#BFD6FF",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#E3EDFF";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#EFF5FF";
+                  }}
                 >
                   <PlusIcon className="w-4 h-4" />
                   <span>Create New Group</span>
@@ -359,7 +369,19 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
                 <button
                   onClick={handleRefreshGroups}
                   disabled={isLoading}
-                  className="flex items-center justify-center px-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    color: "#585A67",
+                    backgroundColor: "#F5F5F5",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isLoading) {
+                      e.currentTarget.style.backgroundColor = "#EAEAEC";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#F5F5F5";
+                  }}
                   title="Refresh groups"
                 >
                   <ArrowPathIcon
@@ -394,32 +416,36 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
                 groups.map((group, index) => {
                   const GroupIcon = getGroupIcon(group.name, index);
                   const groupColor = getGroupColor(group.name, index);
+                  const isSelected = selectedGroup?.id === group.id;
 
                   return (
                     <button
                       key={group.id}
                       onClick={() => handleGroupSelect(group)}
                       className={`w-full text-left px-4 py-4 hover:bg-gray-50 transition-all duration-200 border-l-4 ${
-                        selectedGroup?.id === group.id
-                          ? "bg-blue-50 border-l-blue-500 text-blue-900"
+                        isSelected
+                          ? "text-blue-900 border-l-blue-500"
                           : "border-l-transparent text-gray-700 hover:border-l-gray-300"
                       }`}
+                      style={{
+                        backgroundColor: isSelected ? "#EFF5FF" : undefined,
+                      }}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3 flex-1 min-w-0">
                           <div
-                            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                              selectedGroup?.id === group.id
-                                ? "bg-blue-100"
-                                : groupColor.bg
-                            }`}
+                            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                            style={{
+                              backgroundColor: isSelected
+                                ? "#E3EDFF"
+                                : groupColor.bg,
+                            }}
                           >
                             <GroupIcon
-                              className={`w-4 h-4 ${
-                                selectedGroup?.id === group.id
-                                  ? "text-blue-600"
-                                  : groupColor.text
-                              }`}
+                              className="w-4 h-4"
+                              style={{
+                                color: isSelected ? "#1E50A8" : groupColor.text,
+                              }}
                             />
                           </div>
                           <div className="flex-1 min-w-0">
@@ -427,8 +453,11 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
                               <span className="font-medium truncate">
                                 {group.name}
                               </span>
-                              {selectedGroup?.id === group.id && (
-                                <CheckIcon className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                              {isSelected && (
+                                <CheckIcon
+                                  className="w-4 h-4 flex-shrink-0"
+                                  style={{ color: "#1E50A8" }}
+                                />
                               )}
                             </div>
                             {group.description && (

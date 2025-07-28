@@ -1,8 +1,8 @@
 /**
- * Resume Analytics - Clean Analytics Dashboard Component
+ * Resume Analytics - Premium Analytics Dashboard Component
  *
- * A focused analytics interface displaying resume statistics.
- * Matches the modern dark theme design with essential metrics only.
+ * A modern, premium analytics interface with elegant design patterns.
+ * Features gradient backgrounds, glass morphism effects, and sophisticated animations.
  */
 
 import React, { useState, useMemo, useEffect, useCallback } from "react";
@@ -56,7 +56,7 @@ const ResumeCollection = ({
     error: groupsError,
     clearError: clearGroupsError,
   } = useGroupApi();
-  
+
   // State for managing groups
   const [groups, setGroups] = useState<Group[]>([]);
 
@@ -248,67 +248,69 @@ const ResumeCollection = ({
   };
 
   return (
-    <div className="w-full h-full bg-white cursor-default px-4 py-4 md:px-8 md:py-6 overflow-y-auto">
-      {/* Analytics Header */}
-      <AnalyticsHeader
-        totalFiles={stats.totalFiles}
-        totalGroups={stats.totalGroups}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white overflow-y-auto">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Analytics Header */}
+        <AnalyticsHeader
+          totalFiles={stats.totalFiles}
+          totalGroups={stats.totalGroups}
+        />
 
-      {/* Search and Filter Section */}
-      <SearchAndFilter
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        selectedGroup={selectedGroup}
-        setSelectedGroup={setSelectedGroup}
-        groupStats={groupStats}
-        groupsLoading={groupsLoading}
-        groupsError={groupsError}
-        clearGroupsError={clearGroupsError}
-        refreshGroups={refreshGroups}
-        isLoading={isLoading}
-      />
+        {/* Search and Filter Section */}
+        <SearchAndFilter
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedGroup={selectedGroup}
+          setSelectedGroup={setSelectedGroup}
+          groupStats={groupStats}
+          groupsLoading={groupsLoading}
+          groupsError={groupsError}
+          clearGroupsError={clearGroupsError}
+          refreshGroups={refreshGroups}
+          isLoading={isLoading}
+        />
 
-      {/* Error Display */}
-      {groupsError && (
-        <div className="mb-6">
-          <ErrorDisplay
-            error={groupsError}
-            onDismiss={clearGroupsError}
-            onRetry={refreshGroups}
+        {/* Error Display */}
+        {groupsError && (
+          <div className="mb-8">
+            <ErrorDisplay
+              error={groupsError}
+              onDismiss={clearGroupsError}
+              onRetry={refreshGroups}
+            />
+          </div>
+        )}
+
+        {/* Content Section */}
+        {isLoading ? (
+          <LoadingState />
+        ) : filteredResumes.length === 0 ? (
+          <EmptyState
+            selectedGroup={selectedGroup}
+            searchQuery={searchQuery}
+            clearAllFilters={clearAllFilters}
           />
-        </div>
-      )}
-
-      {/* Content Section */}
-      {isLoading ? (
-        <LoadingState />
-      ) : filteredResumes.length === 0 ? (
-        <EmptyState
-          selectedGroup={selectedGroup}
-          searchQuery={searchQuery}
-          clearAllFilters={clearAllFilters}
-        />
-      ) : (
-        <ResumeGrid
-          filteredResumes={filteredResumes}
-          paginatedResumes={paginatedResumes}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          startIndex={startIndex}
-          endIndex={endIndex}
-          selectedGroup={selectedGroup}
-          searchQuery={searchQuery}
-          onDelete={onDelete}
-          onResumeDeleted={handleResumeDeleted}
-          onCommentAdded={handleCommentAdded}
-          onCommentUpdated={handleCommentUpdated}
-          onCommentDeleted={handleCommentDeleted}
-          onPageChange={handlePageChange}
-          isDeleting={isDeleting}
-          deletingResumeId={deletingResumeId}
-        />
-      )}
+        ) : (
+          <ResumeGrid
+            filteredResumes={filteredResumes}
+            paginatedResumes={paginatedResumes}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            selectedGroup={selectedGroup}
+            searchQuery={searchQuery}
+            onDelete={onDelete}
+            onResumeDeleted={handleResumeDeleted}
+            onCommentAdded={handleCommentAdded}
+            onCommentUpdated={handleCommentUpdated}
+            onCommentDeleted={handleCommentDeleted}
+            onPageChange={handlePageChange}
+            isDeleting={isDeleting}
+            deletingResumeId={deletingResumeId}
+          />
+        )}
+      </div>
     </div>
   );
 };

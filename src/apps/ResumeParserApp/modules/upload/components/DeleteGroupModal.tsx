@@ -44,16 +44,22 @@ const DeleteGroupModal: React.FC<DeleteGroupModalProps> = ({
           </button>
 
           {/* Enhanced Modal Header */}
-          <div className="relative px-8 py-6 bg-gradient-to-r from-red-50 to-pink-50 border-b border-gray-100">
+          <div
+            className="relative px-8 py-6 border-b border-gray-100"
+            style={{ backgroundColor: "#F5F5F5" }}
+          >
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+                style={{ backgroundColor: "#FDA052" }}
+              >
                 <TrashIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold" style={{ color: "#2E3141" }}>
                   Delete Group
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm mt-1" style={{ color: "#6D6F7A" }}>
                   This action cannot be undone
                 </p>
               </div>
@@ -63,31 +69,49 @@ const DeleteGroupModal: React.FC<DeleteGroupModalProps> = ({
           {/* Enhanced Modal Content */}
           <div className="px-8 py-6">
             {/* Warning message */}
-            <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+            <div
+              className="mb-6 p-4 border rounded-xl"
+              style={{ backgroundColor: "#EFF5FF", borderColor: "#BFD6FF" }}
+            >
               <div className="flex items-start space-x-3">
-                <ExclamationTriangleIcon className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                <ExclamationTriangleIcon
+                  className="w-6 h-6 flex-shrink-0 mt-0.5"
+                  style={{ color: "#FDA052" }}
+                />
                 <div>
-                  <p className="text-sm font-semibold text-amber-800 mb-2">
+                  <p
+                    className="text-sm font-semibold mb-2"
+                    style={{ color: "#2E3141" }}
+                  >
                     Are you sure you want to delete this group?
                   </p>
-                  <div className="bg-white rounded-lg p-3 border border-amber-200">
+                  <div
+                    className="bg-white rounded-lg p-3 border"
+                    style={{ borderColor: "#D5D6D9" }}
+                  >
                     <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <TrashIcon className="w-4 h-4 text-gray-600" />
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: "#F5F5F5" }}
+                      >
+                        <TrashIcon
+                          className="w-4 h-4"
+                          style={{ color: "#6D6F7A" }}
+                        />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium" style={{ color: "#2E3141" }}>
                           {group.name}
                         </p>
                         {group.description && (
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs" style={{ color: "#82838D" }}>
                             {group.description}
                           </p>
                         )}
                       </div>
                     </div>
                   </div>
-                  <p className="text-xs text-amber-700 mt-2">
+                  <p className="text-xs mt-2" style={{ color: "#6D6F7A" }}>
                     This will permanently remove the group and cannot be
                     recovered.
                   </p>
@@ -97,14 +121,25 @@ const DeleteGroupModal: React.FC<DeleteGroupModalProps> = ({
 
             {/* Error Message */}
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+              <div
+                className="mb-6 p-4 border rounded-xl"
+                style={{ backgroundColor: "#FFEAEA", borderColor: "#FFB3B3" }}
+              >
                 <div className="flex items-start space-x-3">
-                  <ExclamationTriangleIcon className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <ExclamationTriangleIcon
+                    className="w-5 h-5 mt-0.5 flex-shrink-0"
+                    style={{ color: "#DC2626" }}
+                  />
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-red-800 mb-1">
+                    <p
+                      className="text-sm font-semibold mb-1"
+                      style={{ color: "#7F1D1D" }}
+                    >
                       Failed to delete group
                     </p>
-                    <p className="text-sm text-red-700">{error}</p>
+                    <p className="text-sm" style={{ color: "#991B1B" }}>
+                      {error}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -115,14 +150,43 @@ const DeleteGroupModal: React.FC<DeleteGroupModalProps> = ({
               <button
                 onClick={onClose}
                 disabled={isDeleting}
-                className="flex-1 px-6 py-3 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-3 text-sm font-semibold rounded-xl border-2 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  color: "#6D6F7A",
+                  backgroundColor: "#FFFFFF",
+                  borderColor: "#D5D6D9",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isDeleting) {
+                    e.currentTarget.style.backgroundColor = "#F5F5F5";
+                    e.currentTarget.style.borderColor = "#C0C1C6";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#FFFFFF";
+                  e.currentTarget.style.borderColor = "#D5D6D9";
+                }}
               >
                 Cancel
               </button>
               <button
                 onClick={onConfirm}
                 disabled={isDeleting}
-                className="flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 bg-gradient-to-r from-red-600 to-pink-600 text-white hover:from-red-700 hover:to-pink-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg"
+                className="flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg"
+                style={{
+                  backgroundColor: "#FDA052",
+                  color: "#FFFFFF",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isDeleting) {
+                    e.currentTarget.style.backgroundColor = "#FD8F2B";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isDeleting) {
+                    e.currentTarget.style.backgroundColor = "#FDA052";
+                  }
+                }}
               >
                 {isDeleting ? (
                   <div className="flex items-center justify-center space-x-2">

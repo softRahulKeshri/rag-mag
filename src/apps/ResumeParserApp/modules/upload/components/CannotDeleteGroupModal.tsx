@@ -38,16 +38,22 @@ const CannotDeleteGroupModal: React.FC<CannotDeleteGroupModalProps> = ({
           </button>
 
           {/* Enhanced Modal Header */}
-          <div className="relative px-8 py-6 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-100">
+          <div
+            className="relative px-8 py-6 border-b border-gray-100"
+            style={{ backgroundColor: "#F5F5F5" }}
+          >
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+                style={{ backgroundColor: "#FDA052" }}
+              >
                 <ExclamationTriangleIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-xl font-bold" style={{ color: "#2E3141" }}>
                   Cannot Delete Group
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm mt-1" style={{ color: "#6D6F7A" }}>
                   This group contains active CVs
                 </p>
               </div>
@@ -57,18 +63,34 @@ const CannotDeleteGroupModal: React.FC<CannotDeleteGroupModalProps> = ({
           {/* Enhanced Modal Content */}
           <div className="px-8 py-6">
             {/* Group info */}
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <div
+              className="mb-6 p-4 border rounded-xl"
+              style={{ backgroundColor: "#EFF5FF", borderColor: "#BFD6FF" }}
+            >
               <div className="flex items-start space-x-3">
-                <InformationCircleIcon className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
+                <InformationCircleIcon
+                  className="w-6 h-6 flex-shrink-0 mt-0.5"
+                  style={{ color: "#3077F3" }}
+                />
                 <div>
-                  <p className="text-sm font-semibold text-blue-800 mb-2">
+                  <p
+                    className="text-sm font-semibold mb-2"
+                    style={{ color: "#1E50A8" }}
+                  >
                     Group Information
                   </p>
-                  <div className="bg-white rounded-lg p-3 border border-blue-200">
+                  <div
+                    className="bg-white rounded-lg p-3 border"
+                    style={{ borderColor: "#BFD6FF" }}
+                  >
                     <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: "#E3EDFF" }}
+                      >
                         <svg
-                          className="w-4 h-4 text-blue-600"
+                          className="w-4 h-4"
+                          style={{ color: "#3077F3" }}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -82,18 +104,21 @@ const CannotDeleteGroupModal: React.FC<CannotDeleteGroupModalProps> = ({
                         </svg>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">
+                        <p
+                          className="font-semibold"
+                          style={{ color: "#2E3141" }}
+                        >
                           "{group.name}"
                         </p>
                         {group.description && (
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs" style={{ color: "#82838D" }}>
                             {group.description}
                           </p>
                         )}
                       </div>
                     </div>
                   </div>
-                  <p className="text-xs text-blue-700 mt-2">
+                  <p className="text-xs mt-2" style={{ color: "#1E50A8" }}>
                     The group contains CVs and cannot be deleted to prevent data
                     loss.
                   </p>
@@ -102,13 +127,25 @@ const CannotDeleteGroupModal: React.FC<CannotDeleteGroupModalProps> = ({
             </div>
 
             {/* Enhanced Instructions */}
-            <div className="mb-6 p-5 bg-gradient-to-br from-gray-50 to-blue-50 border border-gray-200 rounded-xl">
+            <div
+              className="mb-6 p-5 border rounded-xl"
+              style={{ backgroundColor: "#F5F5F5", borderColor: "#D5D6D9" }}
+            >
               <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <InformationCircleIcon className="w-5 h-5 text-blue-600" />
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: "#E3EDFF" }}
+                >
+                  <InformationCircleIcon
+                    className="w-5 h-5"
+                    style={{ color: "#3077F3" }}
+                  />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-base font-semibold text-gray-900 mb-3">
+                  <h4
+                    className="text-base font-semibold mb-3"
+                    style={{ color: "#2E3141" }}
+                  >
                     How to delete this group:
                   </h4>
                   <div className="space-y-3">
@@ -119,10 +156,16 @@ const CannotDeleteGroupModal: React.FC<CannotDeleteGroupModalProps> = ({
                       "Return here to delete the empty group",
                     ].map((step, index) => (
                       <div key={index} className="flex items-start space-x-3">
-                        <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                        <div
+                          className="w-6 h-6 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5"
+                          style={{ backgroundColor: "#3077F3" }}
+                        >
                           {index + 1}
                         </div>
-                        <p className="text-sm text-gray-700 leading-relaxed">
+                        <p
+                          className="text-sm leading-relaxed"
+                          style={{ color: "#6D6F7A" }}
+                        >
                           {step}
                         </p>
                       </div>
@@ -133,10 +176,14 @@ const CannotDeleteGroupModal: React.FC<CannotDeleteGroupModalProps> = ({
             </div>
 
             {/* Safety note */}
-            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+            <div
+              className="mb-6 p-4 border rounded-xl"
+              style={{ backgroundColor: "#F0FDF4", borderColor: "#BBF7D0" }}
+            >
               <div className="flex items-start space-x-3">
                 <svg
-                  className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5"
+                  className="w-5 h-5 flex-shrink-0 mt-0.5"
+                  style={{ color: "#059669" }}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -149,10 +196,13 @@ const CannotDeleteGroupModal: React.FC<CannotDeleteGroupModalProps> = ({
                   />
                 </svg>
                 <div>
-                  <p className="text-sm font-medium text-green-800 mb-1">
+                  <p
+                    className="text-sm font-medium mb-1"
+                    style={{ color: "#047857" }}
+                  >
                     Data Protection
                   </p>
-                  <p className="text-xs text-green-700">
+                  <p className="text-xs" style={{ color: "#065F46" }}>
                     This prevents accidental data loss and ensures your CVs are
                     safely managed.
                   </p>
@@ -164,7 +214,17 @@ const CannotDeleteGroupModal: React.FC<CannotDeleteGroupModalProps> = ({
             <div className="flex justify-center">
               <button
                 onClick={onClose}
-                className="px-8 py-3 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="px-8 py-3 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                style={{
+                  backgroundColor: "#3077F3",
+                  color: "#FFFFFF",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#1E50A8";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "#3077F3";
+                }}
               >
                 <span className="flex items-center space-x-2">
                   <span>Got It</span>
