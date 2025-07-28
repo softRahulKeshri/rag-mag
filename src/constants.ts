@@ -37,6 +37,7 @@ export const APPS = {
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
+  SIGNUP: "/signup",
   PROFILE: "/profile",
   RESUME_PARSER: "/resume-parser",
   CHAT_SERVICE: "/chat-service",
