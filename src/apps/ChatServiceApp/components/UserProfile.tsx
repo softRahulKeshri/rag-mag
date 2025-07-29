@@ -42,20 +42,20 @@ export const UserProfile = () => {
       {/* Profile Trigger Button */}
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="w-full flex items-center justify-between p-3 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200/60 shadow-md hover:shadow-lg transition-all duration-300 hover:bg-white group"
+        className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-[#EAEAEC] hover:border-[#D5D6D9] shadow-sm hover:shadow-md transition-all duration-200 group"
       >
         <div className="flex items-center space-x-3">
           {/* Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md border border-indigo-400/30 group-hover:shadow-lg transition-all duration-300">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#3077F3] to-[#B96AF7] rounded-lg flex items-center justify-center shadow-md border border-[#3077F3] border-opacity-30 transition-all duration-200">
               <UserCircleIcon className="h-5 w-5 text-white" />
             </div>
           </div>
 
           {/* User Info */}
           <div className="flex-1 text-left min-w-0">
-            <p className="text-sm font-semibold text-slate-800 truncate">
-               {displayName}
+            <p className="text-sm font-medium text-[#2E3141] truncate">
+              {displayName}
             </p>
           </div>
         </div>
@@ -63,27 +63,27 @@ export const UserProfile = () => {
         {/* Dropdown Arrow */}
         <div className="flex-shrink-0 ml-2">
           {isDropdownOpen ? (
-            <ChevronUpIcon className="h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            <ChevronUpIcon className="h-4 w-4 text-[#9698A0] group-hover:text-[#6D6F7A] transition-colors" />
           ) : (
-            <ChevronDownIcon className="h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            <ChevronDownIcon className="h-4 w-4 text-[#9698A0] group-hover:text-[#6D6F7A] transition-colors" />
           )}
         </div>
       </button>
 
       {/* Dropdown Menu */}
       {isDropdownOpen && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl border border-slate-200/60 shadow-xl backdrop-blur-sm z-50 overflow-hidden">
+        <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl border border-[#EAEAEC] shadow-xl z-50 overflow-hidden">
           {/* User Account Section */}
-          <div className="p-4 border-b border-slate-100">
+          <div className="p-4 border-b border-[#F5F5F5]">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md border border-indigo-400/30">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#3077F3] to-[#B96AF7] rounded-xl flex items-center justify-center shadow-md border border-[#3077F3] border-opacity-30">
                 <UserCircleIcon className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="text-sm font-semibold text-slate-800">
+                <h3 className="text-sm font-medium text-[#2E3141]">
                   User Account
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-[#9698A0]">
                   Manage your profile and settings
                 </p>
               </div>
@@ -93,26 +93,20 @@ export const UserProfile = () => {
           {/* Menu Options */}
           <div className="py-2">
             {/* View Profile */}
-            <button className="w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-slate-50 transition-colors duration-200">
-              <UserCircleIcon className="h-4 w-4 text-slate-400" />
-              <span className="text-sm text-slate-700 font-medium">
+            <button className="w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-[#F5F5F5] transition-colors duration-200">
+              <UserCircleIcon className="h-4 w-4 text-[#9698A0]" />
+              <span className="text-sm text-[#2E3141] font-medium">
                 View Profile
               </span>
             </button>
 
-            {/* Settings - Hidden as requested */}
-            {/* <button className="w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-slate-50 transition-colors duration-200">
-              <Cog6ToothIcon className="h-4 w-4 text-slate-400" />
-              <span className="text-sm text-slate-700 font-medium">Settings</span>
-            </button> */}
-
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-rose-50 transition-colors duration-200 group"
+              className="w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-[#FDA052] hover:bg-opacity-10 transition-colors duration-200 group"
             >
-              <ArrowRightOnRectangleIcon className="h-4 w-4 text-slate-400 group-hover:text-rose-500 transition-colors" />
-              <span className="text-sm text-slate-700 group-hover:text-rose-600 font-medium transition-colors">
+              <ArrowRightOnRectangleIcon className="h-4 w-4 text-[#9698A0] group-hover:text-[#FDA052] transition-colors" />
+              <span className="text-sm text-[#2E3141] group-hover:text-[#FDA052] font-medium transition-colors">
                 Logout
               </span>
             </button>

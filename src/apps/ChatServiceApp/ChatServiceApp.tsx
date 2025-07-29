@@ -275,17 +275,23 @@ const ChatServiceApp = () => {
   // Show loading state while fetching sessions
   if (isLoadingSessions) {
     return (
-      <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
-        <div className="text-center animate-fade-in">
-          {/* Premium Loading Animation */}
-          <div className="relative mb-8">
-            <div className="w-20 h-20 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"></div>
+      <div className="h-screen w-full bg-gradient-to-br from-[#FFFFFF] via-[#F5F5F5] to-[#EAEAEC] flex items-center justify-center">
+        <div className="text-center p-12 bg-white rounded-3xl shadow-2xl border border-[#D5D6D9] max-w-md mx-auto">
+          {/* Professional Loading Animation */}
+          <div className="relative mb-10">
+            <div className="w-20 h-20 border-4 border-[#D5D6D9] border-t-[#3077F3] rounded-full animate-spin mx-auto shadow-lg"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 border-4 border-transparent border-t-purple-400 rounded-full animate-spin animate-reverse"></div>
+              <div className="w-14 h-14 border-4 border-transparent border-t-[#B96AF7] rounded-full animate-spin"></div>
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-8 h-8 border-4 border-transparent border-t-[#41E6F8] rounded-full animate-spin"></div>
             </div>
           </div>
-          <p className="text-slate-600 text-lg font-medium animate-pulse">
-            Loading conversations...
+          <h3 className="text-xl font-semibold text-[#2E3141] mb-3">
+            Loading ChatAI
+          </h3>
+          <p className="text-[#6D6F7A] text-sm leading-relaxed">
+            Setting up your intelligent conversation experience...
           </p>
         </div>
       </div>
@@ -295,11 +301,11 @@ const ChatServiceApp = () => {
   // Show error state if sessions fail to load
   if (sessionsError) {
     return (
-      <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto animate-fade-in">
-          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="h-screen w-full bg-gradient-to-br from-[#FFFFFF] via-[#F5F5F5] to-[#EAEAEC] flex items-center justify-center p-6">
+        <div className="text-center max-w-lg mx-auto p-12 bg-white rounded-3xl shadow-2xl border border-[#D5D6D9]">
+          <div className="w-20 h-20 bg-gradient-to-br from-[#FDA052] to-[#FD8A02] rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
             <svg
-              className="w-8 h-8 text-red-500"
+              className="w-10 h-10 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -312,16 +318,19 @@ const ChatServiceApp = () => {
               />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-slate-800 mb-3">
-            Failed to Load Conversations
+          <h3 className="text-2xl font-semibold text-[#2E3141] mb-4">
+            Connection Failed
           </h3>
-          <p className="text-slate-600 text-sm mb-6">{sessionsError.message}</p>
+          <p className="text-[#6D6F7A] text-base mb-8 leading-relaxed">
+            {sessionsError.message ||
+              "Unable to load your conversations. Please check your connection and try again."}
+          </p>
           <button
             onClick={() => refetchSessions()}
-            className="inline-flex items-center px-4 py-2 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 transition-all duration-300 hover:scale-105"
+            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[#3077F3] to-[#B96AF7] text-white text-base font-medium rounded-2xl hover:from-[#1E50A8] hover:to-[#9D58E5] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             <svg
-              className="w-4 h-4 mr-2 animate-spin"
+              className="w-5 h-5 mr-3"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -333,7 +342,7 @@ const ChatServiceApp = () => {
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-            Retry
+            Try Again
           </button>
         </div>
       </div>
@@ -341,21 +350,18 @@ const ChatServiceApp = () => {
   }
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-100 flex overflow-hidden">
-      {/* Premium Background Effects */}
+    <div className="h-screen w-full bg-gradient-to-br from-[#FFFFFF] via-[#F5F5F5] to-[#EAEAEC] flex">
+      {/* Background Decorative Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-radial from-blue-100/30 via-transparent to-transparent animate-pulse-slow"></div>
-        <div
-          className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-radial from-purple-100/20 via-transparent to-transparent animate-pulse-slow"
-          style={{ animationDelay: "2s" }}
-        ></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[#3077F3]/5 to-[#B96AF7]/5 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-[#41E6F8]/5 to-[#FDA052]/5 rounded-full blur-3xl"></div>
       </div>
 
       {/* Sidebar */}
       <div
         className={`relative z-30 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-500 ease-in-out md:translate-x-0 md:static md:inset-auto w-80 flex-shrink-0`}
+        } transition-transform duration-500 ease-in-out md:translate-x-0 md:static md:inset-auto w-96 flex-shrink-0`}
       >
         <ChatSidebar
           chats={chats}
@@ -397,9 +403,9 @@ const ChatServiceApp = () => {
         </div>
 
         {/* Chat Content - Fixed Height Container */}
-        <div className="flex-1 flex flex-col min-h-0 relative">
+        <div className="flex-1 flex flex-col min-h-0 relative bg-white/50 backdrop-blur-sm m-4 rounded-3xl shadow-xl border border-[#D5D6D9]">
           {/* Messages Area - Takes remaining space */}
-          <div className="flex-1 min-h-0 relative">
+          <div className="flex-1 min-h-0 relative rounded-t-3xl overflow-hidden">
             <ChatMessages
               messages={selectedChat?.messages || []}
               isLoading={isLoadingMessages}

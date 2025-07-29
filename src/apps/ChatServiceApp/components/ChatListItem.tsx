@@ -19,8 +19,8 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
 }) => {
   const lastMessage = chat.messages[chat.messages.length - 1];
   const previewText = lastMessage?.content
-    ? lastMessage.content.length > 50
-      ? lastMessage.content.substring(0, 50) + "..."
+    ? lastMessage.content.length > 45
+      ? lastMessage.content.substring(0, 45) + "..."
       : lastMessage.content
     : "No messages yet";
 
@@ -34,29 +34,29 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`group relative p-3 rounded-xl transition-all duration-300 cursor-pointer transform-gpu ${
+      className={`group relative p-5 rounded-2xl transition-all duration-300 cursor-pointer transform hover:scale-[1.02] ${
         isSelected
-          ? "bg-gradient-to-r from-indigo-50 via-purple-50 to-indigo-50 border border-indigo-200/60 shadow-lg shadow-indigo-500/20"
-          : "hover:bg-gradient-to-r hover:from-slate-50 hover:via-white hover:to-slate-50 border border-transparent hover:border-slate-200/60 hover:shadow-md"
+          ? "bg-gradient-to-r from-[#3077F3]/10 via-[#B96AF7]/5 to-[#3077F3]/10 border-2 border-[#3077F3]/30 shadow-xl shadow-[#3077F3]/10"
+          : "hover:bg-white hover:shadow-xl hover:shadow-black/5 border-2 border-transparent hover:border-[#EAEAEC]"
       }`}
     >
       {/* Enhanced Chat Item Content */}
-      <div className="flex items-start space-x-3">
-        {/* Enhanced Modern Avatar */}
+      <div className="flex items-start space-x-4">
+        {/* Enhanced Avatar */}
         <div className="flex-shrink-0">
           <div
-            className={`relative w-10 h-10 rounded-full flex items-center justify-center shadow-md border-2 transition-all duration-300 ${
+            className={`relative w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg border-2 transition-all duration-300 group-hover:scale-110 ${
               isSelected
-                ? "bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 border-indigo-400/50"
-                : "bg-gradient-to-br from-slate-500 via-gray-500 to-slate-600 border-slate-400/50 group-hover:from-indigo-500 group-hover:via-purple-500 group-hover:to-indigo-600 group-hover:border-indigo-400/50"
-            } group-hover:scale-110`}
+                ? "bg-gradient-to-br from-[#3077F3] to-[#B96AF7] border-[#3077F3]/30"
+                : "bg-gradient-to-br from-[#9698A0] to-[#6D6F7A] border-[#D5D6D9] group-hover:from-[#3077F3] group-hover:to-[#B96AF7] group-hover:border-[#3077F3]/30"
+            }`}
           >
-            <ChatBubbleLeftRightIconSolid className="h-5 w-5 text-white" />
+            <ChatBubbleLeftRightIconSolid className="h-7 w-7 text-white" />
 
-            {/* AI Status Indicator */}
+            {/* Enhanced AI Status Indicator */}
             {hasAIMessage && (
-              <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white">
-                <SparklesIcon className="h-2 w-2 text-white absolute inset-0.5" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#41E6F8] rounded-full animate-pulse border-2 border-white shadow-md">
+                <SparklesIcon className="h-2.5 w-2.5 text-white absolute inset-0.5" />
               </div>
             )}
           </div>
@@ -64,21 +64,21 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
 
         {/* Enhanced Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center justify-between mb-2">
             <h3
-              className={`text-sm font-semibold truncate transition-colors duration-300 ${
+              className={`text-base font-semibold truncate transition-colors duration-300 ${
                 isSelected
-                  ? "text-indigo-700"
-                  : "text-slate-700 group-hover:text-indigo-600"
+                  ? "text-[#3077F3]"
+                  : "text-[#2E3141] group-hover:text-[#3077F3]"
               }`}
             >
               {chat.title || "New Chat"}
             </h3>
             <span
-              className={`text-xs font-medium transition-colors duration-300 ${
+              className={`text-xs font-semibold transition-colors duration-300 ${
                 isSelected
-                  ? "text-indigo-500"
-                  : "text-slate-400 group-hover:text-indigo-500"
+                  ? "text-[#B96AF7]"
+                  : "text-[#9698A0] group-hover:text-[#B96AF7]"
               }`}
             >
               {formattedTime}
@@ -86,41 +86,43 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
           </div>
 
           <p
-            className={`text-xs leading-relaxed truncate transition-colors duration-300 ${
+            className={`text-sm leading-relaxed truncate transition-colors duration-300 ${
               isSelected
-                ? "text-slate-600"
-                : "text-slate-500 group-hover:text-slate-600"
+                ? "text-[#6D6F7A]"
+                : "text-[#9698A0] group-hover:text-[#6D6F7A]"
             }`}
           >
             {previewText}
           </p>
 
-          {/* Enhanced Message Count */}
+          {/* Enhanced Message Count & Status */}
           {chat.messages.length > 0 && (
-            <div className="flex items-center space-x-2 mt-2">
-              <div
-                className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
-                  isSelected
-                    ? "bg-indigo-500"
-                    : "bg-slate-300 group-hover:bg-indigo-400"
-                }`}
-              ></div>
-              <span
-                className={`text-xs font-medium transition-colors duration-300 ${
-                  isSelected
-                    ? "text-indigo-600"
-                    : "text-slate-400 group-hover:text-indigo-500"
-                }`}
-              >
-                {chat.messages.length} message
-                {chat.messages.length !== 1 ? "s" : ""}
-              </span>
+            <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center space-x-2">
+                <div
+                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                    isSelected
+                      ? "bg-[#3077F3]"
+                      : "bg-[#D5D6D9] group-hover:bg-[#3077F3]"
+                  }`}
+                ></div>
+                <span
+                  className={`text-xs font-semibold transition-colors duration-300 ${
+                    isSelected
+                      ? "text-[#3077F3]"
+                      : "text-[#9698A0] group-hover:text-[#3077F3]"
+                  }`}
+                >
+                  {chat.messages.length} message
+                  {chat.messages.length !== 1 ? "s" : ""}
+                </span>
+              </div>
 
-              {/* AI Conversation Indicator */}
+              {/* Enhanced AI Conversation Indicator */}
               {hasAIMessage && (
-                <div className="flex items-center space-x-1">
-                  <SparklesIcon className="h-3 w-3 text-emerald-500 animate-pulse" />
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-full">
+                <div className="flex items-center space-x-2">
+                  <SparklesIcon className="h-4 w-4 text-[#41E6F8] animate-pulse" />
+                  <span className="text-xs font-bold text-[#41E6F8] bg-[#41E6F8]/10 px-2.5 py-1 rounded-full border border-[#41E6F8]/20">
                     AI
                   </span>
                 </div>
@@ -130,31 +132,34 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
         </div>
 
         {/* Enhanced Action Button */}
-        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
           <button
-            className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-white/80 transition-all duration-300 hover:scale-110 transform-gpu"
+            className="p-2.5 text-[#9698A0] hover:text-[#3077F3] rounded-xl hover:bg-white hover:shadow-lg transition-all duration-300 hover:scale-110"
             onClick={(e) => {
               e.stopPropagation();
               // Handle menu click
             }}
             aria-label="Chat options"
           >
-            <EllipsisVerticalIcon className="h-4 w-4" />
+            <EllipsisVerticalIcon className="h-5 w-5" />
           </button>
         </div>
       </div>
 
       {/* Enhanced Selection Indicator */}
       {isSelected && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 via-purple-500 to-indigo-600 rounded-r-full shadow-lg"></div>
+        <>
+          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#3077F3] to-[#B96AF7] rounded-r-full shadow-lg"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#3077F3]/5 to-[#B96AF7]/5 rounded-2xl pointer-events-none"></div>
+        </>
       )}
 
       {/* Enhanced Hover Glow Effect */}
       <div
-        className={`absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 pointer-events-none ${
+        className={`absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 pointer-events-none ${
           isSelected
-            ? "bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-indigo-500/10 opacity-100"
-            : "group-hover:bg-gradient-to-r group-hover:from-indigo-500/5 group-hover:via-purple-500/5 group-hover:to-indigo-500/5 group-hover:opacity-100"
+            ? "bg-gradient-to-r from-[#3077F3]/5 via-[#B96AF7]/5 to-[#3077F3]/5 opacity-100"
+            : "group-hover:bg-gradient-to-r group-hover:from-[#3077F3]/3 group-hover:via-[#B96AF7]/3 group-hover:to-[#3077F3]/3 group-hover:opacity-100"
         }`}
       ></div>
     </div>

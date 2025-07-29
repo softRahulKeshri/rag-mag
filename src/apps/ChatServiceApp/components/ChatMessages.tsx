@@ -63,35 +63,24 @@ export const ChatMessages = ({
   // Loading state for messages
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center p-8">
-        <div className="text-center animate-fade-in">
+      <div className="h-full flex items-center justify-center p-12 bg-gradient-to-b from-white to-[#F5F5F5]">
+        <div className="text-center">
           {/* Enhanced Loading Animation */}
-          <div className="relative mb-8">
-            <div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin mx-auto shadow-lg"></div>
+          <div className="relative mb-12">
+            <div className="w-24 h-24 border-4 border-[#EAEAEC] border-t-[#3077F3] rounded-full animate-spin mx-auto shadow-lg"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-12 h-12 border-4 border-transparent border-t-purple-400 rounded-full animate-spin animate-reverse"></div>
+              <div className="w-16 h-16 border-4 border-transparent border-t-[#B96AF7] rounded-full animate-spin"></div>
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div
-                className="w-8 h-8 border-4 border-transparent border-t-pink-400 rounded-full animate-spin"
-                style={{ animationDuration: "1.5s" }}
-              ></div>
+              <div className="w-8 h-8 border-4 border-transparent border-t-[#41E6F8] rounded-full animate-spin"></div>
             </div>
           </div>
-          <p className="text-slate-600 font-medium animate-pulse text-base">
-            Loading messages...
+          <h3 className="text-xl font-semibold text-[#2E3141] mb-3">
+            Loading Messages
+          </h3>
+          <p className="text-[#6D6F7A] font-medium text-base">
+            Retrieving your conversation history...
           </p>
-          <div className="flex items-center justify-center space-x-2 mt-6">
-            <div className="w-2 h-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full animate-bounce"></div>
-            <div
-              className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-bounce"
-              style={{ animationDelay: "0.1s" }}
-            ></div>
-            <div
-              className="w-2 h-2 bg-gradient-to-r from-pink-500 to-indigo-500 rounded-full animate-bounce"
-              style={{ animationDelay: "0.2s" }}
-            ></div>
-          </div>
         </div>
       </div>
     );
@@ -99,108 +88,90 @@ export const ChatMessages = ({
 
   if (messages.length === 0) {
     return (
-      <div className="h-full flex items-center justify-center p-8">
-        <div className="text-center max-w-lg mx-auto animate-fade-in-up">
-          {/* Enhanced Welcome Animation */}
-          <div className="relative mb-12">
+      <div className="h-full flex items-center justify-center p-12 bg-gradient-to-b from-white to-[#F5F5F5]">
+        <div className="text-center max-w-2xl mx-auto">
+          {/* Enhanced Welcome Section */}
+          <div className="relative mb-16">
             <div className="relative mx-auto w-32 h-32">
-              {/* Main Icon with enhanced styling */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-indigo-500/30 animate-float">
-                <ChatBubbleLeftRightIcon className="h-16 w-16 text-white animate-pulse" />
+              {/* Main Icon */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#3077F3] to-[#B96AF7] rounded-3xl flex items-center justify-center shadow-2xl">
+                <ChatBubbleLeftRightIcon className="h-16 w-16 text-white" />
               </div>
 
               {/* Enhanced Floating Elements */}
               <div
-                className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-bounce shadow-xl"
+                className="absolute -top-3 -right-3 w-8 h-8 bg-[#FDA052] rounded-full flex items-center justify-center animate-bounce shadow-lg"
                 style={{ animationDelay: "0.5s" }}
               >
                 <SparklesIcon className="h-4 w-4 text-white" />
               </div>
 
               <div
-                className="absolute -bottom-2 -left-3 w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center animate-bounce shadow-xl"
+                className="absolute -bottom-3 -left-3 w-7 h-7 bg-[#41E6F8] rounded-full flex items-center justify-center animate-bounce shadow-lg"
                 style={{ animationDelay: "1s" }}
               >
-                <CheckCircleIcon className="h-3 w-3 text-white" />
+                <CheckCircleIcon className="h-4 w-4 text-white" />
               </div>
 
-              <div className="absolute top-2 -left-4 w-4 h-4 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full animate-ping"></div>
               <div
-                className="absolute -bottom-1 -right-1 w-3 h-3 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full animate-ping"
+                className="absolute top-2 -left-6 w-4 h-4 bg-[#B96AF7] rounded-full animate-pulse shadow-md"
                 style={{ animationDelay: "1.5s" }}
               ></div>
-
-              {/* Enhanced Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/30 via-purple-500/30 to-pink-500/30 rounded-3xl blur-3xl animate-pulse-slow"></div>
             </div>
           </div>
 
           {/* Enhanced Welcome Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-fade-in">
+              <h1 className="text-3xl font-bold text-[#2E3141]">
                 Welcome to ChatAI
               </h1>
-              <p
-                className="text-lg text-slate-600 animate-fade-in font-medium"
-                style={{ animationDelay: "0.2s" }}
-              >
+              <p className="text-xl text-[#6D6F7A] font-medium">
                 Your intelligent conversation partner
               </p>
-              <p
-                className="text-sm text-slate-500 leading-relaxed animate-fade-in max-w-md mx-auto"
-                style={{ animationDelay: "0.4s" }}
-              >
+              <p className="text-base text-[#9698A0] leading-relaxed max-w-lg mx-auto">
                 Start a conversation below and experience the power of AI-driven
-                chat with enhanced intelligence
+                chat with enhanced intelligence and natural language
+                understanding
               </p>
             </div>
 
             {/* Enhanced Feature Cards */}
-            <div
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 animate-fade-in"
-              style={{ animationDelay: "0.6s" }}
-            >
-              <div className="group p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/50 hover:border-indigo-300/50 transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/20 hover:-translate-y-1">
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+              <div className="group p-6 bg-white rounded-2xl border border-[#EAEAEC] hover:border-[#3077F3] hover:border-opacity-30 transition-all duration-300 hover:shadow-xl hover:scale-105">
+                <div className="w-12 h-12 bg-[#3077F3] rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform">
                   <SparklesIcon className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="font-semibold text-slate-800 mb-2 text-sm">
+                <h3 className="font-semibold text-[#2E3141] mb-2 text-base">
                   Smart Responses
                 </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-sm text-[#6D6F7A] leading-relaxed">
                   Get intelligent, contextual answers to all your questions with
-                  advanced AI
+                  advanced AI reasoning
                 </p>
               </div>
 
-              <div
-                className="group p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/50 hover:border-emerald-300/50 transition-all duration-500 hover:shadow-xl hover:shadow-emerald-500/20 hover:-translate-y-1"
-                style={{ animationDelay: "0.1s" }}
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="group p-6 bg-white rounded-2xl border border-[#EAEAEC] hover:border-[#41E6F8] hover:border-opacity-30 transition-all duration-300 hover:shadow-xl hover:scale-105">
+                <div className="w-12 h-12 bg-[#41E6F8] rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform">
                   <CheckCircleIcon className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="font-semibold text-slate-800 mb-2 text-sm">
-                  Real-time
+                <h3 className="font-semibold text-[#2E3141] mb-2 text-base">
+                  Real-time Chat
                 </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-sm text-[#6D6F7A] leading-relaxed">
                   Instant responses with seamless conversation flow and live
-                  typing indicators
+                  interaction
                 </p>
               </div>
 
-              <div
-                className="group p-6 bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/50 hover:border-rose-300/50 transition-all duration-500 hover:shadow-xl hover:shadow-rose-500/20 hover:-translate-y-1"
-                style={{ animationDelay: "0.2s" }}
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="group p-6 bg-white rounded-2xl border border-[#EAEAEC] hover:border-[#B96AF7] hover:border-opacity-30 transition-all duration-300 hover:shadow-xl hover:scale-105">
+                <div className="w-12 h-12 bg-[#B96AF7] rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform">
                   <SparklesIconSolid className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="font-semibold text-slate-800 mb-2 text-sm">
+                <h3 className="font-semibold text-[#2E3141] mb-2 text-base">
                   AI Powered
                 </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-sm text-[#6D6F7A] leading-relaxed">
                   Advanced AI technology for natural conversations and
                   intelligent assistance
                 </p>
@@ -208,26 +179,20 @@ export const ChatMessages = ({
             </div>
 
             {/* Enhanced Status Indicators */}
-            <div
-              className="flex items-center justify-center space-x-8 pt-8 animate-fade-in"
-              style={{ animationDelay: "0.8s" }}
-            >
-              <div className="flex items-center space-x-3 px-4 py-2 bg-emerald-50 rounded-full border border-emerald-200/50 shadow-lg">
-                <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full animate-pulse shadow-sm"></div>
-                <span className="text-sm font-semibold text-emerald-700">
+            <div className="flex items-center justify-center space-x-8 pt-8">
+              <div className="flex items-center space-x-3 px-4 py-3 bg-[#41E6F8] bg-opacity-10 rounded-full border border-[#41E6F8] border-opacity-20 shadow-md">
+                <div className="w-3 h-3 bg-[#41E6F8] rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-[#2E3141]">
                   AI Ready
                 </span>
-                <SparklesIcon className="h-3 w-3 text-emerald-500 animate-pulse" />
+                <SparklesIcon className="h-4 w-4 text-[#41E6F8]" />
               </div>
-              <div className="flex items-center space-x-3 px-4 py-2 bg-indigo-50 rounded-full border border-indigo-200/50 shadow-lg">
-                <div
-                  className="w-3 h-3 bg-gradient-to-r from-indigo-400 to-indigo-500 rounded-full animate-pulse shadow-sm"
-                  style={{ animationDelay: "0.5s" }}
-                ></div>
-                <span className="text-sm font-semibold text-indigo-700">
+              <div className="flex items-center space-x-3 px-4 py-3 bg-[#3077F3] bg-opacity-10 rounded-full border border-[#3077F3] border-opacity-20 shadow-md">
+                <div className="w-3 h-3 bg-[#3077F3] rounded-full animate-pulse"></div>
+                <span className="text-sm font-semibold text-[#2E3141]">
                   Online
                 </span>
-                <CheckCircleIcon className="h-3 w-3 text-indigo-500 animate-pulse" />
+                <CheckCircleIcon className="h-4 w-4 text-[#3077F3]" />
               </div>
             </div>
           </div>
@@ -237,69 +202,68 @@ export const ChatMessages = ({
   }
 
   return (
-    <div className="h-full overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50/50 via-white to-gray-50/30 smooth-scroll">
-      <div className="max-w-4xl mx-auto space-y-4">
-        {messages.map((message, index) => (
+    <div className="h-full overflow-y-auto p-6 space-y-6 bg-gradient-to-b from-white to-[#F5F5F5]">
+      <div className="max-w-5xl mx-auto space-y-6">
+        {messages.map((message) => (
           <div
             key={message.id}
             className={`flex ${
               message.role === "user" ? "justify-end" : "justify-start"
-            } group animate-message-appear`}
-            style={{ animationDelay: `${index * 100}ms` }}
+            } group`}
           >
             <div
-              className={`relative max-w-[85%] lg:max-w-[75%] xl:max-w-[70%] flex items-start space-x-3 ${
+              className={`relative max-w-[80%] lg:max-w-[70%] xl:max-w-[65%] flex items-start space-x-4 ${
                 message.role === "user"
                   ? "flex-row-reverse space-x-reverse"
                   : ""
               }`}
             >
-              {/* Enhanced Modern Avatar */}
+              {/* Enhanced Avatar */}
               <div
                 className={`flex-shrink-0 ${
                   message.role === "user" ? "order-last" : "order-first"
                 }`}
               >
                 <div
-                  className={`relative w-10 h-10 rounded-full flex items-center justify-center shadow-lg border-2 transition-all duration-300 group-hover:scale-110 ${
+                  className={`relative w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg border-2 transition-all duration-300 group-hover:scale-110 ${
                     message.role === "user"
-                      ? "bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 border-blue-300/50 shadow-blue-500/30"
-                      : "bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 border-emerald-300/50 shadow-emerald-500/30"
+                      ? "bg-gradient-to-br from-[#3077F3] to-[#B96AF7] border-[#3077F3] border-opacity-30"
+                      : "bg-gradient-to-br from-[#41E6F8] to-[#B96AF7] border-[#41E6F8] border-opacity-30"
                   }`}
                 >
                   {message.role === "user" ? (
-                    <UserCircleIconSolid className="h-6 w-6 text-white" />
+                    <UserCircleIconSolid className="h-7 w-7 text-white" />
                   ) : (
                     <div className="relative">
-                      <SparklesIconSolid className="h-6 w-6 text-white" />
-                      <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                      <SparklesIconSolid className="h-7 w-7 text-white" />
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#FDA052] rounded-full animate-pulse border border-white"></div>
                     </div>
                   )}
                 </div>
 
-                {/* Online Status Indicator */}
+                {/* Enhanced Status Indicator */}
                 <div
-                  className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${
+                  className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white shadow-md ${
                     message.role === "user"
-                      ? "bg-green-500"
-                      : "bg-emerald-400 animate-pulse"
+                      ? "bg-[#41E6F8]"
+                      : "bg-[#41E6F8] animate-pulse"
                   }`}
                 ></div>
               </div>
 
-              {/* Enhanced Modern Message Bubble */}
+              {/* Enhanced Message Bubble */}
               <div
-                className={`relative rounded-2xl px-5 py-4 shadow-md transition-all duration-300 hover:shadow-lg backdrop-blur-sm ${
+                className={`relative rounded-3xl px-6 py-4 shadow-lg transition-all duration-300 hover:shadow-xl group-hover:scale-[1.02] ${
                   message.role === "user"
-                    ? "bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-white rounded-br-md shadow-blue-500/20"
-                    : "bg-white border border-gray-200/80 text-gray-800 rounded-bl-md hover:border-gray-300/80 shadow-gray-500/10"
-                } group-hover:scale-[1.02]`}
+                    ? "bg-gradient-to-br from-[#3077F3] to-[#B96AF7] text-white rounded-br-lg"
+                    : "bg-white border border-[#EAEAEC] text-[#2E3141] rounded-bl-lg hover:border-[#D5D6D9]"
+                }`}
               >
                 {/* Enhanced Message Text */}
-                <div className="prose prose-sm max-w-none break-words overflow-wrap-anywhere">
+                <div className="break-words">
                   {message.isStreaming ? (
-                    <div className="flex items-end space-x-2">
-                      <div className="whitespace-pre-wrap leading-relaxed text-sm font-medium">
+                    <div className="flex items-end space-x-3">
+                      <div className="whitespace-pre-wrap leading-relaxed text-base font-medium">
                         {message.content}
                       </div>
                       <div className="flex space-x-1 pb-1">
@@ -316,7 +280,7 @@ export const ChatMessages = ({
                     </div>
                   ) : (
                     <div
-                      className={`whitespace-pre-wrap leading-relaxed text-sm ${
+                      className={`whitespace-pre-wrap leading-relaxed text-base ${
                         message.role === "user" ? "font-medium" : "font-normal"
                       }`}
                     >
@@ -327,11 +291,11 @@ export const ChatMessages = ({
 
                 {/* Enhanced File Attachment */}
                 {message.file && (
-                  <div className="mt-3 pt-3 border-t border-current/20">
-                    <div className="flex items-center space-x-2 text-xs opacity-90">
-                      <DocumentDuplicateIcon className="h-4 w-4" />
-                      <span className="font-medium">{message.file.name}</span>
-                      <span className="text-xs bg-current/10 px-2 py-1 rounded-full">
+                  <div className="mt-4 pt-4 border-t border-current border-opacity-20">
+                    <div className="flex items-center space-x-3 text-sm opacity-90">
+                      <DocumentDuplicateIcon className="h-5 w-5" />
+                      <span className="font-semibold">{message.file.name}</span>
+                      <span className="text-sm bg-current bg-opacity-10 px-3 py-1 rounded-full">
                         ({(message.file.size / 1024).toFixed(1)} KB)
                       </span>
                     </div>
@@ -340,19 +304,21 @@ export const ChatMessages = ({
 
                 {/* Enhanced Timestamp & Status */}
                 <div
-                  className={`mt-3 text-xs flex items-center justify-between ${
-                    message.role === "user" ? "text-white/80" : "text-gray-500"
+                  className={`mt-4 text-sm flex items-center justify-between ${
+                    message.role === "user"
+                      ? "text-white text-opacity-80"
+                      : "text-[#9698A0]"
                   }`}
                 >
-                  <span className="font-medium">
+                  <span className="font-semibold">
                     {formatTimestamp(message.timestamp)}
                   </span>
 
                   {message.role === "assistant" && (
                     <div className="flex items-center space-x-2">
-                      <div className="flex items-center space-x-1">
-                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
-                        <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-100 px-2 py-0.5 rounded-full">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-[#41E6F8] rounded-full animate-pulse"></div>
+                        <span className="text-sm font-bold text-[#41E6F8] uppercase tracking-wider bg-[#41E6F8] bg-opacity-10 px-3 py-1 rounded-full">
                           AI
                         </span>
                       </div>
@@ -362,12 +328,12 @@ export const ChatMessages = ({
 
                 {/* Enhanced Action Buttons - Only for AI responses */}
                 {message.role === "assistant" && (
-                  <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 flex space-x-1">
+                  <div className="absolute -top-3 -right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 flex space-x-2">
                     <button
-                      className={`p-2 backdrop-blur-sm border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 transform-gpu ${
+                      className={`p-3 backdrop-blur-sm border rounded-2xl transition-all duration-300 hover:scale-110 ${
                         copiedMessageId === String(message.id)
-                          ? "bg-emerald-50 border-emerald-200 text-emerald-600"
-                          : "bg-white/95 border-gray-200 text-gray-600 hover:text-gray-800 hover:bg-white"
+                          ? "bg-[#41E6F8] bg-opacity-20 border-[#41E6F8] border-opacity-30 text-[#41E6F8] shadow-lg"
+                          : "bg-white border-[#D5D6D9] text-[#6D6F7A] hover:text-[#2E3141] hover:bg-white hover:shadow-xl"
                       }`}
                       aria-label="Copy AI response"
                       onClick={() =>
@@ -375,29 +341,20 @@ export const ChatMessages = ({
                       }
                     >
                       {copiedMessageId === String(message.id) ? (
-                        <CheckIcon className="h-4 w-4" />
+                        <CheckIcon className="h-5 w-5" />
                       ) : (
-                        <Square2StackIcon className="h-4 w-4" />
+                        <Square2StackIcon className="h-5 w-5" />
                       )}
                     </button>
                   </div>
                 )}
 
-                {/* Modern Message Tail */}
+                {/* Enhanced Message Tail */}
                 <div
-                  className={`absolute top-4 w-3 h-3 transform rotate-45 ${
+                  className={`absolute top-6 w-4 h-4 transform rotate-45 ${
                     message.role === "user"
-                      ? "right-[-6px] bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600"
-                      : "left-[-6px] bg-white border-l border-b border-gray-200/80"
-                  }`}
-                ></div>
-
-                {/* Enhanced Subtle Glow Effect */}
-                <div
-                  className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none ${
-                    message.role === "user"
-                      ? "bg-gradient-to-r from-blue-400/20 to-purple-400/20"
-                      : "bg-gradient-to-r from-emerald-400/10 to-teal-400/10"
+                      ? "right-[-8px] bg-gradient-to-br from-[#3077F3] to-[#B96AF7]"
+                      : "left-[-8px] bg-white border-l border-b border-[#EAEAEC]"
                   }`}
                 ></div>
               </div>
@@ -405,7 +362,7 @@ export const ChatMessages = ({
           </div>
         ))}
       </div>
-      <div ref={messagesEndRef} className="h-4" />
+      <div ref={messagesEndRef} className="h-8" />
     </div>
   );
 };

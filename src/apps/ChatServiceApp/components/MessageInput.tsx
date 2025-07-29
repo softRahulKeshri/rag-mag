@@ -91,25 +91,25 @@ export const MessageInput = ({
   const hasContent = message.trim() || selectedFile;
 
   return (
-    <div className="relative bg-white/95 backdrop-blur-xl border-t border-slate-200/60 shadow-lg">
+    <div className="relative bg-white border-t border-[#EAEAEC] shadow-2xl rounded-b-3xl">
       {/* Enhanced File Attachment Preview */}
       {selectedFile && (
-        <div className="mx-6 mt-4 p-4 bg-gradient-to-r from-indigo-50 via-white to-purple-50 rounded-2xl border border-indigo-200/60 shadow-xl animate-slide-up">
+        <div className="mx-8 mt-6 p-6 bg-gradient-to-r from-[#3077F3]/5 via-[#B96AF7]/5 to-[#3077F3]/5 rounded-2xl border border-[#3077F3]/20 shadow-lg">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4 flex-1 min-w-0">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-xl border border-indigo-400/30">
-                <DocumentIcon className="h-6 w-6 text-white" />
+            <div className="flex items-center space-x-5 flex-1 min-w-0">
+              <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-[#3077F3] to-[#B96AF7] rounded-2xl flex items-center justify-center shadow-xl">
+                <DocumentIcon className="h-8 w-8 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-slate-800 truncate">
+                <p className="text-base font-semibold text-[#2E3141] truncate">
                   {selectedFile.name}
                 </p>
-                <div className="flex items-center space-x-2 text-xs text-slate-600 mt-1">
-                  <span className="font-medium">
+                <div className="flex items-center space-x-3 text-sm text-[#6D6F7A] mt-2">
+                  <span className="font-semibold">
                     {(selectedFile.size / 1024).toFixed(1)} KB
                   </span>
-                  <span className="w-1 h-1 bg-slate-400 rounded-full"></span>
-                  <span className="capitalize font-medium bg-slate-100 px-2 py-1 rounded-full text-xs">
+                  <span className="w-1.5 h-1.5 bg-[#9698A0] rounded-full"></span>
+                  <span className="capitalize font-semibold bg-white px-3 py-1.5 rounded-full text-xs shadow-sm border border-[#EAEAEC]">
                     {selectedFile.type.split("/")[1] || "Unknown"}
                   </span>
                 </div>
@@ -117,40 +117,40 @@ export const MessageInput = ({
             </div>
             <button
               onClick={removeFile}
-              className="flex-shrink-0 p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-white/80 transition-all duration-300 hover:scale-110 transform-gpu ml-3 shadow-lg"
+              className="flex-shrink-0 p-3 text-[#9698A0] hover:text-[#6D6F7A] rounded-2xl hover:bg-white transition-all duration-300 ml-4 hover:scale-110"
               aria-label="Remove file"
             >
-              <XMarkIcon className="h-5 w-5" />
+              <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
         </div>
       )}
 
       {/* Enhanced Main Input Container */}
-      <div className="p-6">
+      <div className="p-8">
         <form
           onSubmit={handleSubmit}
-          className={`relative bg-white rounded-2xl transition-all duration-500 ${
+          className={`relative bg-white rounded-3xl transition-all duration-300 shadow-lg ${
             isFocused
-              ? "ring-2 ring-indigo-500/40 shadow-xl shadow-indigo-500/20"
-              : "shadow-lg hover:shadow-xl border border-slate-200/60 hover:border-indigo-300/60"
+              ? "ring-2 ring-[#3077F3]/20 shadow-2xl border-2 border-[#3077F3]/30"
+              : "border-2 border-[#EAEAEC] hover:border-[#D5D6D9] hover:shadow-xl"
           }`}
         >
           {/* Enhanced Input Area */}
-          <div className="flex items-end space-x-4 p-4">
+          <div className="flex items-end space-x-6 p-6">
             {/* Enhanced Attach Button */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isSending}
-              className={`flex-shrink-0 p-3 rounded-xl transition-all duration-300 transform-gpu ${
+              className={`flex-shrink-0 p-4 rounded-2xl transition-all duration-300 ${
                 isSending
-                  ? "text-slate-300 cursor-not-allowed"
-                  : "text-slate-500 hover:text-indigo-600 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:scale-110 shadow-md"
+                  ? "text-[#D5D6D9] cursor-not-allowed"
+                  : "text-[#9698A0] hover:text-[#3077F3] hover:bg-[#3077F3]/10 hover:scale-110 shadow-md hover:shadow-lg"
               }`}
               aria-label="Attach file"
             >
-              <PaperClipIcon className="h-5 w-5 transition-transform duration-300 hover:rotate-12" />
+              <PaperClipIcon className="h-6 w-6" />
               <input
                 type="file"
                 ref={fileInputRef}
@@ -175,19 +175,15 @@ export const MessageInput = ({
                   isSending ? "AI is thinking..." : "Type your message..."
                 }
                 disabled={isSending}
-                className={`w-full bg-transparent border-0 text-slate-800 placeholder-slate-400 focus:ring-0 focus:outline-none resize-none py-3 px-0 min-h-[48px] max-h-[120px] text-sm leading-relaxed font-medium transition-all duration-300 ${
-                  isSending ? "text-slate-400 cursor-not-allowed" : ""
-                } selection:bg-indigo-100`}
+                className={`w-full bg-transparent border-0 text-[#2E3141] placeholder-[#9698A0] focus:ring-0 focus:outline-none resize-none py-4 px-0 min-h-[56px] max-h-[140px] text-base leading-relaxed font-medium transition-all duration-300 ${
+                  isSending ? "text-[#9698A0] cursor-not-allowed" : ""
+                }`}
                 rows={1}
-                style={{
-                  scrollbarWidth: "thin",
-                  scrollbarColor: "rgb(203 213 225) transparent",
-                }}
               />
 
               {/* Enhanced Character Count */}
               {message.length > 1000 && (
-                <div className="absolute -bottom-6 right-0 text-xs text-slate-400 font-medium">
+                <div className="absolute -bottom-8 right-0 text-sm text-[#9698A0] font-semibold">
                   {message.length}/2000
                 </div>
               )}
@@ -197,54 +193,47 @@ export const MessageInput = ({
             <button
               type="submit"
               disabled={!hasContent || isSending}
-              className={`flex-shrink-0 p-3 rounded-xl transition-all duration-500 transform-gpu ${
+              className={`flex-shrink-0 p-4 rounded-2xl transition-all duration-300 ${
                 !hasContent || isSending
-                  ? "text-slate-300 bg-slate-100 cursor-not-allowed"
-                  : "text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 hover:from-indigo-600 hover:via-purple-600 hover:to-indigo-700 shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 hover:scale-110 active:scale-95"
+                  ? "text-[#D5D6D9] bg-[#F5F5F5] cursor-not-allowed shadow-inner"
+                  : "text-white bg-gradient-to-r from-[#3077F3] to-[#B96AF7] hover:from-[#1E50A8] hover:to-[#9D58E5] shadow-xl hover:shadow-2xl hover:scale-110 transform"
               }`}
               aria-label={isSending ? "Sending..." : "Send message"}
             >
               {isSending ? (
-                <ArrowPathIcon className="h-5 w-5 animate-spin" />
+                <ArrowPathIcon className="h-6 w-6 animate-spin" />
               ) : (
                 <div className="relative">
-                  <PaperAirplaneIcon className="h-5 w-5" />
+                  <PaperAirplaneIcon className="h-6 w-6" />
                   {hasContent && (
-                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-ping shadow-lg"></div>
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#FDA052] rounded-full animate-ping shadow-lg"></div>
                   )}
                 </div>
               )}
             </button>
           </div>
-
-          {/* Enhanced Focus Glow Effect */}
-          <div
-            className={`absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 opacity-0 transition-opacity duration-500 pointer-events-none ${
-              isFocused ? "opacity-100" : ""
-            }`}
-          ></div>
         </form>
 
         {/* Enhanced Quick Actions */}
-        <div className="flex items-center justify-between mt-4 px-2">
-          <div className="flex items-center space-x-4 text-xs text-slate-500">
-            <div className="flex items-center space-x-2">
-              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-sm"></div>
+        <div className="flex items-center justify-between mt-6 px-4">
+          <div className="flex items-center space-x-6 text-sm text-[#9698A0]">
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-[#41E6F8] rounded-full animate-pulse"></div>
               <span className="font-semibold">AI Ready</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <SparklesIcon className="h-3 w-3 text-indigo-500 animate-pulse" />
+            <div className="flex items-center space-x-3">
+              <SparklesIcon className="h-4 w-4 text-[#B96AF7] animate-pulse" />
               <span className="font-semibold">Enhanced with AI</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <ChatBubbleLeftRightIcon className="h-3 w-3 text-purple-500" />
+            <div className="flex items-center space-x-3">
+              <ChatBubbleLeftRightIcon className="h-4 w-4 text-[#3077F3]" />
               <span className="font-semibold">Real-time Chat</span>
             </div>
           </div>
 
-          <div className="text-xs text-slate-400 font-medium">
+          <div className="text-sm text-[#9698A0] font-semibold">
             Press{" "}
-            <kbd className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600 font-mono text-xs shadow-sm">
+            <kbd className="px-3 py-1.5 bg-[#F5F5F5] rounded-lg text-[#6D6F7A] font-mono text-sm shadow-md border border-[#EAEAEC]">
               ⏎
             </kbd>{" "}
             to send
@@ -254,19 +243,19 @@ export const MessageInput = ({
 
       {/* Enhanced Mobile Floating Send Button */}
       {hasContent && (
-        <div className="fixed bottom-8 right-8 md:hidden z-50 animate-scale-in">
+        <div className="fixed bottom-10 right-10 md:hidden z-50">
           <button
             onClick={handleSubmit}
             disabled={isSending}
-            className="w-16 h-16 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 hover:from-indigo-600 hover:via-purple-600 hover:to-indigo-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-500 flex items-center justify-center hover:scale-110 active:scale-95 transform-gpu"
+            className="w-20 h-20 bg-gradient-to-r from-[#3077F3] to-[#B96AF7] hover:from-[#1E50A8] hover:to-[#9D58E5] text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center hover:scale-110 transform"
             aria-label="Send message"
           >
             {isSending ? (
-              <ArrowPathIcon className="h-8 w-8 animate-spin" />
+              <ArrowPathIcon className="h-10 w-10 animate-spin" />
             ) : (
               <div className="relative">
-                <PaperAirplaneIcon className="h-8 w-8" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping shadow-lg"></div>
+                <PaperAirplaneIcon className="h-10 w-10" />
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#FDA052] rounded-full animate-ping shadow-lg"></div>
               </div>
             )}
           </button>

@@ -41,32 +41,32 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   };
 
   return (
-    <div className="bg-white/95 backdrop-blur-xl border-b border-slate-200/60 shadow-lg">
-      <div className="flex items-center justify-between px-6 py-4 h-16">
+    <div className="bg-white/95 backdrop-blur-xl border-b border-[#EAEAEC] shadow-lg">
+      <div className="flex items-center justify-between px-8 py-6 h-20">
         {/* Enhanced Left Section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-6">
           {/* Enhanced Menu Button */}
           <button
             onClick={onMenuToggle}
-            className="p-2.5 text-slate-600 hover:text-indigo-600 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 hover:scale-110 transform-gpu shadow-md"
+            className="p-3 text-[#6D6F7A] hover:text-[#3077F3] rounded-2xl hover:bg-[#EFF5FF] transition-all duration-300 hover:scale-110 shadow-md hover:shadow-lg"
             aria-label="Toggle menu"
           >
-            <Bars3Icon className="h-5 w-5" />
+            <Bars3Icon className="h-6 w-6" />
           </button>
 
           {/* Enhanced Title Section */}
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
-              <ChatBubbleLeftRightIcon className="h-5 w-5 text-white" />
+          <div className="flex items-center space-x-5">
+            <div className="w-14 h-14 bg-gradient-to-br from-[#3077F3] to-[#B96AF7] rounded-2xl flex items-center justify-center shadow-xl">
+              <ChatBubbleLeftRightIcon className="h-7 w-7 text-white" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-base font-bold text-slate-800 leading-tight">
+              <h1 className="text-xl font-bold text-[#2E3141] leading-tight tracking-tight">
                 {title}
               </h1>
               {subtitle && (
-                <div className="flex items-center space-x-2 text-xs text-slate-500">
-                  <ClockIcon className="h-3 w-3" />
-                  <span className="font-medium">{subtitle}</span>
+                <div className="flex items-center space-x-3 text-sm text-[#6D6F7A] mt-1">
+                  <ClockIcon className="h-4 w-4" />
+                  <span className="font-semibold">{subtitle}</span>
                 </div>
               )}
             </div>
@@ -74,37 +74,35 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </div>
 
         {/* Enhanced Right Section */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
           {/* Enhanced AI Status Indicator */}
-          <div className="hidden sm:flex items-center space-x-2 px-3 py-2 bg-emerald-50 rounded-full border border-emerald-200/50 shadow-md">
-            <div className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full animate-pulse shadow-sm"></div>
-            <span className="text-xs font-semibold text-emerald-700">
-              AI Ready
-            </span>
-            <SparklesIcon className="h-3 w-3 text-emerald-500 animate-pulse" />
+          <div className="hidden sm:flex items-center space-x-3 px-5 py-3 bg-[#41E6F8]/10 rounded-full border border-[#41E6F8]/20 shadow-lg">
+            <div className="w-3 h-3 bg-[#41E6F8] rounded-full animate-pulse shadow-sm"></div>
+            <span className="text-sm font-bold text-[#2E3141]">AI Ready</span>
+            <SparklesIcon className="h-4 w-4 text-[#41E6F8] animate-pulse" />
           </div>
 
           {/* Enhanced Menu Button */}
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2.5 text-slate-600 hover:text-indigo-600 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 hover:scale-110 transform-gpu shadow-md"
+              className="p-3 text-[#6D6F7A] hover:text-[#3077F3] rounded-2xl hover:bg-[#EFF5FF] transition-all duration-300 hover:scale-110 shadow-md hover:shadow-lg"
               aria-label="More options"
             >
-              <EllipsisVerticalIcon className="h-5 w-5" />
+              <EllipsisVerticalIcon className="h-6 w-6" />
             </button>
 
             {/* Enhanced Dropdown Menu */}
             {isMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white/95 backdrop-blur-xl border border-slate-200/60 rounded-2xl shadow-2xl shadow-slate-500/20 z-50 animate-scale-in">
-                <div className="py-2">
+              <div className="absolute right-0 top-full mt-3 w-64 bg-white border border-[#EAEAEC] rounded-2xl shadow-2xl z-50 overflow-hidden">
+                <div className="py-3">
                   <button
                     onClick={handleRename}
-                    className="w-full px-4 py-3 text-left text-sm text-slate-700 hover:text-indigo-600 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 font-medium flex items-center space-x-3"
+                    className="w-full px-6 py-4 text-left text-base text-[#2E3141] hover:text-[#3077F3] hover:bg-[#EFF5FF] transition-all duration-300 font-semibold flex items-center space-x-4"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-[#3077F3] rounded-2xl flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
                       <svg
-                        className="h-4 w-4 text-white"
+                        className="h-6 w-6 text-white"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -117,16 +115,21 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                         />
                       </svg>
                     </div>
-                    <span>Rename Chat</span>
+                    <div>
+                      <span className="block">Rename Chat</span>
+                      <span className="text-xs text-[#9698A0] font-normal">
+                        Change conversation title
+                      </span>
+                    </div>
                   </button>
 
                   <button
                     onClick={handleClearChat}
-                    className="w-full px-4 py-3 text-left text-sm text-slate-700 hover:text-rose-600 hover:bg-gradient-to-r hover:from-rose-50 hover:to-pink-50 transition-all duration-300 font-medium flex items-center space-x-3"
+                    className="w-full px-6 py-4 text-left text-base text-[#2E3141] hover:text-[#FDA052] hover:bg-[#FDA052]/10 transition-all duration-300 font-semibold flex items-center space-x-4 group"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-[#FDA052] rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                       <svg
-                        className="h-4 w-4 text-white"
+                        className="h-6 w-6 text-white"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -139,20 +142,25 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                         />
                       </svg>
                     </div>
-                    <span>Clear Chat</span>
+                    <div>
+                      <span className="block">Clear Chat</span>
+                      <span className="text-xs text-[#9698A0] group-hover:text-[#FDA052] font-normal">
+                        Remove all messages
+                      </span>
+                    </div>
                   </button>
                 </div>
 
                 {/* Enhanced Menu Arrow */}
-                <div className="absolute -top-2 right-4 w-4 h-4 bg-white/95 backdrop-blur-xl border-l border-t border-slate-200/60 transform rotate-45"></div>
+                <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-l border-t border-[#EAEAEC] transform rotate-45 shadow-lg"></div>
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Enhanced Bottom Border Glow */}
-      <div className="h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent"></div>
+      {/* Enhanced Bottom Border */}
+      <div className="h-px bg-gradient-to-r from-transparent via-[#3077F3]/30 to-transparent"></div>
     </div>
   );
 };

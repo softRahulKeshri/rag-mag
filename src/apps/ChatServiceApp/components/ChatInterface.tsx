@@ -178,15 +178,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   return (
     <div
-      className={`flex flex-col h-full bg-white rounded-lg shadow-sm border ${className}`}
+      className={`flex flex-col h-full bg-white rounded-lg shadow-sm border border-[#EAEAEC] ${className}`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between p-4 border-b border-[#EAEAEC]">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-[#2E3141]">
             {useConversationMode ? "AI Conversation" : "Chat Messages"}
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-[#6D6F7A]">
             {totalMessages} {totalMessages === 1 ? "message" : "messages"}
             {useConversationMode && " (Real-time AI responses)"}
           </p>
@@ -194,7 +194,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <button
           onClick={() => refreshMessages(chatId)}
           disabled={isLoadingMessages}
-          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+          className="p-2 text-[#9698A0] hover:text-[#3077F3] hover:bg-[#EFF5FF] rounded-lg transition-colors disabled:opacity-50"
           title="Refresh messages"
         >
           <ArrowPathIcon
@@ -207,12 +207,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {isLoadingMessages ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Loading messages...</span>
+            <div className="relative">
+              <div className="w-8 h-8 border-4 border-[#D5D6D9] border-t-[#3077F3] rounded-full animate-spin"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-6 h-6 border-4 border-transparent border-t-[#B96AF7] rounded-full animate-spin"></div>
+              </div>
+            </div>
+            <span className="ml-2 text-[#6D6F7A]">Loading messages...</span>
           </div>
         ) : sortedMessages.length === 0 ? (
           <div className="text-center py-8">
-            <div className="text-gray-400 mb-2">
+            <div className="text-[#9698A0] mb-2">
               <svg
                 className="h-12 w-12 mx-auto"
                 fill="none"
@@ -227,10 +232,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 />
               </svg>
             </div>
-            <p className="text-gray-500 font-medium">
+            <p className="text-[#6D6F7A] font-medium">
               {useConversationMode ? "Start a conversation" : "No messages yet"}
             </p>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-[#9698A0] mt-1">
               {useConversationMode
                 ? "Send a message to begin chatting with AI"
                 : "Start the conversation!"}
@@ -247,8 +252,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <div
                 className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                   message.role === "user"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-900"
+                    ? "bg-gradient-to-r from-[#3077F3] to-[#B96AF7] text-white"
+                    : "bg-[#F5F5F5] text-[#2E3141]"
                 }`}
               >
                 <div className="text-sm whitespace-pre-wrap break-words">
@@ -256,7 +261,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 </div>
                 <div
                   className={`text-xs mt-1 ${
-                    message.role === "user" ? "text-blue-100" : "text-gray-500"
+                    message.role === "user" ? "text-blue-100" : "text-[#9698A0]"
                   }`}
                 >
                   {formatTimestamp(message.created_at)}
@@ -270,10 +275,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       {/* Error Display */}
       {(sendError || getError || conversationError) && (
-        <div className="mx-4 mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <div className="mx-4 mb-4 p-3 bg-[#FDA052] bg-opacity-10 border border-[#FDA052] border-opacity-20 rounded-lg">
           <div className="flex items-center space-x-2">
-            <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />
-            <p className="text-sm text-red-800 font-medium">
+            <ExclamationTriangleIcon className="h-4 w-4 text-[#FDA052]" />
+            <p className="text-sm text-[#2E3141] font-medium">
               {sendError || getError || conversationError}
             </p>
           </div>
@@ -281,7 +286,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             {sendError && (
               <button
                 onClick={clearSendError}
-                className="text-xs text-red-600 hover:text-red-800 underline"
+                className="text-xs text-[#FDA052] hover:text-[#FD8A02] underline"
               >
                 Clear Error
               </button>
@@ -289,7 +294,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             {getError && (
               <button
                 onClick={clearGetError}
-                className="text-xs text-red-600 hover:text-red-800 underline"
+                className="text-xs text-[#FDA052] hover:text-[#FD8A02] underline"
               >
                 Clear Error
               </button>
@@ -297,7 +302,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             {conversationError && (
               <button
                 onClick={clearConversationError}
-                className="text-xs text-red-600 hover:text-red-800 underline"
+                className="text-xs text-[#FDA052] hover:text-[#FD8A02] underline"
               >
                 Clear Error
               </button>
@@ -307,7 +312,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       )}
 
       {/* Message Input */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-[#EAEAEC]">
         <div className="flex space-x-2">
           <div className="flex-1">
             <textarea
@@ -323,7 +328,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 (useConversationMode ? isConversationLoading : isSending) ||
                 isTyping
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none disabled:opacity-50"
+              className="w-full px-3 py-2 border border-[#D5D6D9] rounded-lg focus:ring-2 focus:ring-[#3077F3] focus:ring-opacity-20 focus:border-[#3077F3] resize-none disabled:opacity-50 text-[#2E3141] placeholder-[#9698A0]"
               rows={1}
               style={{ minHeight: "40px", maxHeight: "120px" }}
             />
@@ -335,7 +340,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               (useConversationMode ? isConversationLoading : isSending) ||
               isTyping
             }
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+            className="px-4 py-2 bg-gradient-to-r from-[#3077F3] to-[#B96AF7] text-white rounded-lg hover:from-[#1E50A8] hover:to-[#9D58E5] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center shadow-md hover:shadow-lg"
             title={useConversationMode ? "Send message to AI" : "Send message"}
           >
             {(useConversationMode ? isConversationLoading : isSending) ||
@@ -346,7 +351,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             )}
           </button>
         </div>
-        <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+        <div className="flex items-center justify-between mt-2 text-xs text-[#9698A0]">
           <span>Press Enter to send, Shift+Enter for new line</span>
           <span>{messageInput.length} characters</span>
         </div>

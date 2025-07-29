@@ -25,18 +25,20 @@ export const ChatSidebar = ({
   isCreatingSession = false,
 }: ChatSidebarProps) => {
   return (
-    <CommonSidebar className="bg-gradient-to-b from-slate-50/80 via-white to-slate-50/60">
+    <CommonSidebar className="bg-gradient-to-b from-white via-[#FFFFFF] to-[#F5F5F5] border-r border-[#EAEAEC] shadow-xl">
       {/* Enhanced Header Section */}
-      <div className="flex-shrink-0 p-6 border-b border-slate-200/60">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div className="relative w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
-              <ChatBubbleLeftRightIcon className="h-5 w-5 text-white" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white"></div>
+      <div className="flex-shrink-0 p-8 border-b border-[#EAEAEC] bg-white">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <div className="relative w-14 h-14 bg-gradient-to-br from-[#3077F3] to-[#B96AF7] rounded-2xl flex items-center justify-center shadow-xl">
+              <ChatBubbleLeftRightIcon className="h-7 w-7 text-white" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#41E6F8] rounded-full animate-pulse border-2 border-white shadow-md"></div>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-800">ChatAI</h1>
-              <p className="text-xs text-slate-500 font-medium">
+              <h1 className="text-xl font-bold text-[#2E3141] tracking-tight">
+                ChatAI
+              </h1>
+              <p className="text-sm text-[#6D6F7A] font-semibold">
                 AI-Powered Conversations
               </p>
             </div>
@@ -47,50 +49,56 @@ export const ChatSidebar = ({
         <button
           onClick={onNewChat}
           disabled={isCreatingSession}
-          className={`w-full flex items-center justify-center space-x-3 px-4 py-3 rounded-xl transition-all duration-500 transform-gpu ${
+          className={`w-full flex items-center justify-center space-x-4 px-6 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl ${
             isCreatingSession
-              ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 hover:from-indigo-600 hover:via-purple-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl hover:shadow-indigo-500/30 hover:scale-105 active:scale-95"
+              ? "bg-[#EAEAEC] text-[#9698A0] cursor-not-allowed"
+              : "bg-gradient-to-r from-[#3077F3] to-[#B96AF7] hover:from-[#1E50A8] hover:to-[#9D58E5] text-white hover:scale-105 transform"
           }`}
         >
-          <PlusIcon className="h-5 w-5" />
-          <span className="font-semibold text-sm">
+          <PlusIcon className="h-6 w-6" />
+          <span className="font-semibold text-base">
             {isCreatingSession ? "Creating..." : "New Chat"}
           </span>
           {!isCreatingSession && (
-            <SparklesIconSolid className="h-4 w-4 animate-pulse" />
+            <SparklesIconSolid className="h-5 w-5 animate-pulse" />
           )}
         </button>
       </div>
 
       {/* Enhanced Search Section */}
-      <div className="flex-shrink-0 p-4 border-b border-slate-200/40">
+      <div className="flex-shrink-0 p-6 border-b border-[#F5F5F5] bg-gradient-to-b from-white to-[#FFFFFF]">
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <MagnifyingGlassIcon className="h-4 w-4 text-slate-400" />
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <MagnifyingGlassIcon className="h-5 w-5 text-[#9698A0]" />
           </div>
           <input
             type="text"
-            placeholder="Search chats..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-300/60 transition-all duration-300 shadow-sm hover:shadow-md"
+            placeholder="Search conversations..."
+            className="w-full pl-12 pr-4 py-4 bg-[#F5F5F5] border border-[#EAEAEC] rounded-2xl text-sm text-[#2E3141] placeholder-[#9698A0] focus:outline-none focus:ring-2 focus:ring-[#3077F3] focus:ring-opacity-20 focus:border-[#3077F3] focus:bg-white transition-all duration-300 shadow-sm hover:shadow-md"
           />
         </div>
       </div>
 
       {/* Enhanced Chat List */}
-      <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-2">
+      <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3 bg-gradient-to-b from-[#FFFFFF] to-[#F5F5F5]">
         {chats.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="relative w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <ChatBubbleLeftRightIcon className="h-8 w-8 text-slate-400" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-slate-300 rounded-full animate-pulse"></div>
+          <div className="text-center py-16 px-6">
+            <div className="relative w-20 h-20 bg-gradient-to-br from-[#EAEAEC] to-[#D5D6D9] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <ChatBubbleLeftRightIcon className="h-10 w-10 text-[#9698A0]" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#F5F5F5] rounded-full border border-[#D5D6D9]"></div>
             </div>
-            <h3 className="text-sm font-semibold text-slate-600 mb-2">
-              No chats yet
+            <h3 className="text-lg font-semibold text-[#2E3141] mb-3">
+              No conversations yet
             </h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Start your first conversation to see it here
+            <p className="text-sm text-[#6D6F7A] leading-relaxed max-w-xs mx-auto">
+              Start your first AI conversation to see it appear here
             </p>
+            <div className="mt-6 px-4 py-2 bg-[#3077F3] bg-opacity-10 rounded-full border border-[#3077F3] border-opacity-20 inline-flex items-center space-x-2">
+              <div className="w-2 h-2 bg-[#3077F3] rounded-full animate-pulse"></div>
+              <span className="text-xs font-semibold text-[#3077F3]">
+                Ready to chat
+              </span>
+            </div>
           </div>
         ) : (
           chats.map((chat) => (
@@ -105,7 +113,7 @@ export const ChatSidebar = ({
       </div>
 
       {/* Enhanced Footer */}
-      <div className="flex-shrink-0 p-4 border-t border-slate-200/60">
+      <div className="flex-shrink-0 p-6 border-t border-[#EAEAEC] bg-white">
         <UserProfile />
       </div>
     </CommonSidebar>
