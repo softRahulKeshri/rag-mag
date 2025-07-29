@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
+import { STORAGE_KEYS } from "../types/global";
 
 /**
  * API Configuration for different services
@@ -34,7 +35,91 @@ export const API_CONFIG = {
 } as const;
 
 /**
- * Create axios instance with common configuration
+ * Token management utilities
+ */
+const TokenManager = {
+  getAccessToken: (): string | null => {
+    return localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+  },
+
+  getRefreshToken: (): string | null => {
+    return localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+  },
+
+  setTokens: (accessToken: string, refreshToken?: string) => {
+    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
+    if (refreshToken) {
+      localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+    }
+  },
+
+  clearTokens: () => {
+    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
+    localStorage.removeItem(STORAGE_KEYS.USER_ID);
+    localStorage.removeItem(STORAGE_KEYS.USERNAME);
+    // Legacy token cleanup
+    localStorage.removeItem("token");
+  },
+
+  isTokenExpired: (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const currentTime = Date.now() / 1000;
+      return payload.exp < currentTime;
+    } catch {
+      return true; // Consider invalid tokens as expired
+    }
+  },
+};
+
+/**
+ * Refresh token function
+ */
+const refreshAccessToken = async (): Promise<string | null> => {
+  const refreshToken = TokenManager.getRefreshToken();
+
+  if (!refreshToken) {
+    console.warn("⚠️ No refresh token available for token refresh");
+    return null;
+  }
+
+  try {
+    console.log("🔄 Attempting to refresh access token");
+
+    const response = await axios.post(
+      `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CHAT}/auth/refresh`,
+      { refresh_token: refreshToken },
+      {
+        headers: { "Content-Type": "application/json" },
+        timeout: 10000,
+      }
+    );
+
+    const { access_token, refresh_token } = response.data;
+
+    if (access_token) {
+      TokenManager.setTokens(access_token, refresh_token);
+      console.log("✅ Access token refreshed successfully");
+      return access_token;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("❌ Token refresh failed:", error);
+    TokenManager.clearTokens();
+
+    // Redirect to login page
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+
+    return null;
+  }
+};
+
+/**
+ * Create axios instance with JWT authentication and auto-refresh
  */
 const createApiInstance = (endpoint: string): AxiosInstance => {
   const instance = axios.create({
@@ -43,54 +128,96 @@ const createApiInstance = (endpoint: string): AxiosInstance => {
     headers: API_CONFIG.DEFAULT_HEADERS,
   });
 
-  // Request interceptor - add auth token, modify requests
+  // Request interceptor - add JWT Bearer token
   instance.interceptors.request.use(
     (config) => {
-      // Add auth token if available
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      const accessToken = TokenManager.getAccessToken();
+
+      if (accessToken) {
+        // Check if token is expired before making request
+        if (TokenManager.isTokenExpired(accessToken)) {
+          console.warn(
+            "⚠️ Access token is expired, will attempt refresh on 401"
+          );
+        }
+
+        config.headers.Authorization = `Bearer ${accessToken}`;
       }
 
       console.log(
-        `API Request [${endpoint}]:`,
+        `🚀 API Request [${endpoint}]:`,
         config.method?.toUpperCase(),
         config.url,
-        config.data ? config.data : ""
+        config.data ? "with data" : "no data"
       );
+
       return config;
     },
     (error) => {
-      console.error(`API Request Error [${endpoint}]:`, error);
+      console.error(`❌ API Request Error [${endpoint}]:`, error);
       return Promise.reject(error);
     }
   );
 
-  // Response interceptor - handle errors globally
+  // Response interceptor - handle token refresh on 401
   instance.interceptors.response.use(
     (response) => {
       console.log(
-        `API Response [${endpoint}]:`,
+        `✅ API Response [${endpoint}]:`,
         response.status,
         response.config.url
       );
       return response;
     },
-    (error) => {
+    async (error) => {
+      const originalRequest = error.config;
+
       console.error(
-        `API Response Error [${endpoint}]:`,
+        `❌ API Response Error [${endpoint}]:`,
         error.response?.status,
-        error.message
+        error.response?.statusText,
+        error.config?.url
       );
 
-      if (error.response?.status === 401) {
-        // Handle unauthorized - redirect to login
-        localStorage.removeItem("token");
-        window.location.href = "/login";
+      // Handle 401 Unauthorized - attempt token refresh
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+
+        console.log("🔄 Received 401, attempting token refresh...");
+
+        const newAccessToken = await refreshAccessToken();
+
+        if (newAccessToken) {
+          // Retry the original request with new token
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          console.log("🔄 Retrying original request with new token");
+          return instance(originalRequest);
+        } else {
+          // Refresh failed, redirect to login
+          console.error("❌ Token refresh failed, redirecting to login");
+          TokenManager.clearTokens();
+
+          if (typeof window !== "undefined") {
+            window.location.href = "/login";
+          }
+
+          return Promise.reject(error);
+        }
       }
 
+      // Handle 403 Forbidden
+      if (error.response?.status === 403) {
+        console.error("🚫 Access forbidden - insufficient permissions");
+      }
+
+      // Handle 500 Server Error
       if (error.response?.status === 500) {
-        console.error("Server error:", error.response.data);
+        console.error("🔥 Server error:", error.response.data);
+      }
+
+      // Handle network errors
+      if (!error.response) {
+        console.error("🌐 Network error - no response received");
       }
 
       return Promise.reject(error);
@@ -139,6 +266,28 @@ export const makeApiCall = async <T = unknown>(
 };
 
 /**
+ * Authentication utilities for manual token management
+ */
+export const authUtils = {
+  ...TokenManager,
+  refreshToken: refreshAccessToken,
+
+  // Check if user is authenticated
+  isAuthenticated: (): boolean => {
+    const token = TokenManager.getAccessToken();
+    return token !== null && !TokenManager.isTokenExpired(token);
+  },
+
+  // Force logout and cleanup
+  logout: () => {
+    TokenManager.clearTokens();
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+  },
+};
+
+/**
  * Environment-specific configuration
  */
 export const getApiConfig = () => {
@@ -163,9 +312,20 @@ export const getApiConfig = () => {
  */
 export const logApiConfig = () => {
   const config = getApiConfig();
+  const isAuthenticated = authUtils.isAuthenticated();
+  const accessToken = TokenManager.getAccessToken();
+
   console.group("🔧 API Configuration");
   console.log("Base URL:", config.BASE_URL);
   console.log("Environment:", import.meta.env.MODE);
   console.log("Service URLs:", config.FULL_URLS);
+  console.log(
+    "Authentication Status:",
+    isAuthenticated ? "✅ Authenticated" : "❌ Not Authenticated"
+  );
+  console.log("Access Token Present:", accessToken ? "✅ Yes" : "❌ No");
+  if (accessToken && !isAuthenticated) {
+    console.log("⚠️ Token is expired");
+  }
   console.groupEnd();
 };

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { subscribeWithSelector } from "zustand/middleware";
-import axios from "axios";
+import { chatApi } from "../lib/axios";
 import type {
   GlobalState,
   User,
@@ -13,10 +13,6 @@ import type {
   RegisterResponse,
 } from "../types/global";
 import { STORAGE_KEYS } from "../types/global";
-
-// API Configuration
-const API_BASE_URL =
-  "http://ec2-65-2-188-195.ap-south-1.compute.amazonaws.com/api2";
 
 // Default Settings
 const DEFAULT_SETTINGS: AppSettings = {
@@ -89,13 +85,9 @@ export const useGlobalStore = create<GlobalState>()(
                 username: credentials.username,
               });
 
-              const response = await axios.post<LoginResponse>(
-                `${API_BASE_URL}/auth/login`,
-                credentials,
-                {
-                  headers: { "Content-Type": "application/json" },
-                  timeout: 10000,
-                }
+              const response = await chatApi.post<LoginResponse>(
+                "/auth/login",
+                credentials
               );
 
               const { access_token, refresh_token, user_id, username, email } =
@@ -168,6 +160,67 @@ export const useGlobalStore = create<GlobalState>()(
             console.log("✅ Global Store: User logged out successfully");
           },
 
+          initializeAuth: async (): Promise<User | null> => {
+            const { setLoading, setError } = get().actions;
+
+            setLoading("auth", true);
+            setError("auth", null);
+
+            try {
+              console.log(
+                "🔐 Global Store: Initializing authentication from stored tokens"
+              );
+
+              // Check for stored tokens
+              const accessToken =
+                localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN) ||
+                localStorage.getItem("token");
+              const userId = localStorage.getItem(STORAGE_KEYS.USER_ID);
+              const username = localStorage.getItem(STORAGE_KEYS.USERNAME);
+
+              if (!accessToken || !userId || !username) {
+                console.log("❌ Global Store: Missing authentication data");
+                return null;
+              }
+
+              // Update auth state with stored data
+              set((state) => ({
+                auth: {
+                  ...state.auth,
+                  accessToken,
+                  isAuthenticated: true,
+                  isLoading: false,
+                  error: null,
+                },
+                user: {
+                  id: userId,
+                  username,
+                  email: localStorage.getItem("email") || "",
+                  isActive: true,
+                  lastLoginAt: new Date().toISOString(),
+                },
+              }));
+
+              console.log(
+                "✅ Global Store: Authentication initialized successfully"
+              );
+              return { id: userId, username, isActive: true };
+            } catch (error) {
+              console.error(
+                "❌ Global Store: Failed to initialize authentication:",
+                error
+              );
+              const errorMessage =
+                error instanceof Error
+                  ? error.message
+                  : "Authentication initialization failed";
+              setError("auth", errorMessage);
+              return null;
+            } finally {
+              setLoading("auth", false);
+            }
+          },
+
           register: async (userData: {
             username: string;
             email: string;
@@ -183,13 +236,9 @@ export const useGlobalStore = create<GlobalState>()(
                 username: userData.username,
               });
 
-              const response = await axios.post<RegisterResponse>(
-                `${API_BASE_URL}/auth/register`,
-                userData,
-                {
-                  headers: { "Content-Type": "application/json" },
-                  timeout: 10000,
-                }
+              const response = await chatApi.post<RegisterResponse>(
+                "/auth/register",
+                userData
               );
 
               console.log(
@@ -229,13 +278,9 @@ export const useGlobalStore = create<GlobalState>()(
             try {
               console.log("🔄 Global Store: Refreshing access token");
 
-              const response = await axios.post<LoginResponse>(
-                `${API_BASE_URL}/auth/refresh`,
-                { refresh_token: auth.refreshToken },
-                {
-                  headers: { "Content-Type": "application/json" },
-                  timeout: 10000,
-                }
+              const response = await chatApi.post<LoginResponse>(
+                "/auth/refresh",
+                { refresh_token: auth.refreshToken }
               );
 
               const { access_token, refresh_token } = response.data;
@@ -465,17 +510,8 @@ export const useError = (key: string) =>
   useGlobalStore((state) => state.errors[key]);
 
 // Subscribe to auth changes for automatic token refresh
-useGlobalStore.subscribe(
-  (state) => state.auth.accessToken,
-  (accessToken) => {
-    if (accessToken) {
-      // Set up axios interceptor for automatic token inclusion
-      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-    } else {
-      delete axios.defaults.headers.common["Authorization"];
-    }
-  }
-);
+// Note: JWT token management is now handled by axios interceptors in lib/axios.ts
+// No need to manually set Authorization headers here
 
 // Subscribe to theme changes for automatic theme switching
 useGlobalStore.subscribe(

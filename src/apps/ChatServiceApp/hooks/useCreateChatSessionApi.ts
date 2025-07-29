@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useApiService } from "./useApiService";
 import type {
   CreateChatSessionRequest,
   CreateChatSessionResponse,
@@ -8,11 +9,10 @@ import type {
  * Real API Chat Session Creation Hook
  *
  * This hook provides functionality to create new chat sessions using the real API endpoint
- * with Bearer token authentication from localStorage.
+ * with JWT Bearer token authentication.
  *
  * Features:
- * - Real API integration with the provided endpoint
- * - Automatic Bearer token authentication from localStorage
+ * - Real API integration with automatic JWT authentication
  * - Comprehensive error handling and loading states
  * - Type-safe API calls
  * - Optimistic updates for better UX
@@ -35,26 +35,20 @@ import type {
  * ```
  */
 export const useCreateChatSessionApi = () => {
+  const { post, handleApiError } = useApiService();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Get authentication token from localStorage
+   * Clear error state
    */
-  const getAuthToken = useCallback((): string | null => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      console.warn("⚠️ No authentication token found in localStorage");
-      return null;
-    }
-    return token;
+  const clearError = useCallback(() => {
+    setError(null);
   }, []);
 
   /**
-   * Create a new chat session via API
-   *
-   * @param payload - The chat session creation payload
-   * @returns Promise<CreateChatSessionResponse>
+   * Create a new chat session using the real API
+   * POST /chat/chat_sessions
    */
   const createSession = useCallback(
     async (
@@ -64,102 +58,47 @@ export const useCreateChatSessionApi = () => {
       setError(null);
 
       try {
-        // Get authentication token
-        const token = getAuthToken();
-        if (!token) {
-          throw new Error(
-            "Authentication token not found. Please log in again."
-          );
-        }
-
         console.log("🚀 Creating new chat session via API:", {
           title: payload.title,
           user_id: payload.user_id,
         });
 
-        // Prepare request
-        const url =
-          "http://ec2-65-2-188-195.ap-south-1.compute.amazonaws.com/api2/chat/chat_sessions";
         const requestBody = {
           title: payload.title,
           user_id: payload.user_id,
         };
 
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(requestBody),
+        const response = await post<CreateChatSessionResponse>(
+          "/chat/chat_sessions",
+          requestBody
+        );
+
+        console.log("✅ Chat session created successfully:", {
+          id: response.id,
+          title: response.title,
+          created_at: response.created_at,
         });
 
-        // Handle non-OK responses
-        if (!response.ok) {
-          let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-
-          try {
-            const errorData = await response.json();
-            if (errorData.error) {
-              errorMessage = errorData.error;
-            } else if (errorData.message) {
-              errorMessage = errorData.message;
-            } else if (errorData.detail) {
-              errorMessage = errorData.detail;
-            }
-          } catch (parseError) {
-            console.warn("Could not parse error response body:", parseError);
-          }
-
-          // Handle specific HTTP status codes
-          if (response.status === 401) {
-            errorMessage = "Authentication failed. Please log in again.";
-            // Clear invalid token
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("user_id");
-            localStorage.removeItem("username");
-          } else if (response.status === 403) {
-            errorMessage =
-              "Access denied. You don't have permission to create chat sessions.";
-          } else if (response.status === 422) {
-            errorMessage = "Invalid request data. Please check your input.";
-          }
-
-          throw new Error(errorMessage);
-        }
-
-        // Parse successful response
-        const data = await response.json();
-
-        console.log("✅ Chat session created successfully via API:", data);
-
-        return data;
+        return response;
       } catch (error) {
-        console.error("❌ Error creating chat session via API:", error);
-
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to create chat session";
-        setError(errorMessage);
-
+        console.error("❌ Error creating chat session:", error);
+        const apiError = handleApiError(error);
+        setError(apiError.message);
         throw error;
       } finally {
         setIsLoading(false);
       }
     },
-    [getAuthToken]
+    [post, handleApiError]
   );
 
   /**
-   * Create a new chat session with default title
-   *
-   * @param userId - The user ID for the session
-   * @returns Promise<CreateChatSessionResponse>
+   * Create a chat session with default title
+   * Uses the current timestamp as the default title
    */
   const createDefaultSession = useCallback(
     async (userId: string): Promise<CreateChatSessionResponse> => {
-      const defaultTitle = `New Chat ${new Date().toLocaleTimeString()}`;
+      const defaultTitle = `Chat ${new Date().toLocaleString()}`;
       return createSession({
         title: defaultTitle,
         user_id: userId,
@@ -169,11 +108,7 @@ export const useCreateChatSessionApi = () => {
   );
 
   /**
-   * Create a new chat session with custom title
-   *
-   * @param title - The custom title for the session
-   * @param userId - The user ID for the session
-   * @returns Promise<CreateChatSessionResponse>
+   * Create a chat session with custom title
    */
   const createCustomSession = useCallback(
     async (
@@ -189,19 +124,56 @@ export const useCreateChatSessionApi = () => {
   );
 
   /**
-   * Clear error state
+   * Batch create multiple chat sessions
+   * Useful for initializing multiple conversations
    */
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
+  const createMultipleSessions = useCallback(
+    async (
+      sessions: CreateChatSessionRequest[]
+    ): Promise<CreateChatSessionResponse[]> => {
+      setIsLoading(true);
+      setError(null);
 
-  /**
-   * Check if user is authenticated
-   */
-  const isAuthenticated = useCallback((): boolean => {
-    const token = localStorage.getItem("access_token");
-    return !!token;
-  }, []);
+      try {
+        console.log(`🚀 Creating ${sessions.length} chat sessions...`);
+
+        const results = await Promise.allSettled(
+          sessions.map((session) => createSession(session))
+        );
+
+        const successful: CreateChatSessionResponse[] = [];
+        const failed: string[] = [];
+
+        results.forEach((result, index) => {
+          if (result.status === "fulfilled") {
+            successful.push(result.value);
+          } else {
+            failed.push(
+              `Session ${index + 1}: ${
+                result.reason?.message || "Unknown error"
+              }`
+            );
+          }
+        });
+
+        if (failed.length > 0) {
+          console.warn("⚠️ Some sessions failed to create:", failed);
+          setError(`${failed.length} sessions failed to create`);
+        }
+
+        console.log(`✅ Successfully created ${successful.length} sessions`);
+        return successful;
+      } catch (error) {
+        console.error("❌ Error in batch session creation:", error);
+        const apiError = handleApiError(error);
+        setError(apiError.message);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [createSession, handleApiError]
+  );
 
   return {
     // State
@@ -212,9 +184,7 @@ export const useCreateChatSessionApi = () => {
     createSession,
     createDefaultSession,
     createCustomSession,
+    createMultipleSessions,
     clearError,
-
-    // Utilities
-    isAuthenticated,
   };
 };

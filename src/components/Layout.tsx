@@ -1,6 +1,4 @@
-import React, { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useIsAuthenticated } from "../store";
+import React from "react";
 import Navbar from "./Navbar";
 
 interface LayoutProps {
@@ -8,21 +6,8 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const currentPath = location.pathname;
-
-  const isAuthenticated = useIsAuthenticated();
-
-  useEffect(() => {
-    if (
-      !isAuthenticated &&
-      currentPath !== "/login" &&
-      currentPath !== "/signup"
-    ) {
-      navigate("/login");
-    }
-  }, [isAuthenticated, currentPath, navigate]);
+  // Note: Authentication is now handled by AuthGuard wrapper
+  // This component focuses purely on layout structure
 
   return (
     <div className="min-h-screen bg-gray-100">

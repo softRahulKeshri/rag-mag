@@ -89,10 +89,10 @@ const Navbar = () => {
               {/* Brand Name */}
               <div className="flex flex-col items-start">
                 <span className="text-xl font-bold tracking-tight leading-tight bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                  Magure
+                  Magure.AI
                 </span>
                 <span className="text-xs font-medium text-gray-500 group-hover:text-purple-500 transition-colors duration-300 leading-tight">
-                  AI Labs
+                  Labs
                 </span>
               </div>
 

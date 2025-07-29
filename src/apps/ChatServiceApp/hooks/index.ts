@@ -7,6 +7,7 @@ export {
 export { useCreateChatSessionApi } from "./useCreateChatSessionApi";
 export { useChatSessions, useChatSessionsEnhanced } from "./useChatSessions";
 export { useLoginApi } from "./useLoginApi";
+export { useAuthApi } from "./useAuthApi";
 export { useApiService } from "./useApiService";
 
 // Re-export types for convenience

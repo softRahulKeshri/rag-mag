@@ -84,6 +84,7 @@ export interface GlobalState {
     // Authentication Actions
     login: (credentials: { username: string; password: string }) => Promise<void>;
     logout: () => void;
+    initializeAuth: () => Promise<User | null>;
     register: (userData: { username: string; email: string; password: string }) => Promise<void>;
     refreshToken: () => Promise<void>;
     updateUser: (userData: Partial<User>) => void;

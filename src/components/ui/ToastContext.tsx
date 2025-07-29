@@ -1,31 +1,7 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import type { ReactNode } from "react";
 import ToastNotification from "../../apps/ResumeParserApp/modules/store/components/ResumeCollection/ToastNotification";
-
-export type ToastType = "error" | "success" | "warning";
-
-export interface Toast {
-  id: string;
-  message: string;
-  type: ToastType;
-  duration?: number;
-}
-
-interface ToastContextType {
-  showToast: (message: string, type: ToastType, duration?: number) => void;
-  hideToast: (id: string) => void;
-  toasts: Toast[];
-}
-
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
-
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error("useToast must be used within a ToastProvider");
-  }
-  return context;
-};
+import { ToastContext, type Toast, type ToastType } from "./toastTypes";
 
 interface ToastProviderProps {
   children: ReactNode;

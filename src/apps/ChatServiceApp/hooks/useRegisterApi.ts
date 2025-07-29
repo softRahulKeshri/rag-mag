@@ -25,13 +25,10 @@ export const useRegisterApi = () => {
       try {
         console.log("🔐 Register API: Registering user:", { username });
 
-        const response = await post(
-          "http://ec2-65-2-188-195.ap-south-1.compute.amazonaws.com/api2/auth/register",
-          {
-            username,
-            password,
-          }
-        );
+        const response = await post("/auth/register", {
+          username,
+          password,
+        });
 
         console.log("✅ User registered successfully:", response);
 

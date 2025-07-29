@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useCreateChatSessionApi } from "../hooks";
+import { useCreateChatSessionApi, useAuthApi } from "../hooks";
 import type { CreateChatSessionResponse } from "../types/types";
 
 /**
@@ -16,8 +16,9 @@ const CreateChatSessionApiExample: React.FC = () => {
     isLoading,
     error,
     clearError,
-    isAuthenticated,
   } = useCreateChatSessionApi();
+
+  const { isAuthenticated } = useAuthApi();
 
   const [title, setTitle] = useState("New Chat Session");
   const [userId, setUserId] = useState("7a649226-4bff-4675-b791-c0deabb72226");

@@ -30,10 +30,7 @@ export const useLoginApi = () => {
           // Don't log password for security
         });
 
-        const response = await post<LoginResponse>(
-          "http://ec2-65-2-188-195.ap-south-1.compute.amazonaws.com/api2/auth/login",
-          credentials
-        );
+        const response = await post<LoginResponse>("/auth/login", credentials);
 
         // Store authentication token if provided
         if (response.access_token) {
