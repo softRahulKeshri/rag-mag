@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useUser } from "../../store";
 import { ChatHeader } from "./components/ChatHeader";
 import { ChatSidebar } from "./components/ChatSidebar";
 import { ChatMessages } from "./components/ChatMessages";
@@ -11,8 +12,9 @@ import { createNewChat, getChatTitle } from "./utils/chatUtils";
 import type { IChat, CreateChatSessionResponse } from "./types/types";
 
 const ChatServiceApp = () => {
-  // TODO: Replace with actual user ID from auth context
-  const userId = "eac74e41-5d4b-44ba-b531-22a0cc19d5cc";
+  // Get user ID from global store
+  const user = useUser();
+  const userId = user?.id || "eac74e41-5d4b-44ba-b531-22a0cc19d5cc"; // Fallback for development
 
   const [chats, setChats] = useState<IChat[]>(mockChats);
   const [selectedChatId, setSelectedChatId] = useState<number | null>(

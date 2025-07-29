@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useActions } from "../store";
 import { ROUTES } from "../constants";
 
 // Apps configuration for navbar
@@ -32,6 +33,9 @@ const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Global store hooks
+  const { logout } = useActions();
+
   // Handle scroll effect for navbar
   useEffect(() => {
     const handleScroll = () => {
@@ -47,7 +51,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    logout();
     navigate("/login");
   };
 

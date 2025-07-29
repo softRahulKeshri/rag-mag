@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRegisterApi } from "../apps/ChatServiceApp/hooks/useRegisterApi";
+import { useToast } from "./ui/ToastContext";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
+    username: "",
     password: "",
     confirmPassword: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
+
+  // API hooks
+  const { register, isLoading, clearError } = useRegisterApi();
+  const { showToast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,18 +29,10 @@ const Signup = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    }
-
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+    if (!formData.username.trim()) {
+      newErrors.username = "Username is required";
+    } else if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters long";
     }
 
     if (!formData.password) {
@@ -55,21 +51,36 @@ const Signup = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
-      // Mock signup logic - in real app, you'd make an API call here
-      localStorage.setItem("token", "mock-jwt-token");
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-        })
-      );
-      navigate("/");
+      try {
+        clearError();
+        await register(formData.username.trim(), formData.password);
+
+        showToast("Account created successfully! Please sign in.", "success");
+        navigate("/login");
+      } catch (error) {
+        // Error is already handled by the API hook, but we can show a specific message
+        const errorMessage =
+          error instanceof Error ? error.message : "Registration failed";
+
+        // Handle specific error cases
+        if (
+          errorMessage.includes("already exists") ||
+          errorMessage.includes("taken")
+        ) {
+          showToast(
+            "Username already exists. Please choose a different username.",
+            "error"
+          );
+        } else if (errorMessage.includes("username")) {
+          showToast("Invalid username format. Please try again.", "error");
+        } else {
+          showToast(errorMessage, "error");
+        }
+      }
     }
   };
 
@@ -151,85 +162,30 @@ const Signup = () => {
         </div>
 
         <form onSubmit={handleSignup} className="space-y-5">
-          {/* Name Fields */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="firstName"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                First Name
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                required
-                placeholder="John"
-                className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                  errors.firstName
-                    ? "border-red-300 focus:ring-red-500"
-                    : "border-gray-200"
-                }`}
-                value={formData.firstName}
-                onChange={handleInputChange}
-              />
-              {errors.firstName && (
-                <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="lastName"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Last Name
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                required
-                placeholder="Doe"
-                className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                  errors.lastName
-                    ? "border-red-300 focus:ring-red-500"
-                    : "border-gray-200"
-                }`}
-                value={formData.lastName}
-                onChange={handleInputChange}
-              />
-              {errors.lastName && (
-                <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Email Field */}
+          {/* Username Field */}
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Email Address
+              Username
             </label>
             <input
-              id="email"
-              name="email"
-              type="email"
+              id="username"
+              name="username"
+              type="text"
               required
-              placeholder="you@example.com"
+              placeholder="Enter your username"
               className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                errors.email
+                errors.username
                   ? "border-red-300 focus:ring-red-500"
                   : "border-gray-200"
               }`}
-              value={formData.email}
+              value={formData.username}
               onChange={handleInputChange}
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            {errors.username && (
+              <p className="mt-1 text-sm text-red-600">{errors.username}</p>
             )}
           </div>
 
@@ -292,9 +248,10 @@ const Signup = () => {
           <div>
             <button
               type="submit"
-              className="w-full py-3 px-4 text-white font-semibold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isLoading}
+              className="w-full py-3 px-4 text-white font-semibold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              Create Account
+              {isLoading ? "Creating Account..." : "Create Account"}
             </button>
           </div>
         </form>

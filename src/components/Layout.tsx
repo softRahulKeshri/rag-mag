@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useIsAuthenticated } from "../store";
 import Navbar from "./Navbar";
 
 interface LayoutProps {
@@ -11,12 +12,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const currentPath = location.pathname;
 
+  const isAuthenticated = useIsAuthenticated();
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token && currentPath !== "/login") {
+    if (
+      !isAuthenticated &&
+      currentPath !== "/login" &&
+      currentPath !== "/signup"
+    ) {
       navigate("/login");
     }
-  }, [currentPath, navigate]);
+  }, [isAuthenticated, currentPath, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-100">

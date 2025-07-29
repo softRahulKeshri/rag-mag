@@ -1,19 +1,61 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useActions, useAuth, useError } from "../store";
+import { useToast } from "./ui/ToastContext";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  // Global store hooks
+  const { login } = useActions();
+  const { isLoading } = useAuth();
+  const authError = useError('auth');
+  const { showToast } = useToast();
 
   const handleSignupRedirect = () => {
     navigate("/signup");
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("token", "mock-jwt-token");
-    navigate("/");
+
+    if (!username.trim() || !password.trim()) {
+      showToast("Please fill in all fields", "error");
+      return;
+    }
+
+    try {
+      await login({ username: username.trim(), password });
+
+      // Store token for compatibility with existing auth system
+      localStorage.setItem("token", "authenticated");
+
+      showToast("Login successful! Welcome back!", "success");
+      navigate("/");
+    } catch (error) {
+      // Error is already handled by the global store, but we can show a specific message
+      const errorMessage = authError || (error instanceof Error ? error.message : "Login failed");
+
+      // Handle specific error cases
+      if (
+        errorMessage.includes("not found") ||
+        errorMessage.includes("does not exist")
+      ) {
+        showToast(
+          "User not found. Please check your username or sign up.",
+          "error"
+        );
+      } else if (
+        errorMessage.includes("password") ||
+        errorMessage.includes("invalid")
+      ) {
+        showToast("Invalid password. Please try again.", "error");
+      } else {
+        showToast(errorMessage, "error");
+      }
+    }
   };
 
   return (
@@ -90,19 +132,19 @@ const Login = () => {
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Email address
+              Username
             </label>
             <input
-              id="email"
-              type="email"
+              id="username"
+              type="text"
               required
-              placeholder="you@example.com"
+              placeholder="Enter your username"
               className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
 
@@ -127,16 +169,17 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="w-full py-3 px-4 text-white font-semibold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isLoading}
+              className="w-full py-3 px-4 text-white font-semibold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              Sign in
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>
 
         <p className="text-center text-sm text-gray-500">
           Don't have an account?{" "}
-          <span 
+          <span
             onClick={handleSignupRedirect}
             className="text-indigo-600 hover:text-indigo-700 hover:underline cursor-pointer transition-colors duration-200"
           >
