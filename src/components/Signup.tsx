@@ -1,16 +1,27 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRegisterApi } from "../apps/ChatServiceApp/hooks/useRegisterApi";
+import { useToast } from "./ui/useToast";
+import { EyeIcon, EyeSlashIcon, CheckIcon } from "@heroicons/react/24/outline";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
+    username: "",
     password: "",
     confirmPassword: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
   const navigate = useNavigate();
+
+  // API hooks
+  const { register, isLoading, clearError } = useRegisterApi();
+  const { showToast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -20,61 +31,212 @@ const Signup = () => {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
+
+    // Mark field as touched
+    setTouchedFields((prev) => ({ ...prev, [name]: true }));
+  };
+
+  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name } = e.target;
+    setTouchedFields((prev) => ({ ...prev, [name]: true }));
+
+    // Validate on blur
+    const fieldErrors = validateField(
+      name,
+      formData[name as keyof typeof formData]
+    );
+    setErrors((prev) => ({ ...prev, ...fieldErrors }));
+  };
+
+  const validateField = (fieldName: string, value: string) => {
+    const newErrors: Record<string, string> = {};
+
+    if (fieldName === "username") {
+      if (!value.trim()) {
+        newErrors.username = "Username is required";
+      } else if (value.length < 3) {
+        newErrors.username = "Username must be at least 3 characters long";
+      }
+    }
+
+    if (fieldName === "password") {
+      if (!value) {
+        newErrors.password = "Password is required";
+      } else if (value.length < 8) {
+        newErrors.password = "Password must be at least 8 characters long";
+      }
+    }
+
+    if (fieldName === "confirmPassword") {
+      if (!value) {
+        newErrors.confirmPassword = "Please confirm your password";
+      } else if (formData.password !== value) {
+        newErrors.confirmPassword = "Passwords do not match";
+      }
+    }
+
+    return newErrors;
   };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+    const usernameErrors = validateField("username", formData.username);
+    const passwordErrors = validateField("password", formData.password);
+    const confirmPasswordErrors = validateField(
+      "confirmPassword",
+      formData.confirmPassword
+    );
 
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    }
+    const allErrors = {
+      ...usernameErrors,
+      ...passwordErrors,
+      ...confirmPasswordErrors,
+    };
+    setErrors(allErrors);
+    setTouchedFields({ username: true, password: true, confirmPassword: true });
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters long";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(allErrors).length === 0;
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const getPasswordStrength = (password: string) => {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/\d/.test(password)) strength++;
+    if (/[^a-zA-Z\d]/.test(password)) strength++;
+
+    return strength;
+  };
+
+  const getPasswordStrengthLabel = (strength: number) => {
+    switch (strength) {
+      case 0:
+        return { label: "Weak", color: "text-red-500", bgColor: "bg-red-500" };
+      case 2:
+        return {
+          label: "Fair",
+          color: "text-yellow-500",
+          bgColor: "bg-yellow-500",
+        };
+      case 3:
+        return {
+          label: "Good",
+          color: "text-blue-500",
+          bgColor: "bg-blue-500",
+        };
+      case 4:
+      case 5:
+        return {
+          label: "Strong",
+          color: "text-green-500",
+          bgColor: "bg-green-500",
+        };
+      default:
+        return { label: "", color: "", bgColor: "" };
+    }
+  };
+
+  const getFieldClassName = (fieldName: string) => {
+    const baseClasses =
+      "w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm input-focus-glow";
+
+    if (errors[fieldName]) {
+      return `${baseClasses} form-field-invalid`;
+    }
+
+    if (
+      touchedFields[fieldName] &&
+      !errors[fieldName] &&
+      formData[fieldName as keyof typeof formData]
+    ) {
+      return `${baseClasses} form-field-valid`;
+    }
+
+    if (isLoading) {
+      return `${baseClasses} form-field-disabled`;
+    }
+
+    return `${baseClasses} border-gray-200`;
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
-      // Mock signup logic - in real app, you'd make an API call here
-      localStorage.setItem("token", "mock-jwt-token");
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-        })
-      );
-      navigate("/");
+      try {
+        clearError();
+        await register(formData.username.trim(), formData.password);
+
+        setSignupSuccess(true);
+
+        // Add a small delay to show success state
+        setTimeout(() => {
+          showToast("Account created successfully! Please sign in.", "success");
+          navigate("/login");
+        }, 800);
+      } catch (error) {
+        // Error is already handled by the API hook, but we can show a specific message
+        const errorMessage =
+          error instanceof Error ? error.message : "Registration failed";
+
+        // Handle specific error cases
+        if (
+          errorMessage.includes("already exists") ||
+          errorMessage.includes("taken")
+        ) {
+          showToast(
+            "Username already exists. Please choose a different username.",
+            "error"
+          );
+        } else if (errorMessage.includes("username")) {
+          showToast("Invalid username format. Please try again.", "error");
+        } else {
+          showToast(errorMessage, "error");
+        }
+      }
     }
   };
 
   const handleLoginRedirect = () => {
     navigate("/login");
+  };
+
+  const isFormValid =
+    formData.username.trim().length >= 3 &&
+    formData.password.length >= 8 &&
+    formData.confirmPassword === formData.password;
+  const isButtonDisabled = isLoading || !isFormValid;
+  const passwordStrength = getPasswordStrength(formData.password);
+  const strengthInfo = getPasswordStrengthLabel(passwordStrength);
+
+  const renderLoadingButton = () => {
+    if (signupSuccess) {
+      return (
+        <>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <CheckIcon className="w-6 h-6 text-white success-checkmark" />
+          </div>
+          <span className="opacity-0">Success!</span>
+        </>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-white rounded-full loading-dot"></div>
+              <div className="w-2 h-2 bg-white rounded-full loading-dot"></div>
+              <div className="w-2 h-2 bg-white rounded-full loading-dot"></div>
+            </div>
+          </div>
+          <span className="opacity-0">Creating Account...</span>
+        </>
+      );
+    }
+
+    return "Create Account";
   };
 
   return (
@@ -137,10 +299,10 @@ const Signup = () => {
       ></div>
 
       {/* Premium Glass Morphism Card */}
-      <div className="z-10 w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 space-y-6 border border-white/20">
-        <div className="text-center">
+      <div className="z-10 w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 space-y-6 border border-white/20 animate-scale-in">
+        <div className="text-center animate-fade-in-up">
           <div className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
-            Magure
+            Magure.AI
           </div>
           <h2 className="text-2xl font-semibold text-gray-800">
             Create Account
@@ -150,164 +312,200 @@ const Signup = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSignup} className="space-y-5">
-          {/* Name Fields */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="firstName"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                First Name
-              </label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                required
-                placeholder="John"
-                className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                  errors.firstName
-                    ? "border-red-300 focus:ring-red-500"
-                    : "border-gray-200"
-                }`}
-                value={formData.firstName}
-                onChange={handleInputChange}
-              />
-              {errors.firstName && (
-                <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="lastName"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Last Name
-              </label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                required
-                placeholder="Doe"
-                className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                  errors.lastName
-                    ? "border-red-300 focus:ring-red-500"
-                    : "border-gray-200"
-                }`}
-                value={formData.lastName}
-                onChange={handleInputChange}
-              />
-              {errors.lastName && (
-                <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Email Field */}
+        <form
+          onSubmit={handleSignup}
+          className="space-y-5 animate-fade-in-up stagger-1"
+        >
+          {/* Username Field */}
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Email Address
+              Username
+              {touchedFields.username &&
+                !errors.username &&
+                formData.username.trim() && (
+                  <span className="ml-2 text-green-500">
+                    <CheckIcon className="w-4 h-4 inline" />
+                  </span>
+                )}
             </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              placeholder="you@example.com"
-              className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                errors.email
-                  ? "border-red-300 focus:ring-red-500"
-                  : "border-gray-200"
-              }`}
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-            )}
+            <div className="relative">
+              <input
+                id="username"
+                name="username"
+                type="text"
+                required
+                placeholder="Enter your username"
+                className={getFieldClassName("username")}
+                value={formData.username}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                disabled={isLoading}
+              />
+              {errors.username && (
+                <p className="mt-1 text-sm text-red-600 animate-slide-up">
+                  {errors.username}
+                </p>
+              )}
+            </div>
           </div>
 
-          {/* Password Fields */}
+          {/* Password Field */}
           <div>
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Password
+              {touchedFields.password &&
+                !errors.password &&
+                formData.password && (
+                  <span className="ml-2 text-green-500">
+                    <CheckIcon className="w-4 h-4 inline" />
+                  </span>
+                )}
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              placeholder="••••••••"
-              className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                errors.password
-                  ? "border-red-300 focus:ring-red-500"
-                  : "border-gray-200"
-              }`}
-              value={formData.password}
-              onChange={handleInputChange}
-            />
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                required
+                placeholder="••••••••"
+                className={`${getFieldClassName("password")} pr-12`}
+                value={formData.password}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className={`absolute right-3 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200 hover-scale ${
+                  errors.password ? "top-[calc(50%-12px)]" : "top-1/2"
+                }`}
+                disabled={isLoading}
+                data-tooltip={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="w-5 h-5" />
+                ) : (
+                  <EyeIcon className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+
+            {/* Password Strength Indicator */}
+            {formData.password && (
+              <div className="mt-2 animate-fade-in-up">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs text-gray-500">
+                    Password Strength
+                  </span>
+                  <span className={`text-xs font-medium ${strengthInfo.color}`}>
+                    {strengthInfo.label}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                  <div
+                    className={`h-1.5 rounded-full transition-all duration-300 ${strengthInfo.bgColor}`}
+                    style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+
             {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+              <p className="mt-1 text-sm text-red-600 animate-slide-up">
+                {errors.password}
+              </p>
             )}
           </div>
 
+          {/* Confirm Password Field */}
           <div>
             <label
               htmlFor="confirmPassword"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Confirm Password
+              {touchedFields.confirmPassword &&
+                !errors.confirmPassword &&
+                formData.confirmPassword && (
+                  <span className="ml-2 text-green-500">
+                    <CheckIcon className="w-4 h-4 inline" />
+                  </span>
+                )}
             </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              placeholder="••••••••"
-              className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:outline-none transition-all duration-200 bg-white/50 backdrop-blur-sm ${
-                errors.confirmPassword
-                  ? "border-red-300 focus:ring-red-500"
-                  : "border-gray-200"
-              }`}
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-            />
-            {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.confirmPassword}
-              </p>
-            )}
+            <div className="relative">
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                placeholder="••••••••"
+                className={`${getFieldClassName("confirmPassword")} pr-12`}
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className={`absolute right-3 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200 hover-scale ${
+                  errors.confirmPassword ? "top-[calc(50%-12px)]" : "top-1/2"
+                }`}
+                disabled={isLoading}
+                data-tooltip={
+                  showConfirmPassword ? "Hide password" : "Show password"
+                }
+              >
+                {showConfirmPassword ? (
+                  <EyeSlashIcon className="w-5 h-5" />
+                ) : (
+                  <EyeIcon className="w-5 h-5" />
+                )}
+              </button>
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-600 animate-slide-up">
+                  {errors.confirmPassword}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Sign Up Button */}
-          <div>
+          <div className="animate-fade-in-up stagger-2">
             <button
               type="submit"
-              className="w-full py-3 px-4 text-white font-semibold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isButtonDisabled}
+              className={`w-full py-3 px-4 text-white font-semibold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden btn-primary click-scale ${
+                isLoading && !signupSuccess ? "btn-loading" : ""
+              } ${
+                signupSuccess
+                  ? "bg-gradient-to-r from-green-500 to-green-600"
+                  : ""
+              }`}
             >
-              Create Account
+              {renderLoadingButton()}
             </button>
           </div>
         </form>
 
-        <p className="text-center text-sm text-gray-500">
-          Already have an account?{" "}
-          <span
-            onClick={handleLoginRedirect}
-            className="text-indigo-600 hover:text-indigo-700 hover:underline cursor-pointer transition-colors duration-200"
-          >
-            Sign in
-          </span>
-        </p>
+        <div className="animate-fade-in-up stagger-3">
+          <p className="text-center text-sm text-gray-500">
+            Already have an account?{" "}
+            <span
+              onClick={handleLoginRedirect}
+              className="text-indigo-600 hover:text-indigo-700 hover:underline cursor-pointer transition-colors duration-200 font-medium hover-scale"
+            >
+              Sign in
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Additional Premium Effects */}

@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { useActions, useResumes } from "../../../../../store";
 import type {
   StoreResume,
   Group,
@@ -99,7 +100,10 @@ const transformBackendResume = (
  * }
  */
 export const useResumeStore = (): UseResumeStoreReturn => {
-  const [resumes, setResumes] = useState<StoreResume[]>([]);
+  // Global store hooks
+  const { setResumes: setGlobalResumes } = useActions();
+  const globalResumes = useResumes();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletingResumeId, setDeletingResumeId] = useState<number | null>(null);
@@ -123,7 +127,24 @@ export const useResumeStore = (): UseResumeStoreReturn => {
       // Transform backend response to frontend format
       const transformedResumes = backendResumes.map(transformBackendResume);
 
-      setResumes(transformedResumes);
+      // Transform to global store format
+      const globalResumeData = transformedResumes.map((resume) => ({
+        id: resume.id,
+        filename: resume.filename,
+        originalFilename: resume.original_filename || resume.filename,
+        storedFilename: resume.stored_filename || resume.filename,
+        filepath: resume.filepath || "",
+        fileSize: resume.fileSize,
+        fileType: resume.fileType,
+        uploadedAt: resume.uploadedAt,
+        status: resume.status,
+        group: resume.group,
+        cloudUrl: resume.cloud_url,
+        commentedAt: resume.commented_at,
+        uploadTime: resume.upload_time,
+      }));
+
+      setGlobalResumes(globalResumeData);
     } catch (err) {
       console.error("❌ Failed to fetch resumes:", err);
       const errorMessage =
@@ -164,8 +185,8 @@ export const useResumeStore = (): UseResumeStoreReturn => {
       await deleteResume(resume.id);
       console.log(`✅ Successfully deleted resume with ID: ${resume.id}`);
 
-      // Remove the resume from local state
-      setResumes((prev) => prev.filter((r) => r.id !== resume.id));
+      // Remove the resume from global state
+      setGlobalResumes(globalResumes.filter((r) => r.id !== resume.id));
     } catch (err) {
       console.error("❌ Failed to delete resume:", err);
       const errorMessage =
@@ -182,9 +203,11 @@ export const useResumeStore = (): UseResumeStoreReturn => {
     async (resumeId: number, updates: Partial<StoreResume>) => {
       try {
         console.log(`🔄 Updating resume with ID: ${resumeId}`, updates);
-        // Update local state immediately for optimistic UI
-        setResumes((prev) =>
-          prev.map((r) => (r.id === resumeId ? { ...r, ...updates } : r))
+        // Update global state immediately for optimistic UI
+        setGlobalResumes(
+          globalResumes.map((r) =>
+            r.id === resumeId ? { ...r, ...updates } : r
+          )
         );
         console.log(`✅ Successfully updated resume with ID: ${resumeId}`);
       } catch (err) {
@@ -204,9 +227,9 @@ export const useResumeStore = (): UseResumeStoreReturn => {
           `💬 Adding comment to resume with ID: ${resumeId}`,
           comment
         );
-        // Update local state immediately for optimistic UI
-        setResumes((prev) =>
-          prev.map((r) => (r.id === resumeId ? { ...r, comment } : r))
+        // Update global state immediately for optimistic UI
+        setGlobalResumes(
+          globalResumes.map((r) => (r.id === resumeId ? { ...r, comment } : r))
         );
         console.log(
           `✅ Successfully added comment to resume with ID: ${resumeId}`
@@ -226,9 +249,9 @@ export const useResumeStore = (): UseResumeStoreReturn => {
           `✏️ Updating comment for resume with ID: ${resumeId}`,
           comment
         );
-        // Update local state immediately for optimistic UI
-        setResumes((prev) =>
-          prev.map((r) => (r.id === resumeId ? { ...r, comment } : r))
+        // Update global state immediately for optimistic UI
+        setGlobalResumes(
+          globalResumes.map((r) => (r.id === resumeId ? { ...r, comment } : r))
         );
         console.log(
           `✅ Successfully updated comment for resume with ID: ${resumeId}`
@@ -246,9 +269,11 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   const handleDeleteComment = useCallback(async (resumeId: number) => {
     try {
       console.log(`🗑️ Deleting comment for resume with ID: ${resumeId}`);
-      // Update local state immediately for optimistic UI
-      setResumes((prev) =>
-        prev.map((r) => (r.id === resumeId ? { ...r, comment: undefined } : r))
+      // Update global state immediately for optimistic UI
+      setGlobalResumes(
+        globalResumes.map((r) =>
+          r.id === resumeId ? { ...r, comment: undefined } : r
+        )
       );
       console.log(
         `✅ Successfully deleted comment for resume with ID: ${resumeId}`
@@ -271,7 +296,7 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   }, [refreshResumes, refreshGroups]);
 
   return {
-    resumes,
+    resumes: globalResumes as StoreResume[], // Use global resumes with type assertion
     groups,
     isLoading,
     isDeleting,

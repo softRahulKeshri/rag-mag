@@ -119,7 +119,7 @@ const Home = () => {
               }`}
             >
               <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent animate-gradient-x">
-                Welcome to Magure.ai
+                Welcome to Magure.AI <span className="text-gray-500 text-sm font-normal">Labs</span>
               </span>
             </h1>
 
@@ -259,7 +259,7 @@ const Home = () => {
 
             {/* Additional footer content */}
             <div className="flex justify-center space-x-8 mt-6 text-sm text-gray-500">
-              <span>© 2025 Magure.ai</span>
+              <span>© 2025 Magure.AI</span>
               <span>•</span>
               <span>Privacy Policy</span>
               <span>•</span>

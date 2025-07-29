@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useActions } from "../store";
 import { ROUTES } from "../constants";
 
 // Apps configuration for navbar
@@ -32,6 +33,9 @@ const Navbar = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // Global store hooks
+  const { logout } = useActions();
+
   // Handle scroll effect for navbar
   useEffect(() => {
     const handleScroll = () => {
@@ -47,7 +51,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    logout();
     navigate("/login");
   };
 
@@ -85,10 +89,10 @@ const Navbar = () => {
               {/* Brand Name */}
               <div className="flex flex-col items-start">
                 <span className="text-xl font-bold tracking-tight leading-tight bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                  Magure
+                  Magure.AI
                 </span>
                 <span className="text-xs font-medium text-gray-500 group-hover:text-purple-500 transition-colors duration-300 leading-tight">
-                  AI Labs
+                  Labs
                 </span>
               </div>
 
