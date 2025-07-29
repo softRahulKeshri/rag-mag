@@ -1,9 +1,9 @@
 import {
   MagnifyingGlassIcon,
   PlusIcon,
-  SparklesIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
+import { SparklesIcon as SparklesIconSolid } from "@heroicons/react/24/solid";
 import CommonSidebar from "../../../components/CommonSidebar";
 import ChatListItem from "./ChatListItem";
 import { UserProfile } from "./UserProfile";
@@ -30,8 +30,9 @@ export const ChatSidebar = ({
       <div className="flex-shrink-0 p-6 border-b border-slate-200/60">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
+            <div className="relative w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
               <ChatBubbleLeftRightIcon className="h-5 w-5 text-white" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white"></div>
             </div>
             <div>
               <h1 className="text-lg font-bold text-slate-800">ChatAI</h1>
@@ -57,7 +58,7 @@ export const ChatSidebar = ({
             {isCreatingSession ? "Creating..." : "New Chat"}
           </span>
           {!isCreatingSession && (
-            <SparklesIcon className="h-4 w-4 animate-pulse" />
+            <SparklesIconSolid className="h-4 w-4 animate-pulse" />
           )}
         </button>
       </div>
@@ -80,8 +81,9 @@ export const ChatSidebar = ({
       <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-2">
         {chats.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <div className="relative w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <ChatBubbleLeftRightIcon className="h-8 w-8 text-slate-400" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-slate-300 rounded-full animate-pulse"></div>
             </div>
             <h3 className="text-sm font-semibold text-slate-600 mb-2">
               No chats yet

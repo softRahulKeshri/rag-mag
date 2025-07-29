@@ -1,5 +1,7 @@
 import React from "react";
+import { UserCircleIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 import CommonSidebar from "../../../components/CommonSidebar";
+import { useUser } from "../../../store/useGlobalStore";
 import type { SidebarProps, NavigationItem } from "../types/sidebar";
 import { Section } from "../types/shared";
 
@@ -7,6 +9,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   activeSection,
   onSectionChange,
 }) => {
+  const user = useUser();
+  const displayName = user?.username || "User";
+
   const navigationItems: NavigationItem[] = [
     {
       id: Section.UPLOAD,
@@ -75,15 +80,16 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Logo Section */}
       <div className="flex-shrink-0 p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
-          {/* Magure.AI Logo */}
-          <div className="flex-shrink-0">
-           
+          {/* Enhanced Brand Icon */}
+          <div className="relative">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
+              <DocumentTextIcon className="h-5 w-5 text-white" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white"></div>
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900">ResumeAI</h1>
-            <p className="text-sm text-gray-500">
-              AI-Powered Talent Discovery Platform
-            </p>
+            <p className="text-sm text-gray-500">AI-Powered Talent Discovery</p>
           </div>
         </div>
       </div>
@@ -94,17 +100,17 @@ const Sidebar: React.FC<SidebarProps> = ({
           <button
             key={item.id}
             onClick={() => onSectionChange(item.id)}
-            className={`w-full text-left p-4 rounded-lg transition-all duration-200 group ${
+            className={`w-full text-left p-4 rounded-xl transition-all duration-300 ease-out group ${
               activeSection === item.id
-                ? "bg-blue-50 border border-blue-200 shadow-sm"
-                : "hover:bg-gray-50 border border-transparent"
+                ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg border border-purple-200/50"
+                : "hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80 border border-transparent"
             }`}
           >
             <div className="flex items-start space-x-3">
               <div
-                className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-200 ${
+                className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
                   activeSection === item.id
-                    ? "bg-blue-100 text-blue-600"
+                    ? "bg-purple-100 text-purple-600"
                     : "text-gray-400 group-hover:text-gray-600"
                 }`}
               >
@@ -112,7 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               </div>
               <div className="flex-1 min-w-0">
                 <h3
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-300 ${
                     activeSection === item.id
                       ? "text-gray-900"
                       : "text-gray-700"
@@ -124,16 +130,41 @@ const Sidebar: React.FC<SidebarProps> = ({
                   {item.description}
                 </p>
               </div>
+
+              {/* Active indicator */}
+              {activeSection === item.id && (
+                <div className="absolute right-4 w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full animate-pulse shadow-sm" />
+              )}
             </div>
+
+            {/* Hover background effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-50/80 to-blue-50/80 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
           </button>
         ))}
       </nav>
 
-      {/* Footer */}
-      <div className="flex-shrink-0 p-4 border-t border-gray-200">
-        <p className="text-xs text-gray-400 text-center">
-          Powered by Magure.AI
-        </p>
+      {/* User Profile Section - Consistent with other apps */}
+      <div className="flex-shrink-0 p-4 border-t border-gray-200/60">
+        <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200/60 shadow-md p-3">
+          <div className="flex items-center space-x-3">
+            {/* Enhanced Avatar */}
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md border border-indigo-400/30">
+                <UserCircleIcon className="h-5 w-5 text-white" />
+              </div>
+            </div>
+
+            {/* Enhanced User Info */}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-semibold text-slate-800 truncate">
+                {displayName}
+              </h3>
+              <p className="text-xs text-slate-500 truncate">
+                {user?.email || "User Account"}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </CommonSidebar>
   );

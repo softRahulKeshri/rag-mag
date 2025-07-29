@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import {
-  EllipsisVerticalIcon,
-  ChatBubbleLeftRightIcon,
-} from "@heroicons/react/24/outline";
+  ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconSolid,
+  SparklesIcon,
+} from "@heroicons/react/24/solid";
 import type { IChat } from "../types/types";
 
 interface IChatListItemProps {
@@ -28,6 +29,8 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
     lastMessage?.timestamp || chat.timestamp || new Date().toISOString();
   const formattedTime = dayjs(timestamp).format("MMM D, h:mm A");
 
+  const hasAIMessage = chat.messages.some((msg) => msg.role === "assistant");
+
   return (
     <div
       onClick={onClick}
@@ -39,16 +42,23 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
     >
       {/* Enhanced Chat Item Content */}
       <div className="flex items-start space-x-3">
-        {/* Enhanced Avatar */}
+        {/* Enhanced Modern Avatar */}
         <div className="flex-shrink-0">
           <div
-            className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-md border ${
+            className={`relative w-10 h-10 rounded-full flex items-center justify-center shadow-md border-2 transition-all duration-300 ${
               isSelected
-                ? "bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 border-indigo-400/30"
-                : "bg-gradient-to-br from-slate-500 via-gray-500 to-slate-600 border-slate-400/30 group-hover:from-indigo-500 group-hover:via-purple-500 group-hover:to-indigo-600 group-hover:border-indigo-400/30"
-            } transition-all duration-300`}
+                ? "bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 border-indigo-400/50"
+                : "bg-gradient-to-br from-slate-500 via-gray-500 to-slate-600 border-slate-400/50 group-hover:from-indigo-500 group-hover:via-purple-500 group-hover:to-indigo-600 group-hover:border-indigo-400/50"
+            } group-hover:scale-110`}
           >
-            <ChatBubbleLeftRightIcon className="h-4 w-4 text-white" />
+            <ChatBubbleLeftRightIconSolid className="h-5 w-5 text-white" />
+
+            {/* AI Status Indicator */}
+            {hasAIMessage && (
+              <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white">
+                <SparklesIcon className="h-2 w-2 text-white absolute inset-0.5" />
+              </div>
+            )}
           </div>
         </div>
 
@@ -105,6 +115,16 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
                 {chat.messages.length} message
                 {chat.messages.length !== 1 ? "s" : ""}
               </span>
+
+              {/* AI Conversation Indicator */}
+              {hasAIMessage && (
+                <div className="flex items-center space-x-1">
+                  <SparklesIcon className="h-3 w-3 text-emerald-500 animate-pulse" />
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-full">
+                    AI
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -137,13 +157,6 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
             : "group-hover:bg-gradient-to-r group-hover:from-indigo-500/5 group-hover:via-purple-500/5 group-hover:to-indigo-500/5 group-hover:opacity-100"
         }`}
       ></div>
-
-      {/* Enhanced AI Indicator */}
-      {chat.messages.some((msg) => msg.role === "assistant") && (
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full animate-pulse shadow-sm"></div>
-        </div>
-      )}
     </div>
   );
 };
