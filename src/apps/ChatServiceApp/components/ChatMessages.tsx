@@ -3,6 +3,10 @@ import {
   Square2StackIcon,
   DocumentDuplicateIcon,
   LightBulbIcon,
+  SparklesIcon,
+  CheckCircleIcon,
+  UserIcon,
+  CpuChipIcon,
 } from "@heroicons/react/24/outline";
 import type { IMessage } from "../types/types";
 import { formatTimestamp } from "../utils/chatUtils";
@@ -18,121 +22,288 @@ export const ChatMessages = ({ messages }: { messages: IMessage[] }) => {
     scrollToBottom();
   }, [messages]);
 
-  return (
-    <div className="overflow-y-auto bg-gradient-to-b from-[#FAFAFA] to-white p-6 space-y-6 min-h-0 smooth-scroll">
-      {messages.length === 0 ? (
-        <div className="h-full flex items-center justify-center px-4 py-16">
-          <div className="text-center max-w-md mx-auto animate-fade-in-up">
-            {/* Icon Container */}
-            <div className="relative flex items-center justify-center mb-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#3077F3]/10 to-[#B96AF7]/10 rounded-2xl flex items-center justify-center animate-float hover-glow">
-                <LightBulbIcon className="h-8 w-8 text-[#3077F3] animate-pulse-gentle" />
+  if (messages.length === 0) {
+    return (
+      <div className="h-full flex items-center justify-center p-8">
+        <div className="text-center max-w-lg mx-auto animate-fade-in-up">
+          {/* Premium Welcome Animation */}
+          <div className="relative mb-12">
+            <div className="relative mx-auto w-32 h-32">
+              {/* Main Icon */}
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-indigo-500/25 animate-float">
+                <LightBulbIcon className="h-16 w-16 text-white animate-pulse" />
               </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-[#3077F3]/5 to-[#B96AF7]/5 rounded-2xl blur-xl animate-pulse-slow"></div>
+
+              {/* Floating Elements */}
+              <div
+                className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-bounce shadow-lg"
+                style={{ animationDelay: "0.5s" }}
+              >
+                <SparklesIcon className="h-4 w-4 text-white" />
+              </div>
+
+              <div
+                className="absolute -bottom-2 -left-3 w-6 h-6 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center animate-bounce shadow-lg"
+                style={{ animationDelay: "1s" }}
+              >
+                <CheckCircleIcon className="h-3 w-3 text-white" />
+              </div>
+
+              <div className="absolute top-2 -left-4 w-4 h-4 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full animate-ping"></div>
+              <div
+                className="absolute -bottom-1 -right-1 w-3 h-3 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full animate-ping"
+                style={{ animationDelay: "1.5s" }}
+              ></div>
+
+              {/* Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 rounded-3xl blur-2xl animate-pulse-slow"></div>
+            </div>
+          </div>
+
+          {/* Welcome Content */}
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-fade-in">
+                Welcome to ChatAI
+              </h1>
+              <p
+                className="text-xl text-slate-600 animate-fade-in"
+                style={{ animationDelay: "0.2s" }}
+              >
+                Your intelligent conversation partner
+              </p>
+              <p
+                className="text-base text-slate-500 leading-relaxed animate-fade-in"
+                style={{ animationDelay: "0.4s" }}
+              >
+                Start a conversation below and experience the power of AI-driven
+                chat
+              </p>
+            </div>
+
+            {/* Feature Cards */}
+            <div
+              className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 animate-fade-in"
+              style={{ animationDelay: "0.6s" }}
+            >
+              <div className="group p-6 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 hover:border-indigo-300/50 transition-all duration-500 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-1">
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <SparklesIcon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="font-semibold text-slate-800 mb-2">
+                  Smart Responses
+                </h3>
+                <p className="text-sm text-slate-600">
+                  Get intelligent, contextual answers to all your questions
+                </p>
+              </div>
+
+              <div
+                className="group p-6 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 hover:border-emerald-300/50 transition-all duration-500 hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1"
+                style={{ animationDelay: "0.1s" }}
+              >
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <CheckCircleIcon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="font-semibold text-slate-800 mb-2">Real-time</h3>
+                <p className="text-sm text-slate-600">
+                  Instant responses with seamless conversation flow
+                </p>
+              </div>
+
+              <div
+                className="group p-6 bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 hover:border-rose-300/50 transition-all duration-500 hover:shadow-xl hover:shadow-rose-500/10 hover:-translate-y-1"
+                style={{ animationDelay: "0.2s" }}
+              >
+                <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <CpuChipIcon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="font-semibold text-slate-800 mb-2">
+                  AI Powered
+                </h3>
+                <p className="text-sm text-slate-600">
+                  Advanced AI technology for natural conversations
+                </p>
               </div>
             </div>
 
-            {/* Content */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-[#2E3141] animate-fade-in stagger-1">
-                How can I help you today?
-              </h3>
-              <p className="text-[#6D6F7A] leading-relaxed animate-fade-in stagger-2">
-                Ask me anything or start a new conversation to get started
-              </p>
-
-              {/* Status Indicators */}
-              <div className="flex items-center justify-center space-x-6 pt-4 animate-fade-in stagger-3">
-                <div className="flex items-center space-x-2 text-sm text-[#82838D] hover:text-[#6D6F7A] transition-colors duration-300">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span>AI Ready</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-[#82838D] hover:text-[#6D6F7A] transition-colors duration-300">
-                  <div
-                    className="w-2 h-2 bg-[#3077F3] rounded-full animate-pulse"
-                    style={{ animationDelay: "1s" }}
-                  ></div>
-                  <span>Real-time</span>
-                </div>
+            {/* Status Indicators */}
+            <div
+              className="flex items-center justify-center space-x-8 pt-8 animate-fade-in"
+              style={{ animationDelay: "0.8s" }}
+            >
+              <div className="flex items-center space-x-3 px-4 py-2 bg-emerald-50 rounded-full border border-emerald-200/50">
+                <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full animate-pulse shadow-sm"></div>
+                <span className="text-sm font-medium text-emerald-700">
+                  AI Ready
+                </span>
+              </div>
+              <div className="flex items-center space-x-3 px-4 py-2 bg-indigo-50 rounded-full border border-indigo-200/50">
+                <div
+                  className="w-3 h-3 bg-gradient-to-r from-indigo-400 to-indigo-500 rounded-full animate-pulse shadow-sm"
+                  style={{ animationDelay: "0.5s" }}
+                ></div>
+                <span className="text-sm font-medium text-indigo-700">
+                  Online
+                </span>
               </div>
             </div>
           </div>
         </div>
-      ) : (
-        <div className="max-w-4xl mx-auto w-full space-y-6">
-          {messages.map((message, index) => (
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full overflow-y-auto px-4 py-6 space-y-6 bg-gradient-to-b from-slate-50/50 to-white smooth-scroll">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {messages.map((message, index) => (
+          <div
+            key={message.id}
+            className={`flex ${
+              message.role === "user" ? "justify-end" : "justify-start"
+            } group animate-message-appear`}
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
             <div
-              key={message.id}
-              className={`flex ${
-                message.role === "user" ? "justify-end" : "justify-start"
-              } group animate-message-appear`}
-              style={{ animationDelay: `${index * 100}ms` }}
+              className={`relative max-w-[85%] lg:max-w-[75%] flex items-start space-x-3 ${
+                message.role === "user"
+                  ? "flex-row-reverse space-x-reverse"
+                  : ""
+              }`}
             >
+              {/* Avatar */}
               <div
-                className={`relative max-w-[80%] md:max-w-[70%] rounded-2xl p-4 transition-all duration-300 message-bubble hover-lift ${
-                  message.role === "user"
-                    ? "bg-[#3077F3] text-white rounded-br-md hover:bg-[#1E50A8] hover:shadow-lg transform-gpu"
-                    : "bg-white text-[#2E3141] rounded-bl-md border border-[#EAEAEC] hover:border-[#D5D6D9] hover:shadow-md"
+                className={`flex-shrink-0 ${
+                  message.role === "user" ? "order-last" : "order-first"
                 }`}
               >
-                <div className="prose max-w-none text-sm leading-relaxed break-words">
-                  {message.isStreaming ? (
-                    <div className="flex items-center space-x-1">
-                      <span>{message.content}</span>
-                      <div className="w-2 h-4 bg-current animate-pulse opacity-70"></div>
-                    </div>
+                <div
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-lg ${
+                    message.role === "user"
+                      ? "bg-gradient-to-br from-indigo-500 to-purple-500"
+                      : "bg-gradient-to-br from-emerald-500 to-teal-500"
+                  }`}
+                >
+                  {message.role === "user" ? (
+                    <UserIcon className="h-5 w-5 text-white" />
                   ) : (
-                    message.content
+                    <CpuChipIcon className="h-5 w-5 text-white" />
                   )}
                 </div>
+              </div>
+
+              {/* Message Content */}
+              <div
+                className={`relative rounded-3xl px-6 py-4 shadow-lg transition-all duration-500 hover:shadow-xl ${
+                  message.role === "user"
+                    ? "bg-gradient-to-br from-indigo-500 to-purple-500 text-white rounded-br-lg"
+                    : "bg-white border border-slate-200/50 text-slate-800 rounded-bl-lg hover:border-slate-300/50"
+                } backdrop-blur-sm`}
+              >
+                {/* Message Text */}
+                <div className="prose prose-sm max-w-none break-words overflow-wrap-anywhere">
+                  {message.isStreaming ? (
+                    <div className="flex items-end space-x-2">
+                      <div className="whitespace-pre-wrap leading-7 text-base font-medium">
+                        {message.content}
+                      </div>
+                      <div className="flex space-x-1 pb-1">
+                        <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"></div>
+                        <div
+                          className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+                          style={{ animationDelay: "0.1s" }}
+                        ></div>
+                        <div
+                          className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      className={`whitespace-pre-wrap leading-7 text-base ${
+                        message.role === "user" ? "font-medium" : ""
+                      }`}
+                    >
+                      {message.content}
+                    </div>
+                  )}
+                </div>
+
+                {/* File Attachment */}
+                {message.file && (
+                  <div className="mt-3 pt-3 border-t border-current/20">
+                    <div className="flex items-center space-x-2 text-sm opacity-90">
+                      <DocumentDuplicateIcon className="h-4 w-4" />
+                      <span>{message.file.name}</span>
+                      <span className="text-xs">
+                        ({(message.file.size / 1024).toFixed(1)} KB)
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {/* Timestamp */}
                 <div
-                  className={`mt-3 text-xs flex items-center justify-end transition-all duration-300 ${
-                    message.role === "user" ? "text-white/70" : "text-[#82838D]"
+                  className={`mt-3 text-xs flex items-center ${
+                    message.role === "user"
+                      ? "justify-end text-white/80"
+                      : "justify-start text-slate-500"
                   }`}
                 >
-                  <span className="hover:text-current transition-colors duration-300">
+                  <span className="font-medium">
                     {formatTimestamp(message.timestamp)}
                   </span>
                   {message.role === "assistant" && (
-                    <span className="w-2 h-2 rounded-full bg-green-500 ml-2 flex-shrink-0 animate-pulse-gentle"></span>
+                    <div className="flex items-center space-x-1 ml-2">
+                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                      <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">
+                        AI
+                      </span>
+                    </div>
                   )}
                 </div>
 
-                {/* Message actions */}
-                <div className="absolute -top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 flex space-x-1 transform translate-y-2 group-hover:translate-y-0">
+                {/* Action Buttons */}
+                <div
+                  className={`absolute -top-2 ${
+                    message.role === "user" ? "-left-2" : "-right-2"
+                  } opacity-0 group-hover:opacity-100 transition-all duration-300 flex space-x-1`}
+                >
                   <button
-                    className="p-1.5 rounded-lg bg-white border border-[#EAEAEC] text-[#6D6F7A] hover:text-[#434654] hover:bg-[#F5F5F5] transition-all duration-300 shadow-sm hover:shadow-md hover:scale-110 transform-gpu focus-ring-brand"
+                    className="p-2 bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl text-slate-600 hover:text-slate-800 hover:bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 transform-gpu"
                     aria-label="Copy message"
                     onClick={() =>
                       navigator.clipboard.writeText(message.content)
                     }
                   >
-                    <Square2StackIcon className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    className="p-1.5 rounded-lg bg-white border border-[#EAEAEC] text-[#6D6F7A] hover:text-[#434654] hover:bg-[#F5F5F5] transition-all duration-300 shadow-sm hover:shadow-md hover:scale-110 transform-gpu focus-ring-brand"
-                    aria-label="Duplicate message"
-                  >
-                    <DocumentDuplicateIcon className="h-3.5 w-3.5" />
+                    <Square2StackIcon className="h-4 w-4" />
                   </button>
                 </div>
 
-                {/* Message glow effect */}
+                {/* Message Tail */}
                 <div
-                  className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${
+                  className={`absolute top-4 w-3 h-3 transform rotate-45 ${
                     message.role === "user"
-                      ? "bg-gradient-to-r from-[#3077F3]/10 to-[#1E50A8]/10"
-                      : "bg-gradient-to-r from-[#3077F3]/5 to-[#B96AF7]/5"
+                      ? "right-[-6px] bg-gradient-to-br from-indigo-500 to-purple-500"
+                      : "left-[-6px] bg-white border-l border-b border-slate-200/50"
+                  }`}
+                ></div>
+
+                {/* Glow Effect */}
+                <div
+                  className={`absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
+                    message.role === "user"
+                      ? "bg-gradient-to-r from-indigo-500/20 to-purple-500/20"
+                      : "bg-gradient-to-r from-emerald-500/10 to-teal-500/10"
                   }`}
                 ></div>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
       <div ref={messagesEndRef} className="h-4" />
     </div>
   );
