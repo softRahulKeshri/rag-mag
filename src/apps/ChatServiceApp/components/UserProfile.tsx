@@ -1,9 +1,8 @@
-import { useState } from "react";
 import {
   UserCircleIcon,
   Cog6ToothIcon,
-  StarIcon,
-  CheckBadgeIcon,
+  ArrowRightOnRectangleIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
 
 interface UserProfileProps {
@@ -13,96 +12,51 @@ interface UserProfileProps {
   onSettingsClick?: () => void;
 }
 
-export const UserProfile = ({
-  name = "User Name",
+export const UserProfile: React.FC<UserProfileProps> = ({
+  name = "User",
   email = "user@example.com",
   plan = "Free Plan",
   onSettingsClick,
-}: UserProfileProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const getPlanIcon = (planType: string) => {
-    if (
-      planType.toLowerCase().includes("pro") ||
-      planType.toLowerCase().includes("premium")
-    ) {
-      return <StarIcon className="h-3 w-3" />;
-    }
-    return <CheckBadgeIcon className="h-3 w-3" />;
-  };
-
-  const getPlanColors = (planType: string) => {
-    if (
-      planType.toLowerCase().includes("pro") ||
-      planType.toLowerCase().includes("premium")
-    ) {
-      return "bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple text-white";
-    }
-    return "bg-gray-100 text-gray-700";
-  };
-
+}) => {
   return (
-    <div className="p-6 border-t border-gray-200 bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      <div className="flex items-center space-x-4">
-        {/* Enhanced Avatar with Status Indicator */}
-        <div className="relative">
-          <div
-            className={`w-14 h-14 rounded-3xl bg-gradient-to-br from-brand-gradient-blue to-brand-gradient-purple flex items-center justify-center text-white transition-all duration-300 shadow-md border border-white/50 ${
-              isHovered
-                ? "scale-110 shadow-xl shadow-brand-gradient-blue/20"
-                : ""
-            }`}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <UserCircleIcon className="h-8 w-8 text-white/90" />
+    <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200/60 shadow-md p-4">
+      <div className="flex items-center space-x-3">
+        {/* Enhanced Avatar */}
+        <div className="flex-shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
+            <UserCircleIcon className="h-6 w-6 text-white" />
           </div>
-
-          {/* Online Status Indicator */}
-          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-sm">
-            <div className="w-full h-full bg-green-400 rounded-full animate-pulse"></div>
-          </div>
-
-          {/* Subtle Glow Effect - Only on Hover */}
-          {isHovered && (
-            <div className="absolute inset-0 bg-gradient-to-br from-brand-gradient-blue/10 to-brand-gradient-purple/10 rounded-3xl blur-xl"></div>
-          )}
         </div>
 
-        {/* User Information */}
+        {/* Enhanced User Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-2 mb-1">
-            <p className="text-base font-semibold text-neutral-n900 truncate">
-              {name}
-            </p>
-            <div
-              className={`px-2 py-1 text-xs font-medium rounded-lg flex items-center space-x-1 ${getPlanColors(
-                plan
-              )}`}
-            >
-              {getPlanIcon(plan)}
-              <span>{plan}</span>
-            </div>
+          <h3 className="text-sm font-semibold text-slate-800 truncate">
+            {name}
+          </h3>
+          <p className="text-xs text-slate-500 truncate">{email}</p>
+          <div className="flex items-center space-x-1 mt-1">
+            <SparklesIcon className="h-3 w-3 text-indigo-500" />
+            <span className="text-xs font-medium text-indigo-600">{plan}</span>
           </div>
-          <p className="text-sm text-neutral-n600 truncate" title={email}>
-            {email}
-          </p>
         </div>
 
-        {/* Settings Button */}
-        <button
-          className="group p-3 rounded-2xl hover:bg-white hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-ui-blue-p500/30 focus:bg-white border border-transparent hover:border-gray-200"
-          onClick={onSettingsClick}
-          aria-label="Open profile settings"
-        >
-          <Cog6ToothIcon className="h-5 w-5 text-neutral-n500 group-hover:text-primary-ui-blue-p600 group-hover:rotate-90 transition-all duration-300" />
-        </button>
+        {/* Enhanced Action Buttons */}
+        <div className="flex items-center space-x-1">
+          <button
+            onClick={onSettingsClick}
+            className="p-2 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-300 hover:scale-110 transform-gpu"
+            aria-label="Settings"
+          >
+            <Cog6ToothIcon className="h-4 w-4" />
+          </button>
+          <button
+            className="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-all duration-300 hover:scale-110 transform-gpu"
+            aria-label="Sign out"
+          >
+            <ArrowRightOnRectangleIcon className="h-4 w-4" />
+          </button>
+        </div>
       </div>
-
-      {/* Subtle Bottom Accent - Less Prominent */}
-      <div className="mt-4 h-0.5 bg-gradient-to-r from-gray-200 via-primary-ui-blue-p200 to-gray-200 rounded-full"></div>
     </div>
   );
 };
-
-export default UserProfile;

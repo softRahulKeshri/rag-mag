@@ -22,6 +22,7 @@ const ChatServiceApp = () => {
   const [chats, setChats] = useState<IChat[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
 
   // API hooks for chat sessions
   const {
@@ -30,8 +31,12 @@ const ChatServiceApp = () => {
     clearError: clearCreateSessionError,
   } = useCreateChatSessionApi();
 
-  const { data: chatSessions, refetch: refetchSessions } =
-    useChatSessionsEnhanced(userId);
+  const {
+    data: chatSessions,
+    isLoading: isLoadingSessions,
+    error: sessionsError,
+    refetch: refetchSessions,
+  } = useChatSessionsEnhanced(userId);
 
   // Conversation API for sending messages and getting AI responses
   const {
@@ -72,6 +77,7 @@ const ChatServiceApp = () => {
   useEffect(() => {
     const loadChatMessages = async () => {
       if (selectedChatId) {
+        setIsLoadingMessages(true);
         try {
           const messages = await fetchMessages(selectedChatId);
           // Transform API messages to local format
@@ -96,6 +102,8 @@ const ChatServiceApp = () => {
             selectedChatId,
             error
           );
+        } finally {
+          setIsLoadingMessages(false);
         }
       }
     };
@@ -264,8 +272,76 @@ const ChatServiceApp = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Show loading state while fetching sessions
+  if (isLoadingSessions) {
+    return (
+      <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center animate-fade-in">
+          {/* Premium Loading Animation */}
+          <div className="relative mb-8">
+            <div className="w-20 h-20 border-4 border-indigo-200 border-t-indigo-500 rounded-full animate-spin"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 border-4 border-transparent border-t-purple-400 rounded-full animate-spin animate-reverse"></div>
+            </div>
+          </div>
+          <p className="text-slate-600 text-lg font-medium animate-pulse">
+            Loading conversations...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if sessions fail to load
+  if (sessionsError) {
+    return (
+      <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto animate-fade-in">
+          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg
+              className="w-8 h-8 text-red-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-slate-800 mb-3">
+            Failed to Load Conversations
+          </h3>
+          <p className="text-slate-600 text-sm mb-6">{sessionsError.message}</p>
+          <button
+            onClick={() => refetchSessions()}
+            className="inline-flex items-center px-4 py-2 bg-indigo-500 text-white text-sm font-medium rounded-lg hover:bg-indigo-600 transition-all duration-300 hover:scale-105"
+          >
+            <svg
+              className="w-4 h-4 mr-2 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 overflow-hidden">
+    <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-white to-slate-100 flex overflow-hidden">
       {/* Premium Background Effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-radial from-blue-100/30 via-transparent to-transparent animate-pulse-slow"></div>
@@ -299,36 +375,39 @@ const ChatServiceApp = () => {
       )}
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 relative z-10">
+      <div className="flex-1 flex flex-col min-w-0 relative z-10 h-full">
         {/* Chat Header */}
-        <ChatHeader
-          onMenuToggle={toggleSidebar}
-          title={selectedChat?.title || "Select a Chat"}
-          subtitle={
-            selectedChat
-              ? `${selectedChat.messages.length} messages`
-              : "Choose a conversation to start chatting"
-          }
-          onClearChat={handleClearChat}
-          onRenameChat={handleRenameChat}
-        />
+        <div className="flex-shrink-0">
+          <ChatHeader
+            onMenuToggle={toggleSidebar}
+            title={selectedChat?.title || "Select a Chat"}
+            subtitle={
+              selectedChat
+                ? `${selectedChat.messages.length} messages`
+                : "Choose a conversation to start chatting"
+            }
+            onClearChat={handleClearChat}
+            onRenameChat={handleRenameChat}
+          />
+        </div>
 
         {/* Tools Bar */}
-        <Tools />
+        <div className="flex-shrink-0">
+          <Tools />
+        </div>
 
-        {/* Chat Content */}
+        {/* Chat Content - Fixed Height Container */}
         <div className="flex-1 flex flex-col min-h-0 relative">
-          {/* Messages Area */}
-          <div className="flex-1 relative min-h-0">
-            <div className="absolute inset-0 flex flex-col">
-              <div className="flex-1 overflow-hidden">
-                <ChatMessages messages={selectedChat?.messages || []} />
-              </div>
-            </div>
+          {/* Messages Area - Takes remaining space */}
+          <div className="flex-1 min-h-0 relative">
+            <ChatMessages
+              messages={selectedChat?.messages || []}
+              isLoading={isLoadingMessages}
+            />
           </div>
 
-          {/* Message Input */}
-          <div className="flex-shrink-0 border-t border-slate-200/50 bg-white/80 backdrop-blur-xl">
+          {/* Message Input - Fixed at bottom */}
+          <div className="flex-shrink-0">
             <MessageInput
               onSendMessage={handleSendMessage}
               isSending={isConversationLoading}
