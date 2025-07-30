@@ -5,6 +5,7 @@ import { ChatSidebar } from "./components/ChatSidebar";
 import { ChatMessages } from "./components/ChatMessages";
 import { MessageInput } from "./components/MessageInput";
 import { Tools } from "./components/Tools";
+import { ModelSelector } from "./components/ModelSelector";
 import {
   useCreateChatSessionApi,
   useChatSessionsEnhanced,
@@ -13,6 +14,7 @@ import {
 } from "./hooks";
 import { getChatTitle } from "./utils/chatUtils";
 import type { IChat, IMessage, CreateChatSessionResponse } from "./types/types";
+import { ModelType } from "./types/types";
 
 const ChatServiceApp = () => {
   // Get user ID from global store
@@ -21,8 +23,11 @@ const ChatServiceApp = () => {
 
   const [chats, setChats] = useState<IChat[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Start with sidebar closed on mobile
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<ModelType>(
+    ModelType.OPENAI
+  );
 
   // API hooks for chat sessions
   const {
@@ -54,9 +59,10 @@ const ChatServiceApp = () => {
   ): IChat[] => {
     return sessions.map((session) => ({
       id: session.id,
-      title: session.title,
+      title: session.title || "New Chat",
       timestamp: session.created_at,
       messages: [], // Messages will be loaded separately when chat is selected
+      selectedModel: ModelType.OPENAI, // Default model for existing chats
     }));
   };
 
@@ -66,7 +72,7 @@ const ChatServiceApp = () => {
       const transformedChats = transformSessionsToChats(chatSessions);
       setChats(transformedChats);
 
-      // Select first chat if none selected
+      // Select first chat if none selected and we have chats
       if (!selectedChatId && transformedChats.length > 0) {
         setSelectedChatId(transformedChats[0].id);
       }
@@ -136,6 +142,7 @@ const ChatServiceApp = () => {
         title: newSession.title,
         timestamp: newSession.created_at,
         messages: [],
+        selectedModel: selectedModel, // Use currently selected model
       };
 
       // Add to local state immediately
@@ -172,8 +179,24 @@ const ChatServiceApp = () => {
     );
   };
 
+  const handleModelChange = (model: ModelType) => {
+    setSelectedModel(model);
+
+    // Update the selected chat's model
+    if (selectedChatId) {
+      setChats((prevChats) =>
+        prevChats.map((chat) =>
+          chat.id === selectedChatId ? { ...chat, selectedModel: model } : chat
+        )
+      );
+    }
+  };
+
   const handleSendMessage = async (content: string, file?: File) => {
     if (!selectedChatId || (!content.trim() && !file)) return;
+
+    // Get the model for the selected chat
+    const chatModel = selectedChat?.selectedModel || selectedModel;
 
     // Create user message for immediate UI update
     const userMessage: IMessage = {
@@ -213,11 +236,12 @@ const ChatServiceApp = () => {
       // Clear any previous conversation errors
       clearConversationError();
 
-      // Send message and get AI response using the conversation API
+      // Send message and get AI response using the conversation API with selected model
       const aiResponse = await sendUserMessageAndGetResponse(
         content,
         selectedChatId,
-        userId
+        userId,
+        chatModel
       );
 
       console.log("✅ AI response received:", aiResponse);
@@ -275,18 +299,15 @@ const ChatServiceApp = () => {
   // Show loading state while fetching sessions
   if (isLoadingSessions) {
     return (
-      <div className="h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center p-10 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 max-w-md mx-auto">
-          <div className="relative mb-8">
-            <div className="w-16 h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mx-auto shadow-lg"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin"></div>
-            </div>
+      <div className="h-screen w-full bg-gray-50 flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-2xl shadow-xl border border-gray-200 max-w-sm mx-auto">
+          <div className="relative mb-6">
+            <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
           </div>
-          <h3 className="text-xl font-bold text-slate-800 mb-3">
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
             Loading ChatAI
           </h3>
-          <p className="text-slate-600 text-base">
+          <p className="text-sm text-gray-600">
             Setting up your conversation experience...
           </p>
         </div>
@@ -297,11 +318,11 @@ const ChatServiceApp = () => {
   // Show error state if sessions fail to load
   if (sessionsError) {
     return (
-      <div className="h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
-        <div className="text-center max-w-lg mx-auto p-10 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20">
-          <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+      <div className="h-screen w-full bg-gray-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md mx-auto p-8 bg-white rounded-2xl shadow-xl border border-gray-200">
+          <div className="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <svg
-              className="w-10 h-10 text-white"
+              className="w-10 h-10 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -314,16 +335,16 @@ const ChatServiceApp = () => {
               />
             </svg>
           </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-4">
+          <h3 className="text-2xl font-bold text-gray-800 mb-4">
             Connection Failed
           </h3>
-          <p className="text-slate-600 text-base mb-8 leading-relaxed">
+          <p className="text-sm text-gray-600 mb-8 leading-relaxed">
             {sessionsError.message ||
               "Unable to load your conversations. Please check your connection and try again."}
           </p>
           <button
             onClick={() => refetchSessions()}
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-base font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="inline-flex items-center px-8 py-4 bg-blue-500 text-white text-sm font-semibold rounded-xl hover:bg-blue-600 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <svg
               className="w-5 h-5 mr-3"
@@ -346,18 +367,12 @@ const ChatServiceApp = () => {
   }
 
   return (
-    <div className="h-full w-full bg-gradient-to-br from-slate-50 to-blue-50 flex overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-indigo-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/10 to-pink-500/10 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Sidebar */}
+    <div className="flex h-full bg-gray-50 overflow-hidden">
+      {/* Sidebar - Hidden by default on mobile, shown on desktop */}
       <div
-        className={`relative z-30 ${
+        className={`${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto w-80 lg:w-80 xl:w-96 flex-shrink-0`}
+        } lg:translate-x-0 transition-transform duration-300 ease-in-out lg:static lg:inset-auto w-80 flex-shrink-0 z-30`}
       >
         <ChatSidebar
           chats={chats}
@@ -377,34 +392,47 @@ const ChatServiceApp = () => {
       )}
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 relative z-10 h-full">
+      <div className="flex-1 flex flex-col min-w-0 relative h-full overflow-hidden">
         {/* Chat Header */}
         <div className="flex-shrink-0">
           <ChatHeader
             onMenuToggle={toggleSidebar}
-            title={selectedChat?.title || "Select a Chat"}
+            title={selectedChat?.title || "New Chat"}
             subtitle={
               selectedChat
                 ? `${selectedChat.messages.length} messages`
-                : "Choose a conversation to start chatting"
+                : "0 messages"
             }
+            selectedModel={selectedChat?.selectedModel || selectedModel}
             onClearChat={handleClearChat}
             onRenameChat={handleRenameChat}
           />
         </div>
 
-        {/* Tools Bar */}
+        {/* Tools Bar with Model Selector */}
         <div className="flex-shrink-0">
-          <Tools />
+          <div className="bg-white border-b border-gray-200">
+            <div className="flex items-center justify-between px-6 py-4 h-16">
+              <Tools />
+              <div className="flex items-center space-x-4">
+                <ModelSelector
+                  selectedModel={selectedChat?.selectedModel || selectedModel}
+                  onModelChange={handleModelChange}
+                  className="w-48"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Chat Content Container */}
-        <div className="flex-1 flex flex-col min-h-0 relative bg-white/80 backdrop-blur-sm m-4 lg:m-6 rounded-2xl shadow-xl border border-white/30">
+        <div className="flex-1 flex flex-col min-h-0 relative bg-white m-4 lg:m-6 rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
           {/* Messages Area - Takes remaining space */}
           <div className="flex-1 min-h-0 relative rounded-t-2xl overflow-hidden">
             <ChatMessages
               messages={selectedChat?.messages || []}
               isLoading={isLoadingMessages}
+              isAITyping={isConversationLoading}
             />
           </div>
 
@@ -413,6 +441,7 @@ const ChatServiceApp = () => {
             <MessageInput
               onSendMessage={handleSendMessage}
               isSending={isConversationLoading}
+              selectedModel={selectedChat?.selectedModel || selectedModel}
             />
           </div>
         </div>

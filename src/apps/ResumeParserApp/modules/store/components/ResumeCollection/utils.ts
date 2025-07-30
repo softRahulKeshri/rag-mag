@@ -119,3 +119,15 @@ export const filterResumes = (
     return true;
   });
 };
+
+/**
+ * Build API URL for resume operations using the new API endpoint
+ * This URL is used for both viewing and downloading files
+ * @param cvId - The CV/Resume ID
+ * @returns The complete API URL
+ */
+export const buildResumeApiUrl = (cvId: string | number): string => {
+  const baseURL =
+    "http://ec2-65-2-188-195.ap-south-1.compute.amazonaws.com/api";
+  return `${baseURL}/download/${cvId}`;
+};

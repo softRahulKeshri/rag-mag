@@ -6,6 +6,7 @@ import {
   PresentationChartLineIcon,
 } from "@heroicons/react/24/outline";
 import { useUser } from "../../../store/useGlobalStore";
+import CommonSidebar from "../../../components/CommonSidebar";
 import type { NavigationProps, TabId } from "../types/navigation";
 
 const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
@@ -15,29 +16,30 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   const navigationItems = [
     {
       id: "upload" as TabId,
-      label: "Upload Pitch",
+      title: "Upload Pitch",
+      description: "Upload and analyze your pitch deck with AI",
       icon: CloudArrowUpIcon,
-      path: "/upload",
     },
     {
       id: "bookmarked" as TabId,
-      label: "Bookmarked",
+      title: "Bookmarked",
+      description: "Access your saved pitch decks for quick analysis",
       icon: BookmarkIcon,
-      path: "/bookmarked",
     },
     {
       id: "chat" as TabId,
-      label: "Chat & Details",
+      title: "Chat & Details",
+      description: "AI-powered conversation and detailed insights",
       icon: ChatBubbleLeftRightIcon,
-      path: "/chat",
     },
   ];
 
   return (
-    <div className="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col h-screen">
-      {/* Brand Section */}
-      <div className="p-6 border-b border-gray-200">
+    <CommonSidebar>
+      {/* Logo Section */}
+      <div className="flex-shrink-0 p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
+          {/* Enhanced Brand Icon */}
           <div className="relative">
             <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
               <PresentationChartLineIcon className="h-5 w-5 text-white" />
@@ -53,47 +55,50 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
         </div>
       </div>
 
-      {/* Navigation Items */}
-      <div className="flex-1 p-4 space-y-2">
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto min-h-0">
         {navigationItems.map((item) => {
           const IconComponent = item.icon;
           return (
             <button
               key={item.id}
               onClick={() => onTabChange(item.id)}
-              className={`
-                w-full relative px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ease-out
-                flex items-center space-x-3 group
-                ${
-                  activeTab === item.id
-                    ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg border border-purple-200/50"
-                    : "text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80 border border-transparent"
-                }
-              `}
+              className={`w-full text-left p-4 rounded-lg transition-all duration-200 group ${
+                activeTab === item.id
+                  ? "bg-blue-50 border border-blue-200 shadow-sm"
+                  : "hover:bg-gray-50 border border-transparent"
+              }`}
             >
-              <IconComponent
-                className={`w-5 h-5 transition-all duration-300 ${
-                  activeTab === item.id
-                    ? "text-purple-600"
-                    : "text-gray-400 group-hover:text-gray-600"
-                }`}
-              />
-              <span>{item.label}</span>
-
-              {/* Active indicator */}
-              {activeTab === item.id && (
-                <div className="absolute right-2 w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full animate-pulse shadow-sm" />
-              )}
-
-              {/* Hover background effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-50/80 to-blue-50/80 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+              <div className="flex items-start space-x-3">
+                <div
+                  className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-200 ${
+                    activeTab === item.id
+                      ? "bg-blue-100 text-blue-600"
+                      : "text-gray-400 group-hover:text-gray-600"
+                  }`}
+                >
+                  <IconComponent className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3
+                    className={`text-sm font-medium transition-colors duration-200 ${
+                      activeTab === item.id ? "text-gray-900" : "text-gray-700"
+                    }`}
+                  >
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
             </button>
           );
         })}
-      </div>
+      </nav>
 
-      {/* User Profile Section - Consistent with main navbar */}
-      <div className="p-4 border-t border-gray-200/60">
+      {/* User Profile Section */}
+      <div className="flex-shrink-0 p-4 border-t border-gray-200">
         <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200/60 shadow-md p-3">
           <div className="flex items-center space-x-3">
             {/* Enhanced Avatar */}
@@ -115,7 +120,7 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
           </div>
         </div>
       </div>
-    </div>
+    </CommonSidebar>
   );
 };
 

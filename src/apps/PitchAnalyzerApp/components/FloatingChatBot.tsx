@@ -3,6 +3,8 @@ import {
   PaperAirplaneIcon,
   XMarkIcon,
   ChatBubbleLeftRightIcon,
+  LightBulbIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
 import { useChatWithAI } from "../hooks/useChatWithAI";
 import type { Pitch } from "../types/types";
@@ -16,17 +18,11 @@ interface Message {
 
 interface FloatingChatBotProps {
   pitch: Pitch;
-  userEmail: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const FloatingChatBot = ({
-  pitch,
-  userEmail,
-  isOpen,
-  onClose,
-}: FloatingChatBotProps) => {
+const FloatingChatBot = ({ pitch, isOpen, onClose }: FloatingChatBotProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -66,11 +62,11 @@ const FloatingChatBot = ({
     setIsTyping(true);
 
     try {
-      const response = await chatWithAI(pitch.id, inputMessage, userEmail);
+      const response = await chatWithAI(pitch.id, inputMessage);
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: response.queryRespFromAi,
+        text: response.answer,
         isUser: false,
         timestamp: new Date(),
       };
@@ -88,7 +84,7 @@ const FloatingChatBot = ({
     } finally {
       setIsTyping(false);
     }
-  }, [inputMessage, isLoading, chatWithAI, pitch.id, userEmail]);
+  }, [inputMessage, isLoading, chatWithAI, pitch.id]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -110,25 +106,25 @@ const FloatingChatBot = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col z-50">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-96 h-[calc(100vh-8rem)] sm:h-[500px] max-h-[600px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col z-50">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-2xl">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-t-2xl">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
             <ChatBubbleLeftRightIcon className="w-5 h-5 text-white" />
           </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 text-sm">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-gray-900 text-sm truncate">
               Chat with AI
             </h3>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 truncate">
               {pitch.title || pitch.filename}
             </p>
           </div>
         </div>
         <button
           onClick={onClose}
-          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+          className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
         >
           <XMarkIcon className="w-5 h-5" />
         </button>
@@ -159,13 +155,13 @@ const FloatingChatBot = ({
             }`}
           >
             <div
-              className={`max-w-[80%] px-3 py-2 rounded-2xl text-sm ${
+              className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm ${
                 message.isUser
                   ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
                   : "bg-white text-gray-900 border border-gray-200"
               }`}
             >
-              <p className="leading-relaxed">{message.text}</p>
+              <p className="leading-relaxed break-words">{message.text}</p>
               <p
                 className={`text-xs mt-1 ${
                   message.isUser ? "text-blue-100" : "text-gray-500"
@@ -205,48 +201,65 @@ const FloatingChatBot = ({
       {error && (
         <div className="mx-4 mb-3 p-3 bg-red-50 border border-red-200 rounded-xl">
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+            <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
               <XMarkIcon className="w-4 h-4 text-red-600" />
             </div>
-            <div className="flex-1">
-              <p className="text-xs font-medium text-red-800">{error}</p>
-              <button
-                onClick={clearError}
-                className="mt-1 text-xs text-red-600 hover:text-red-700 font-medium"
-              >
-                Dismiss
-              </button>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-red-800 break-words">
+                {error}
+              </p>
             </div>
+            <button
+              onClick={clearError}
+              className="flex-shrink-0 p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded transition-colors duration-200"
+            >
+              <XMarkIcon className="w-3 h-3" />
+            </button>
           </div>
         </div>
       )}
 
       {/* Input Section */}
       <div className="p-4 border-t border-gray-200 bg-white rounded-b-2xl">
-        <div className="flex items-end space-x-2">
+        <div className="flex items-end space-x-3">
           <div className="flex-1 relative">
-            <textarea
-              ref={textareaRef}
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask about the pitch deck..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-200 text-sm"
-              rows={1}
-              style={{ minHeight: "44px", maxHeight: "120px" }}
-            />
+            <div className="relative">
+              <textarea
+                ref={textareaRef}
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Ask about the pitch deck..."
+                className="w-full px-4 py-3 pr-24 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-200 text-sm leading-relaxed"
+                rows={1}
+                style={{ minHeight: "48px", maxHeight: "120px" }}
+              />
+              {/* Icons positioned absolutely for better alignment */}
+              <div className="absolute right-5 top-1/2 transform -translate-y-1/2 flex items-center space-x-3">
+                <LightBulbIcon className="w-4 h-4 text-blue-500" />
+                <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">G</span>
+                </div>
+              </div>
+            </div>
           </div>
           <button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isLoading}
-            className="flex-shrink-0 p-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="flex-shrink-0 p-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center"
           >
             <PaperAirplaneIcon className="w-4 h-4" />
           </button>
         </div>
-        <p className="text-xs text-gray-500 mt-2">
-          {inputMessage.length}/100 characters
-        </p>
+        <div className="flex items-center justify-between mt-2">
+          <p className="text-xs text-gray-500">
+            {inputMessage.length}/100 characters
+          </p>
+          <div className="flex items-center space-x-1">
+            <SparklesIcon className="w-3 h-3 text-gray-400" />
+            <span className="text-xs text-gray-400">AI Power</span>
+          </div>
+        </div>
       </div>
     </div>
   );

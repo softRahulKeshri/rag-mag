@@ -5,7 +5,7 @@ import CommentDialog from "./CommentDialog";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import Pagination from "./Pagination";
 import { DocumentTextIcon, FunnelIcon } from "@heroicons/react/24/outline";
-import { API_CONFIG } from "../../../../theme/constants";
+import { buildResumeApiUrl } from "./utils";
 
 interface ResumeGridProps {
   filteredResumes: Resume[];
@@ -77,26 +77,6 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
     setResumeToDelete(null);
   };
 
-  // Enhanced file URL builder function
-  const getFileUrl = (resume: Resume): string => {
-    // First priority: use cloud_url if available
-    if (resume.cloud_url) {
-      return resume.cloud_url;
-    }
-
-    // Fallback: construct URL using filepath and base API URL
-    if (resume.filepath) {
-      // Remove any leading slashes and construct full URL
-      const cleanPath = resume.filepath.startsWith("/")
-        ? resume.filepath.substring(1)
-        : resume.filepath;
-      return `${API_CONFIG.baseURL}/${cleanPath}`;
-    }
-
-    // Last resort: return empty string (will show error)
-    return "";
-  };
-
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Enhanced Results Summary */}
@@ -144,52 +124,19 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
             key={resume.id}
             resume={resume}
             onView={() => {
-              const fileUrl = getFileUrl(resume);
+              const fileUrl = buildResumeApiUrl(resume.id);
 
-              if (fileUrl) {
-                try {
-                  // Open the file URL in a new tab for viewing
-                  window.open(fileUrl, "_blank");
-                  console.log(
-                    `✅ Opened resume "${
-                      resume.original_filename || resume.filename
-                    }" in new tab using URL: ${fileUrl}`
-                  );
-                } catch (error) {
-                  console.error(
-                    `❌ Failed to open resume "${
-                      resume.original_filename || resume.filename
-                    }":`,
-                    error
-                  );
-                  alert(
-                    `Unable to view resume "${
-                      resume.original_filename || resume.filename
-                    }" - please try again`
-                  );
-                }
-              } else {
-                console.warn("No URL available for viewing resume:", resume);
-                alert(
-                  `Unable to view resume "${
-                    resume.original_filename || resume.filename
-                  }" - no file URL available`
-                );
-              }
-            }}
-            onDownload={() => {
-              const fileUrl = getFileUrl(resume);
-
-              if (fileUrl) {
-                const downloadFile = async () => {
+              try {
+                // For viewing, we'll fetch the file and create a blob URL to display inline
+                const viewFile = async () => {
                   try {
                     console.log(
-                      `🔄 Starting download for "${
+                      `🔄 Loading resume for viewing: "${
                         resume.original_filename || resume.filename
                       }" from URL: ${fileUrl}`
                     );
 
-                    // Fetch the file from the URL (cloud_url or constructed filepath URL)
+                    // Fetch the file
                     const response = await fetch(fileUrl);
                     if (!response.ok) {
                       throw new Error(`HTTP error! status: ${response.status}`);
@@ -198,78 +145,144 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
                     // Get the file as a blob
                     const blob = await response.blob();
 
-                    // Create a blob URL
+                    // Create a blob URL for viewing
                     const blobUrl = window.URL.createObjectURL(blob);
 
-                    // Create download link
-                    const link = document.createElement("a");
-                    link.href = blobUrl;
-                    link.download = resume.original_filename || resume.filename;
-                    link.style.display = "none";
+                    // Open in new tab for viewing
+                    window.open(blobUrl, "_blank");
 
-                    // Append to body, click, and cleanup
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-
-                    // Clean up the blob URL
-                    window.URL.revokeObjectURL(blobUrl);
+                    // Clean up the blob URL after a delay to allow the tab to open
+                    setTimeout(() => {
+                      window.URL.revokeObjectURL(blobUrl);
+                    }, 1000);
 
                     console.log(
-                      `✅ Successfully downloaded "${
+                      `✅ Opened resume "${
                         resume.original_filename || resume.filename
-                      }"`
+                      }" for viewing in new tab`
                     );
                   } catch (error) {
                     console.error(
-                      `❌ Failed to download resume "${
+                      `❌ Failed to load resume for viewing "${
                         resume.original_filename || resume.filename
                       }":`,
                       error
                     );
 
-                    // Try direct download as fallback
+                    // Fallback: try to open the URL directly
                     try {
-                      const link = document.createElement("a");
-                      link.href = fileUrl;
-                      link.download =
-                        resume.original_filename || resume.filename;
-                      link.target = "_blank";
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-
+                      window.open(fileUrl, "_blank");
                       console.log(
-                        `✅ Fallback download initiated for "${
+                        `✅ Fallback: Opened resume "${
                           resume.original_filename || resume.filename
-                        }"`
+                        }" directly in new tab`
                       );
                     } catch (fallbackError) {
-                      console.error(
-                        "❌ Fallback download also failed:",
-                        fallbackError
-                      );
+                      console.error("❌ Fallback also failed:", fallbackError);
                       alert(
-                        `Unable to download resume "${
+                        `Unable to view resume "${
                           resume.original_filename || resume.filename
-                        }" - please try again or contact support`
+                        }" - please try again`
                       );
                     }
                   }
                 };
 
-                downloadFile();
-              } else {
-                console.warn(
-                  "No URL available for downloading resume:",
-                  resume
+                viewFile();
+              } catch (error) {
+                console.error(
+                  `❌ Failed to open resume "${
+                    resume.original_filename || resume.filename
+                  }":`,
+                  error
                 );
                 alert(
-                  `Unable to download resume "${
+                  `Unable to view resume "${
                     resume.original_filename || resume.filename
-                  }" - no file URL available`
+                  }" - please try again`
                 );
               }
+            }}
+            onDownload={() => {
+              const fileUrl = buildResumeApiUrl(resume.id);
+
+              const downloadFile = async () => {
+                try {
+                  console.log(
+                    `🔄 Starting download for "${
+                      resume.original_filename || resume.filename
+                    }" from URL: ${fileUrl}`
+                  );
+
+                  // Fetch the file from the new download endpoint
+                  const response = await fetch(fileUrl);
+                  if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                  }
+
+                  // Get the file as a blob
+                  const blob = await response.blob();
+
+                  // Create a blob URL
+                  const blobUrl = window.URL.createObjectURL(blob);
+
+                  // Create download link
+                  const link = document.createElement("a");
+                  link.href = blobUrl;
+                  link.download = resume.original_filename || resume.filename;
+                  link.style.display = "none";
+
+                  // Append to body, click, and cleanup
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+
+                  // Clean up the blob URL
+                  window.URL.revokeObjectURL(blobUrl);
+
+                  console.log(
+                    `✅ Successfully downloaded "${
+                      resume.original_filename || resume.filename
+                    }"`
+                  );
+                } catch (error) {
+                  console.error(
+                    `❌ Failed to download resume "${
+                      resume.original_filename || resume.filename
+                    }":`,
+                    error
+                  );
+
+                  // Try direct download as fallback
+                  try {
+                    const link = document.createElement("a");
+                    link.href = fileUrl;
+                    link.download = resume.original_filename || resume.filename;
+                    link.target = "_blank";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    console.log(
+                      `✅ Fallback download initiated for "${
+                        resume.original_filename || resume.filename
+                      }"`
+                    );
+                  } catch (fallbackError) {
+                    console.error(
+                      "❌ Fallback download also failed:",
+                      fallbackError
+                    );
+                    alert(
+                      `Unable to download resume "${
+                        resume.original_filename || resume.filename
+                      }" - please try again or contact support`
+                    );
+                  }
+                }
+              };
+
+              downloadFile();
             }}
             onDelete={() => handleDeleteClick(resume)}
             onComment={() => handleCommentClick(resume)}

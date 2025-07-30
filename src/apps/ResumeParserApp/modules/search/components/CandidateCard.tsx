@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import type { CandidateCardProps } from "../types";
+import { buildResumeApiUrl } from "../../store/components/ResumeCollection/utils";
 
 /**
  * CandidateCard Component
@@ -240,6 +241,146 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
         </button>
 
         <button
+          onClick={() => {
+            const viewUrl = buildResumeApiUrl(candidate.id);
+
+            const viewFile = async () => {
+              try {
+                console.log(
+                  `🔄 Loading resume for viewing: "${candidate.name}" from URL: ${viewUrl}`
+                );
+
+                // Fetch the file
+                const response = await fetch(viewUrl);
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Get the file as a blob
+                const blob = await response.blob();
+
+                // Create a blob URL for viewing
+                const blobUrl = window.URL.createObjectURL(blob);
+
+                // Open in new tab for viewing
+                window.open(blobUrl, "_blank");
+
+                // Clean up the blob URL after a delay to allow the tab to open
+                setTimeout(() => {
+                  window.URL.revokeObjectURL(blobUrl);
+                }, 1000);
+
+                console.log(
+                  `✅ Opened resume "${candidate.name}" for viewing in new tab`
+                );
+              } catch (error) {
+                console.error(
+                  `❌ Failed to load resume for viewing "${candidate.name}":`,
+                  error
+                );
+
+                // Fallback: try to open the URL directly
+                try {
+                  window.open(viewUrl, "_blank");
+                  console.log(
+                    `✅ Fallback: Opened resume "${candidate.name}" directly in new tab`
+                  );
+                } catch (fallbackError) {
+                  console.error("❌ Fallback also failed:", fallbackError);
+                  alert(
+                    `Unable to view resume "${candidate.name}" - please try again`
+                  );
+                }
+              }
+            };
+
+            viewFile();
+          }}
+          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center flex-shrink-0"
+          title="View Resume"
+        >
+          <svg
+            className="w-4 h-4 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+          </svg>
+        </button>
+
+        <button
+          onClick={() => {
+            const downloadUrl = buildResumeApiUrl(candidate.id);
+
+            const downloadFile = async () => {
+              try {
+                console.log(
+                  `🔄 Starting download for "${candidate.name}" from URL: ${downloadUrl}`
+                );
+
+                // Fetch the file from the download endpoint
+                const response = await fetch(downloadUrl);
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Get the file as a blob
+                const blob = await response.blob();
+
+                // Create a blob URL
+                const blobUrl = window.URL.createObjectURL(blob);
+
+                // Create download link
+                const link = document.createElement("a");
+                link.href = blobUrl;
+                link.download =
+                  candidate.filename || `${candidate.name}_resume.pdf`;
+                link.style.display = "none";
+
+                // Append to body, click, and cleanup
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Clean up the blob URL
+                window.URL.revokeObjectURL(blobUrl);
+
+                console.log(`✅ Successfully downloaded "${candidate.name}"`);
+              } catch (error) {
+                console.error(
+                  `❌ Failed to download resume "${candidate.name}":`,
+                  error
+                );
+
+                // Try direct download as fallback
+                try {
+                  const link = document.createElement("a");
+                  link.href = downloadUrl;
+                  link.download =
+                    candidate.filename || `${candidate.name}_resume.pdf`;
+                  link.target = "_blank";
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+
+                  console.log(
+                    `✅ Fallback download initiated for "${candidate.name}"`
+                  );
+                } catch (fallbackError) {
+                  console.error(
+                    "❌ Fallback download also failed:",
+                    fallbackError
+                  );
+                  alert(
+                    `Unable to download resume "${candidate.name}" - please try again or contact support`
+                  );
+                }
+              }
+            };
+
+            downloadFile();
+          }}
           className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center flex-shrink-0"
           title="Download Resume"
         >

@@ -4,3 +4,4 @@ export { default as PitchChat } from "./PitchChat";
 export { default as PitchDetailsView } from "./PitchDetailsView";
 export { default as FloatingChatBot } from "./FloatingChatBot";
 export { default as FloatingChatToggle } from "./FloatingChatToggle";
+export { default as UploadArea } from "./UploadArea";

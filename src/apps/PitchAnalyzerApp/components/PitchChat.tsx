@@ -4,6 +4,7 @@ import {
   DocumentMagnifyingGlassIcon,
   SparklesIcon,
   ChartBarIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { usePitchDetails } from "../hooks/usePitchDetails";
 import PitchDetailsView from "./PitchDetailsView";
@@ -13,11 +14,10 @@ import type { Pitch } from "../types/types";
 
 interface PitchChatProps {
   pitch: Pitch;
-  userEmail: string;
   onBack: () => void;
 }
 
-const PitchChat = ({ pitch, userEmail, onBack }: PitchChatProps) => {
+const PitchChat = ({ pitch, onBack }: PitchChatProps) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const {
@@ -44,7 +44,7 @@ const PitchChat = ({ pitch, userEmail, onBack }: PitchChatProps) => {
   return (
     <div className="h-full flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-2xl">
         <div className="flex items-center space-x-4">
           <button
             onClick={onBack}
@@ -105,13 +105,13 @@ const PitchChat = ({ pitch, userEmail, onBack }: PitchChatProps) => {
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-red-800">{detailsError}</p>
-              <button
-                onClick={clearDetailsError}
-                className="mt-1 text-xs text-red-600 hover:text-red-700 font-medium"
-              >
-                Dismiss
-              </button>
             </div>
+            <button
+              onClick={clearDetailsError}
+              className="flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
+            >
+              <XMarkIcon className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
@@ -122,7 +122,6 @@ const PitchChat = ({ pitch, userEmail, onBack }: PitchChatProps) => {
       {/* Floating Chat Bot */}
       <FloatingChatBot
         pitch={pitch}
-        userEmail={userEmail}
         isOpen={isChatOpen}
         onClose={handleCloseChat}
       />

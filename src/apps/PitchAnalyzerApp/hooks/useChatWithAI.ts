@@ -1,58 +1,57 @@
 import { useState, useCallback } from "react";
 import { pitchApi } from "../../../lib/axios";
 
-// Types for the new API
-interface QueryPitchRequest {
-  pitch_id: string;
-  question: string;
-}
-
-interface QueryPitchResponse {
-  answer: string;
-}
-
-import type { ChatWithAIResponse, UseChatWithAIReturn } from "../types/types";
+import type { ChatWithAIResponse } from "../types/types";
 
 export const useChatWithAI = (): UseChatWithAIReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const chatWithAI = useCallback(
-    async (pitchId: string, query: string) => {
-      setIsLoading(true);
-      setError(null);
+  const chatWithAI = useCallback(async (pitchId: string, query: string) => {
+    setIsLoading(true);
+    setError(null);
 
-      try {
-        const payload: QueryPitchRequest = {
-          pitch_id: pitchId,
-          question: query,
-        };
+    try {
+      const payload = {
+        pitch_id: pitchId,
+        question: query,
+      };
 
-        const response = await pitchApi.post<QueryPitchResponse>(
-          "/query-pitch",
-          payload
-        );
+      const response = await pitchApi.post("/query-pitch", payload);
+      console.log("Chat API Response:", response.data);
+      const result: ChatWithAIResponse = response.data;
 
-        const result = response.data;
+      return result;
+    } catch (error) {
+      // Show user-friendly error messages instead of technical details
+      let userFriendlyMessage =
+        "Something went wrong while getting AI response";
 
-        // Transform the response to match the expected format
-        const transformedResponse: ChatWithAIResponse = {
-          queryRespFromAi: result.answer,
-          userQuery: query,
-        };
-
-        return transformedResponse;
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to chat with AI";
-        setError(errorMessage);
-        throw error;
-      } finally {
-        setIsLoading(false);
+      if (error instanceof Error) {
+        if (error.message.includes("404")) {
+          userFriendlyMessage =
+            "Pitch not found. It may have been removed or is not available for chat";
+        } else if (error.message.includes("500")) {
+          userFriendlyMessage =
+            "AI service is temporarily unavailable. Please try again later";
+        } else if (
+          error.message.includes("network") ||
+          error.message.includes("fetch")
+        ) {
+          userFriendlyMessage =
+            "Unable to connect to the AI service. Please check your internet connection";
+        } else if (error.message.includes("timeout")) {
+          userFriendlyMessage = "AI response timed out. Please try again";
+        }
       }
-    },
-    []
-  );
+
+      setError(userFriendlyMessage);
+
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -65,3 +64,10 @@ export const useChatWithAI = (): UseChatWithAIReturn => {
     clearError,
   };
 };
+
+interface UseChatWithAIReturn {
+  chatWithAI: (pitchId: string, query: string) => Promise<ChatWithAIResponse>;
+  isLoading: boolean;
+  error: string | null;
+  clearError: () => void;
+}
