@@ -54,9 +54,9 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
     <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3 flex-1">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           {/* Avatar */}
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
             {getInitials(candidate.name)}
           </div>
 
@@ -73,7 +73,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
 
         {/* Overall Score */}
         <div
-          className={`px-3 py-1 rounded-full text-sm font-medium ${getScoreColor(
+          className={`px-3 py-1 rounded-full text-sm font-medium flex-shrink-0 ${getScoreColor(
             candidate.averageScore || 0
           )}`}
         >
@@ -89,7 +89,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
             <span className="text-sm font-medium text-gray-900">
               {formatScore(candidate.clarityScore || 0)}
             </span>
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
               <div
                 className="h-full bg-blue-500 transition-all duration-300"
                 style={{
@@ -109,7 +109,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
             <span className="text-sm font-medium text-gray-900">
               {formatScore(candidate.experienceScore || 0)}
             </span>
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
               <div
                 className="h-full bg-green-500 transition-all duration-300"
                 style={{
@@ -129,7 +129,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
             <span className="text-sm font-medium text-gray-900">
               {formatScore(candidate.loyaltyScore || 0)}
             </span>
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
               <div
                 className="h-full bg-purple-500 transition-all duration-300"
                 style={{
@@ -149,7 +149,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
             <span className="text-sm font-medium text-gray-900">
               {formatScore(candidate.reputationScore || 0)}
             </span>
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
               <div
                 className="h-full bg-orange-500 transition-all duration-300"
                 style={{
@@ -188,9 +188,10 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
         <div className="mb-4">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
             <svg
-              className="w-3 h-3 mr-1"
+              className="w-3 h-3 mr-1 flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 18v-1c0-1.1.9-2 2-2h2l.72-3.28a2 2 0 011.96-1.72c.34 0 .68.09.96.26L14 12.5v3l-2.5-1.5c-.28-.17-.62-.26-.96-.26a2 2 0 00-1.96 1.72L8 18H4z" />
             </svg>
@@ -207,10 +208,11 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
               className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v3c0 .6.4 1 1 1 .2 0 .5-.1.7-.3L14.6 18H20c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
             </svg>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <p className="text-sm text-blue-800 font-medium mb-1">
                 HR Comment
               </p>
@@ -226,17 +228,27 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
           onClick={() => onViewDetails?.(candidate)}
           className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200 flex items-center justify-center gap-2"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-4 h-4 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
             <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
           </svg>
           View Details
         </button>
 
         <button
-          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center"
+          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center flex-shrink-0"
           title="Download Resume"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-4 h-4 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
           </svg>
         </button>

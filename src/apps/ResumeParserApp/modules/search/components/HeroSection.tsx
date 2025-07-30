@@ -26,11 +26,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="relative z-10 text-center">
         {/* Animated Icon */}
         <div className="flex justify-center mb-6">
-          <div className="w-12 h-12 text-white animate-bounce">
+          <div className="w-12 h-12 text-white animate-bounce flex-shrink-0">
             <svg
               className="w-full h-full"
               fill="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" />
             </svg>
@@ -60,7 +61,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                   : "text-purple-100 hover:text-white hover:bg-white/10"
               }`}
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
               </svg>
               Search by Text
@@ -73,7 +79,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                   : "text-purple-100 hover:text-white hover:bg-white/10"
               }`}
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
               </svg>
               Upload JD

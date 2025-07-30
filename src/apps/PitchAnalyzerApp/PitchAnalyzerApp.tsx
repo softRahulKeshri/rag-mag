@@ -99,57 +99,595 @@ const PitchAnalyzerApp = () => {
   };
 
   return (
-    <div className="h-full bg-gray-50 flex">
+    <div className="h-full bg-gradient-to-br from-gray-50 to-white flex">
       <Navigation
         activeTab={activeTab}
         onTabChange={handleTabChange}
         userEmail="member1@company1.com"
       />
 
-      <main className="flex-1 bg-gray-50 overflow-y-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Tab Content */}
-          {activeTab === "upload" && (
-            <UploadArea userEmail="member1@company1.com" />
-          )}
+      <main className="flex-1 bg-gradient-to-br from-gray-50 to-white overflow-y-auto">
+        <div className="min-h-screen">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+            {/* Tab Content */}
+            {activeTab === "upload" && (
+              <UploadArea userEmail="member1@company1.com" />
+            )}
 
-          {activeTab === "bookmarked" && (
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Bookmarked Pitches
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Your saved pitch decks for quick access
-                </p>
+            {activeTab === "bookmarked" && (
+              <div className="space-y-8">
+                {/* Enhanced Header Section */}
+                <div className="text-center mb-10">
+                  <div className="flex items-center justify-center mb-6">
+                    <div className="relative">
+                      <div className="w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <BookmarkIcon className="w-10 h-10 text-white" />
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full animate-pulse border-2 border-white"></div>
+                    </div>
+                  </div>
+                  <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                    Bookmarked Pitches
+                  </h1>
+                  <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    Your saved pitch decks for quick access and analysis
+                  </p>
+                </div>
+
+                {/* Premium Stats Card */}
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-yellow-200/50 p-8 mb-8">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <BookmarkIcon className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-yellow-600 uppercase tracking-wider mb-1">
+                          Saved Pitches
+                        </p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {bookmarkedPitches.length}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">Total bookmarked</p>
+                      <p className="text-xs text-gray-500">
+                        Ready for analysis
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 {/* Loading State */}
                 {isLoadingBookmarked && (
-                  <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mx-auto mb-4"></div>
-                    <p className="text-gray-500">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <p className="text-gray-600 font-medium">
                       Loading bookmarked pitches...
+                    </p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Please wait while we fetch your saved content
                     </p>
                   </div>
                 )}
 
                 {/* Bookmarked Pitches Display */}
                 {!isLoadingBookmarked && bookmarkedPitches.length > 0 && (
-                  <div className="grid gap-4">
+                  <div className="grid gap-6">
                     {bookmarkedPitches.map((pitch) => (
                       <div
                         key={pitch.id}
-                        className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                        className="group relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                       >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold text-lg">
-                              {pitch.title || pitch.filename}
-                            </h3>
-                            <p className="text-sm text-gray-600">
-                              Sector: {pitch.sector_category}
-                            </p>
-                            <p className="text-sm text-gray-500">
+                        {/* Background hover effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-yellow-50/50 to-orange-50/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                        <div className="relative">
+                          <div className="flex justify-between items-start mb-4">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-3 mb-3">
+                                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                  <svg
+                                    className="w-5 h-5 text-white"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    />
+                                  </svg>
+                                </div>
+                                <div>
+                                  <h3 className="font-semibold text-lg text-gray-900">
+                                    {pitch.title || pitch.filename}
+                                  </h3>
+                                  <p className="text-sm text-gray-600">
+                                    Sector: {pitch.sector_category}
+                                  </p>
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-500 mb-4">
+                                Created:{" "}
+                                {new Date(
+                                  pitch.created_at
+                                ).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() =>
+                                  handleToggleBookmark(
+                                    pitch.id,
+                                    pitch.is_bookmarked
+                                  )
+                                }
+                                disabled={bookmarkLoading}
+                                className="p-3 rounded-xl transition-all duration-200 text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="Remove bookmark"
+                              >
+                                <BookmarkIcon className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => handleViewPitchDetails(pitch)}
+                                className="p-3 rounded-xl transition-all duration-200 text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50"
+                                title="View Details"
+                              >
+                                <svg
+                                  className="w-5 h-5"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+
+                          {pitch.tagsinfo &&
+                            Object.keys(pitch.tagsinfo).length > 0 && (
+                              <div className="pt-4 border-t border-gray-100">
+                                <h4 className="font-medium text-sm mb-3 text-gray-700">
+                                  Key Information:
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  {pitch.tagsinfo.Ask && (
+                                    <div className="bg-blue-50 rounded-lg p-3">
+                                      <span className="font-medium text-blue-700 text-sm">
+                                        Ask:
+                                      </span>
+                                      <p className="text-blue-600 text-sm mt-1">
+                                        {pitch.tagsinfo.Ask}
+                                      </p>
+                                    </div>
+                                  )}
+                                  {pitch.tagsinfo.FundingStage && (
+                                    <div className="bg-green-50 rounded-lg p-3">
+                                      <span className="font-medium text-green-700 text-sm">
+                                        Stage:
+                                      </span>
+                                      <p className="text-green-600 text-sm mt-1">
+                                        {pitch.tagsinfo.FundingStage}
+                                      </p>
+                                    </div>
+                                  )}
+                                  {pitch.tagsinfo.Market && (
+                                    <div className="bg-purple-50 rounded-lg p-3">
+                                      <span className="font-medium text-purple-700 text-sm">
+                                        Market:
+                                      </span>
+                                      <p className="text-purple-600 text-sm mt-1">
+                                        {pitch.tagsinfo.Market}
+                                      </p>
+                                    </div>
+                                  )}
+                                  {pitch.tagsinfo.Technology &&
+                                    pitch.tagsinfo.Technology.length > 0 && (
+                                      <div className="bg-orange-50 rounded-lg p-3">
+                                        <span className="font-medium text-orange-700 text-sm">
+                                          Tech:
+                                        </span>
+                                        <p className="text-orange-600 text-sm mt-1">
+                                          {pitch.tagsinfo.Technology.join(", ")}
+                                        </p>
+                                      </div>
+                                    )}
+                                </div>
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Empty State */}
+                {!isLoadingBookmarked && bookmarkedPitches.length === 0 && (
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-12 text-center">
+                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <BookmarkIcon className="w-10 h-10 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      No bookmarked pitches yet
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      Start bookmarking pitches from the main list to see them
+                      here
+                    </p>
+                    <button
+                      onClick={() => handleTabChange("upload")}
+                      className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200"
+                    >
+                      Upload Pitch
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === "chat" &&
+              (selectedPitchForChat ? (
+                <PitchChat
+                  pitch={selectedPitchForChat}
+                  userEmail="member1@company1.com"
+                  onBack={() => setSelectedPitchForChat(null)}
+                />
+              ) : (
+                <ChatInterface
+                  onPitchSelect={(pitch: Pitch) => {
+                    setSelectedPitchForChat(pitch);
+                  }}
+                  onViewDetails={(pitch: Pitch) => {
+                    handleViewPitchDetails(pitch);
+                  }}
+                />
+              ))}
+
+            {/* Pitch Details View */}
+            {selectedPitchForDetails && (
+              <div className="space-y-8">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={handleBackFromDetails}
+                        className="p-3 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all duration-200"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                          />
+                        </svg>
+                      </button>
+                      <div>
+                        <h2 className="text-3xl font-bold text-gray-900">
+                          Pitch Details
+                        </h2>
+                        <p className="text-gray-600 text-lg">
+                          {selectedPitchForDetails.title ||
+                            selectedPitchForDetails.filename}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Loading State */}
+                  {isLoadingDetails && (
+                    <div className="text-center py-16">
+                      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-6"></div>
+                      <p className="text-gray-600 font-medium text-lg">
+                        Loading pitch details...
+                      </p>
+                      <p className="text-sm text-gray-500 mt-2">
+                        Analyzing your pitch deck
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Error State */}
+                  {detailsError && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+                        </div>
+                        <div className="ml-4">
+                          <h3 className="text-lg font-medium text-red-800">
+                            Error
+                          </h3>
+                          <p className="text-red-700 mt-1">{detailsError}</p>
+                          <button
+                            onClick={clearDetailsError}
+                            className="mt-3 text-sm text-red-600 hover:text-red-500 font-medium"
+                          >
+                            Dismiss
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pitch Details Content */}
+                  {!isLoadingDetails && pitchDetails && (
+                    <PitchDetailsView pitchDetails={pitchDetails} />
+                  )}
+
+                  {/* No Details Available */}
+                  {!isLoadingDetails && !pitchDetails && !detailsError && (
+                    <div className="text-center py-16">
+                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg
+                          className="w-10 h-10 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                        No details available
+                      </h3>
+                      <p className="text-gray-600">
+                        Detailed analysis for this pitch deck is not available.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Error Display */}
+            {pitchesError && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-lg font-medium text-red-800">Error</h3>
+                    <p className="text-red-700 mt-1">{pitchesError}</p>
+                    <button
+                      onClick={clearPitchesError}
+                      className="mt-3 text-sm text-red-600 hover:text-red-500 font-medium"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {bookmarkedPitchesError && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-lg font-medium text-red-800">
+                      Bookmarked Pitches Error
+                    </h3>
+                    <p className="text-red-700 mt-1">
+                      {bookmarkedPitchesError}
+                    </p>
+                    <button
+                      onClick={clearBookmarkedPitchesError}
+                      className="mt-3 text-sm text-red-600 hover:text-red-500 font-medium"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {bookmarkError && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-lg font-medium text-red-800">
+                      Bookmark Error
+                    </h3>
+                    <p className="text-red-700 mt-1">{bookmarkError}</p>
+                    <button
+                      onClick={clearBookmarkError}
+                      className="mt-3 text-sm text-red-600 hover:text-red-500 font-medium"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Success Messages */}
+            {lastBookmarkAction && (
+              <div
+                className={`rounded-xl p-6 mb-8 ${
+                  lastBookmarkAction.success
+                    ? "bg-green-50 border border-green-200"
+                    : "bg-red-50 border border-red-200"
+                }`}
+              >
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    {lastBookmarkAction.success ? (
+                      <CheckCircleIcon className="h-6 w-6 text-green-400" />
+                    ) : (
+                      <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+                    )}
+                  </div>
+                  <div className="ml-4">
+                    <h3
+                      className={`text-lg font-medium ${
+                        lastBookmarkAction.success
+                          ? "text-green-800"
+                          : "text-red-800"
+                      }`}
+                    >
+                      {lastBookmarkAction.success ? "Success!" : "Failed"}
+                    </h3>
+                    <p
+                      className={`mt-1 ${
+                        lastBookmarkAction.success
+                          ? "text-green-700"
+                          : "text-red-700"
+                      }`}
+                    >
+                      Pitch{" "}
+                      {lastBookmarkAction.isBookmarked
+                        ? "bookmarked"
+                        : "unbookmarked"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Pitches Display */}
+            {pitches.length > 0 && (
+              <div className="space-y-8">
+                {/* Enhanced Header Section */}
+                <div className="text-center mb-10">
+                  <div className="flex items-center justify-center mb-6">
+                    <div className="relative">
+                      <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <svg
+                          className="w-10 h-10 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full animate-pulse border-2 border-white"></div>
+                    </div>
+                  </div>
+                  <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                    Company Pitches
+                  </h1>
+                  <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    AI-Powered Pitch Deck Analysis - Analyze and manage your
+                    pitch collection
+                  </p>
+                </div>
+
+                {/* Premium Stats Card */}
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-indigo-200/50 p-8 mb-8">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg
+                          className="w-6 h-6 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-indigo-600 uppercase tracking-wider mb-1">
+                          Total Pitches
+                        </p>
+                        <p className="text-2xl font-bold text-gray-900">
+                          {pitches.length}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">
+                        Available for analysis
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Click to view details
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-6">
+                  {pitches.map((pitch) => (
+                    <div
+                      key={pitch.id}
+                      className="group relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                    >
+                      {/* Background hover effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                      <div className="relative">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3 mb-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <svg
+                                  className="w-5 h-5 text-white"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                  />
+                                </svg>
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-lg text-gray-900">
+                                  {pitch.title || pitch.filename}
+                                </h3>
+                                <p className="text-sm text-gray-600">
+                                  Sector: {pitch.sector_category}
+                                </p>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-500 mb-4">
                               Created:{" "}
                               {new Date(pitch.created_at).toLocaleDateString()}
                             </p>
@@ -163,27 +701,46 @@ const PitchAnalyzerApp = () => {
                                 )
                               }
                               disabled={bookmarkLoading}
-                              className="p-2 rounded-full transition-colors text-yellow-500 hover:text-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                              title="Remove bookmark"
+                              className={`p-3 rounded-xl transition-all duration-200 ${
+                                pitch.is_bookmarked
+                                  ? "text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50"
+                                  : "text-gray-400 hover:text-yellow-500 hover:bg-yellow-50"
+                              } ${
+                                bookmarkLoading
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                              title={
+                                pitch.is_bookmarked
+                                  ? "Remove bookmark"
+                                  : "Add bookmark"
+                              }
                             >
-                              ⭐
+                              <BookmarkIcon className="w-5 h-5" />
                             </button>
                             <button
                               onClick={() => handleViewPitchDetails(pitch)}
-                              className="p-2 rounded-full text-blue-500 hover:text-blue-600"
+                              className="p-3 rounded-xl transition-all duration-200 text-indigo-500 hover:text-indigo-600 hover:bg-indigo-50"
                               title="View Details"
                             >
                               <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
+                                className="w-5 h-5"
                                 fill="none"
                                 stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="w-5 h-5"
+                                viewBox="0 0 24 24"
                               >
-                                <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0-3 3V6a3 3 0 1 0 3-3H18a3 3 0 1 0-3 3" />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                />
                               </svg>
                             </button>
                           </div>
@@ -191,402 +748,62 @@ const PitchAnalyzerApp = () => {
 
                         {pitch.tagsinfo &&
                           Object.keys(pitch.tagsinfo).length > 0 && (
-                            <div className="mt-3 pt-3 border-t border-gray-100">
-                              <h4 className="font-medium text-sm mb-2">
+                            <div className="pt-4 border-t border-gray-100">
+                              <h4 className="font-medium text-sm mb-3 text-gray-700">
                                 Key Information:
                               </h4>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 {pitch.tagsinfo.Ask && (
-                                  <div>
-                                    <span className="font-medium">Ask:</span>{" "}
-                                    {pitch.tagsinfo.Ask}
+                                  <div className="bg-blue-50 rounded-lg p-3">
+                                    <span className="font-medium text-blue-700 text-sm">
+                                      Ask:
+                                    </span>
+                                    <p className="text-blue-600 text-sm mt-1">
+                                      {pitch.tagsinfo.Ask}
+                                    </p>
                                   </div>
                                 )}
                                 {pitch.tagsinfo.FundingStage && (
-                                  <div>
-                                    <span className="font-medium">Stage:</span>{" "}
-                                    {pitch.tagsinfo.FundingStage}
+                                  <div className="bg-green-50 rounded-lg p-3">
+                                    <span className="font-medium text-green-700 text-sm">
+                                      Stage:
+                                    </span>
+                                    <p className="text-green-600 text-sm mt-1">
+                                      {pitch.tagsinfo.FundingStage}
+                                    </p>
                                   </div>
                                 )}
                                 {pitch.tagsinfo.Market && (
-                                  <div>
-                                    <span className="font-medium">Market:</span>{" "}
-                                    {pitch.tagsinfo.Market}
+                                  <div className="bg-purple-50 rounded-lg p-3">
+                                    <span className="font-medium text-purple-700 text-sm">
+                                      Market:
+                                    </span>
+                                    <p className="text-purple-600 text-sm mt-1">
+                                      {pitch.tagsinfo.Market}
+                                    </p>
                                   </div>
                                 )}
                                 {pitch.tagsinfo.Technology &&
                                   pitch.tagsinfo.Technology.length > 0 && (
-                                    <div>
-                                      <span className="font-medium">Tech:</span>{" "}
-                                      {pitch.tagsinfo.Technology.join(", ")}
+                                    <div className="bg-orange-50 rounded-lg p-3">
+                                      <span className="font-medium text-orange-700 text-sm">
+                                        Tech:
+                                      </span>
+                                      <p className="text-orange-600 text-sm mt-1">
+                                        {pitch.tagsinfo.Technology.join(", ")}
+                                      </p>
                                     </div>
                                   )}
                               </div>
                             </div>
                           )}
                       </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Empty State */}
-                {!isLoadingBookmarked && bookmarkedPitches.length === 0 && (
-                  <div className="text-center py-8">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <BookmarkIcon className="w-8 h-8 text-gray-400" />
                     </div>
-                    <p className="text-gray-500">No bookmarked pitches yet</p>
-                    <p className="text-sm text-gray-400 mt-2">
-                      Bookmark pitches from the main list to see them here
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {activeTab === "chat" &&
-            (selectedPitchForChat ? (
-              <PitchChat
-                pitch={selectedPitchForChat}
-                userEmail="member1@company1.com"
-                onBack={() => setSelectedPitchForChat(null)}
-              />
-            ) : (
-              <ChatInterface
-                onPitchSelect={(pitch: Pitch) => {
-                  setSelectedPitchForChat(pitch);
-                }}
-                onViewDetails={(pitch: Pitch) => {
-                  handleViewPitchDetails(pitch);
-                }}
-              />
-            ))}
-
-          {/* Pitch Details View */}
-          {selectedPitchForDetails && (
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={handleBackFromDetails}
-                      className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                        />
-                      </svg>
-                    </button>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900">
-                        Pitch Details
-                      </h2>
-                      <p className="text-gray-600">
-                        {selectedPitchForDetails.title ||
-                          selectedPitchForDetails.filename}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Loading State */}
-                {isLoadingDetails && (
-                  <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading pitch details...</p>
-                  </div>
-                )}
-
-                {/* Error State */}
-                {detailsError && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="text-sm font-medium text-red-800">
-                          Error
-                        </h3>
-                        <p className="text-sm text-red-700 mt-1">
-                          {detailsError}
-                        </p>
-                        <button
-                          onClick={clearDetailsError}
-                          className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
-                        >
-                          Dismiss
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Pitch Details Content */}
-                {!isLoadingDetails && pitchDetails && (
-                  <PitchDetailsView pitchDetails={pitchDetails} />
-                )}
-
-                {/* No Details Available */}
-                {!isLoadingDetails && !pitchDetails && !detailsError && (
-                  <div className="text-center py-12">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg
-                        className="w-8 h-8 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No details available
-                    </h3>
-                    <p className="text-gray-500">
-                      Detailed analysis for this pitch deck is not available.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Error Display */}
-          {pitchesError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">Error</h3>
-                  <p className="text-sm text-red-700 mt-1">{pitchesError}</p>
-                  <button
-                    onClick={clearPitchesError}
-                    className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
-                  >
-                    Dismiss
-                  </button>
+                  ))}
                 </div>
               </div>
-            </div>
-          )}
-
-          {bookmarkedPitchesError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">
-                    Bookmarked Pitches Error
-                  </h3>
-                  <p className="text-sm text-red-700 mt-1">
-                    {bookmarkedPitchesError}
-                  </p>
-                  <button
-                    onClick={clearBookmarkedPitchesError}
-                    className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
-                  >
-                    Dismiss
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {bookmarkError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">
-                    Bookmark Error
-                  </h3>
-                  <p className="text-sm text-red-700 mt-1">{bookmarkError}</p>
-                  <button
-                    onClick={clearBookmarkError}
-                    className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
-                  >
-                    Dismiss
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Success Messages */}
-          {lastBookmarkAction && (
-            <div
-              className={`rounded-lg p-4 ${
-                lastBookmarkAction.success
-                  ? "bg-green-50 border border-green-200"
-                  : "bg-red-50 border border-red-200"
-              }`}
-            >
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  {lastBookmarkAction.success ? (
-                    <CheckCircleIcon className="h-5 w-5 text-green-400" />
-                  ) : (
-                    <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <h3
-                    className={`text-sm font-medium ${
-                      lastBookmarkAction.success
-                        ? "text-green-800"
-                        : "text-red-800"
-                    }`}
-                  >
-                    {lastBookmarkAction.success ? "Success!" : "Failed"}
-                  </h3>
-                  <p
-                    className={`text-sm mt-1 ${
-                      lastBookmarkAction.success
-                        ? "text-green-700"
-                        : "text-red-700"
-                    }`}
-                  >
-                    Pitch{" "}
-                    {lastBookmarkAction.isBookmarked
-                      ? "bookmarked"
-                      : "unbookmarked"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Pitches Display */}
-          {pitches.length > 0 && (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Company Pitches ({pitches.length})
-              </h2>
-              <div className="grid gap-4">
-                {pitches.map((pitch) => (
-                  <div
-                    key={pitch.id}
-                    className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-semibold text-lg">
-                          {pitch.title || pitch.filename}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          Sector: {pitch.sector_category}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          Created:{" "}
-                          {new Date(pitch.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() =>
-                            handleToggleBookmark(pitch.id, pitch.is_bookmarked)
-                          }
-                          disabled={bookmarkLoading}
-                          className={`p-2 rounded-full transition-colors ${
-                            pitch.is_bookmarked
-                              ? "text-yellow-500 hover:text-yellow-600"
-                              : "text-gray-400 hover:text-yellow-500"
-                          } ${
-                            bookmarkLoading
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                          title={
-                            pitch.is_bookmarked
-                              ? "Remove bookmark"
-                              : "Add bookmark"
-                          }
-                        >
-                          ⭐
-                        </button>
-                        <button
-                          onClick={() => handleViewPitchDetails(pitch)}
-                          className="p-2 rounded-full text-blue-500 hover:text-blue-600"
-                          title="View Details"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="w-5 h-5"
-                          >
-                            <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0-3 3V6a3 3 0 1 0 3-3H18a3 3 0 1 0-3 3" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-
-                    {pitch.tagsinfo &&
-                      Object.keys(pitch.tagsinfo).length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-gray-100">
-                          <h4 className="font-medium text-sm mb-2">
-                            Key Information:
-                          </h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                            {pitch.tagsinfo.Ask && (
-                              <div>
-                                <span className="font-medium">Ask:</span>{" "}
-                                {pitch.tagsinfo.Ask}
-                              </div>
-                            )}
-                            {pitch.tagsinfo.FundingStage && (
-                              <div>
-                                <span className="font-medium">Stage:</span>{" "}
-                                {pitch.tagsinfo.FundingStage}
-                              </div>
-                            )}
-                            {pitch.tagsinfo.Market && (
-                              <div>
-                                <span className="font-medium">Market:</span>{" "}
-                                {pitch.tagsinfo.Market}
-                              </div>
-                            )}
-                            {pitch.tagsinfo.Technology &&
-                              pitch.tagsinfo.Technology.length > 0 && (
-                                <div>
-                                  <span className="font-medium">Tech:</span>{" "}
-                                  {pitch.tagsinfo.Technology.join(", ")}
-                                </div>
-                              )}
-                          </div>
-                        </div>
-                      )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </main>
     </div>

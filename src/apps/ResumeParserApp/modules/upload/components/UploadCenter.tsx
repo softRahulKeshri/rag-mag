@@ -268,29 +268,55 @@ const UploadCenter: React.FC = () => {
               </p>
             </div>
           )}
-        </div>
-      </div>
 
-      {/* Fixed Upload Button at Bottom - Only covers main content area */}
-      <div className="fixed bottom-0 left-72 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200/50 shadow-lg z-50">
-        <div className="max-w-5xl mx-auto px-6 py-4">
-          <div className="flex justify-center">
-            <button
-              onClick={handleUpload}
-              disabled={
-                !selectedGroup || selectedFiles.length === 0 || isUploading
-              }
-              className={`inline-flex items-center px-8 py-4 border border-transparent text-base font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
-                selectedGroup && selectedFiles.length > 0 && !isUploading
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 focus:ring-blue-500 transform hover:-translate-y-0.5 hover:shadow-xl"
-                  : "bg-gray-200 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              <CloudArrowUpIcon className="w-6 h-6 mr-3" />
-              {isUploading
-                ? `Uploading ${selectedFiles.length} Files...`
-                : `Upload ${selectedFiles.length || ""} CVs`.trim()}
-            </button>
+          {/* Upload Button Section - At Bottom */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 mb-8">
+            <div className="text-center">
+              <div className="flex items-center justify-center space-x-4 mb-4">
+                {/* <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <CloudArrowUpIcon className="w-6 h-6 text-white" />
+                </div> */}
+                <div className="text-left">
+                  <h3 className="text-lg text-center font-semibold text-gray-900">
+                    Ready to Upload
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {selectedFiles.length > 0
+                      ? `${selectedFiles.length} file${
+                          selectedFiles.length > 1 ? "s" : ""
+                        } selected for upload`
+                      : "Select files to begin upload process"}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleUpload}
+                disabled={
+                  !selectedGroup || selectedFiles.length === 0 || isUploading
+                }
+                className={`inline-flex items-center px-10 py-4 border-2 border-transparent text-base font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-offset-2 transition-all duration-300 ${
+                  selectedGroup && selectedFiles.length > 0 && !isUploading
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 focus:ring-blue-500/30 transform hover:-translate-y-1 hover:shadow-2xl border-blue-500/20"
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
+                }`}
+              >
+                <CloudArrowUpIcon className="w-6 h-6 mr-3" />
+                {isUploading
+                  ? `Uploading ${selectedFiles.length} Files...`
+                  : `Upload ${selectedFiles.length || ""} CVs`.trim()}
+              </button>
+
+              {selectedGroup && selectedFiles.length > 0 && !isUploading && (
+                <p className="text-xs text-gray-500 mt-3">
+                  Files will be uploaded to{" "}
+                  <span className="font-medium text-blue-600">
+                    {selectedGroup.name}
+                  </span>{" "}
+                  group
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

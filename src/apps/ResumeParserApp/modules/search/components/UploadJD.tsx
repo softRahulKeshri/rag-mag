@@ -102,9 +102,10 @@ const UploadJD: React.FC<UploadJDProps> = ({
     if (fileType.includes("pdf")) {
       return (
         <svg
-          className="w-8 h-8 text-red-500"
+          className="w-8 h-8 text-red-500 flex-shrink-0"
           fill="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
         </svg>
@@ -113,9 +114,10 @@ const UploadJD: React.FC<UploadJDProps> = ({
     if (fileType.includes("word") || fileType.includes("document")) {
       return (
         <svg
-          className="w-8 h-8 text-blue-500"
+          className="w-8 h-8 text-blue-500 flex-shrink-0"
           fill="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
         </svg>
@@ -123,9 +125,10 @@ const UploadJD: React.FC<UploadJDProps> = ({
     }
     return (
       <svg
-        className="w-8 h-8 text-gray-500"
+        className="w-8 h-8 text-gray-500 flex-shrink-0"
         fill="currentColor"
         viewBox="0 0 24 24"
+        aria-hidden="true"
       >
         <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
       </svg>
@@ -138,7 +141,7 @@ const UploadJD: React.FC<UploadJDProps> = ({
     <div className="w-full space-y-6">
       {/* Group Selection */}
       <div className="flex justify-center">
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl p-1 inline-flex">
+        <div className="bg-white/30 backdrop-blur-sm rounded-xl p-1 inline-flex shadow-lg">
           <select
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
@@ -165,7 +168,7 @@ const UploadJD: React.FC<UploadJDProps> = ({
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        className="bg-white/10 backdrop-blur-sm border-2 border-dashed border-white/30 rounded-xl p-8 text-center hover:border-white/50 transition-all duration-200 cursor-pointer"
+        className="bg-white/40 backdrop-blur-sm border-2 border-dashed border-white/60 rounded-xl p-8 text-center hover:border-white/80 hover:bg-white/50 transition-all duration-200 cursor-pointer shadow-lg"
         onClick={() => fileInputRef.current?.click()}
       >
         <input
@@ -185,7 +188,7 @@ const UploadJD: React.FC<UploadJDProps> = ({
             </div>
             <div>
               <p className="text-white font-medium">{selectedFile.name}</p>
-              <p className="text-purple-100 text-sm">
+              <p className="text-white/90 text-sm">
                 {formatFileSize(selectedFile.size)}
               </p>
             </div>
@@ -196,7 +199,7 @@ const UploadJD: React.FC<UploadJDProps> = ({
                 setError(null);
               }}
               disabled={isUploading}
-              className="text-purple-200 hover:text-white text-sm underline disabled:cursor-not-allowed"
+              className="text-white hover:text-white/80 text-sm underline disabled:cursor-not-allowed font-medium"
             >
               Remove file
             </button>
@@ -206,10 +209,11 @@ const UploadJD: React.FC<UploadJDProps> = ({
           <div className="space-y-4">
             <div className="flex justify-center">
               <svg
-                className="w-12 h-12 text-white/70"
+                className="w-12 h-12 text-white flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -220,14 +224,12 @@ const UploadJD: React.FC<UploadJDProps> = ({
               </svg>
             </div>
             <div>
-              <p className="text-white font-medium mb-2">
+              <p className="text-white font-medium mb-2 text-lg">
                 Drop your job description here
               </p>
-              <p className="text-purple-100 text-sm">
-                or click to browse files
-              </p>
+              <p className="text-white text-sm">or click to browse files</p>
             </div>
-            <div className="text-purple-200 text-xs">
+            <div className="text-white/90 text-xs">
               Supports PDF, DOC, DOCX, TXT (max 10MB)
             </div>
           </div>
@@ -254,12 +256,17 @@ const UploadJD: React.FC<UploadJDProps> = ({
         >
           {isUploading ? (
             <>
-              <div className="w-5 h-5 border-2 border-purple-600/30 border-t-purple-600 rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-purple-600/30 border-t-purple-600 rounded-full animate-spin flex-shrink-0"></div>
               Analyzing...
             </>
           ) : (
             <>
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
               </svg>
               Analyze & Search
@@ -270,7 +277,7 @@ const UploadJD: React.FC<UploadJDProps> = ({
 
       {/* Upload Tips */}
       <div className="text-center">
-        <p className="text-purple-100 text-sm">
+        <p className="text-white text-sm font-medium">
           💡 Upload a detailed job description for better candidate matching
         </p>
       </div>

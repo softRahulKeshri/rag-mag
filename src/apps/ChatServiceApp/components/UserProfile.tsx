@@ -39,63 +39,63 @@ export const UserProfile = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Profile Trigger Button */}
+      {/* Premium Profile Trigger Button */}
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-[#EAEAEC] hover:border-[#D5D6D9] shadow-sm hover:shadow-md transition-all duration-200 group"
+        className="w-full flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-lg hover:shadow-xl transition-all duration-300 group"
       >
-        <div className="flex items-center space-x-3">
-          {/* Avatar */}
+        <div className="flex items-center space-x-4">
+          {/* Premium Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-[#3077F3] to-[#B96AF7] rounded-lg flex items-center justify-center shadow-md border border-[#3077F3] border-opacity-30 transition-all duration-200">
-              <UserCircleIcon className="h-5 w-5 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg border border-blue-500 border-opacity-30 transition-all duration-300 group-hover:scale-110">
+              <UserCircleIcon className="h-6 w-6 text-white" />
             </div>
           </div>
 
-          {/* User Info */}
+          {/* Premium User Info */}
           <div className="flex-1 text-left min-w-0">
-            <p className="text-sm font-medium text-[#2E3141] truncate">
+            <p className="text-base font-bold text-slate-800 truncate">
               {displayName}
             </p>
           </div>
         </div>
 
-        {/* Dropdown Arrow */}
-        <div className="flex-shrink-0 ml-2">
+        {/* Premium Dropdown Arrow */}
+        <div className="flex-shrink-0 ml-3">
           {isDropdownOpen ? (
-            <ChevronUpIcon className="h-4 w-4 text-[#9698A0] group-hover:text-[#6D6F7A] transition-colors" />
+            <ChevronUpIcon className="h-5 w-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
           ) : (
-            <ChevronDownIcon className="h-4 w-4 text-[#9698A0] group-hover:text-[#6D6F7A] transition-colors" />
+            <ChevronDownIcon className="h-5 w-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
           )}
         </div>
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Premium Dropdown Menu */}
       {isDropdownOpen && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl border border-[#EAEAEC] shadow-xl z-50 overflow-hidden">
-          {/* User Account Section */}
-          <div className="p-4 border-b border-[#F5F5F5]">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#3077F3] to-[#B96AF7] rounded-xl flex items-center justify-center shadow-md border border-[#3077F3] border-opacity-30">
-                <UserCircleIcon className="h-6 w-6 text-white" />
+        <div className="absolute bottom-full left-0 right-0 mb-3 bg-white/95 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl z-50 overflow-hidden">
+          {/* Premium User Account Section */}
+          <div className="p-6 border-b border-slate-100">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg border border-blue-500 border-opacity-30">
+                <UserCircleIcon className="h-7 w-7 text-white" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-[#2E3141]">
+                <h3 className="text-base font-bold text-slate-800">
                   User Account
                 </h3>
-                <p className="text-xs text-[#9698A0]">
+                <p className="text-sm text-slate-500">
                   Manage your profile and settings
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Menu Options */}
-          <div className="py-2">
+          {/* Premium Menu Options */}
+          <div className="py-3">
             {/* View Profile */}
-            <button className="w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-[#F5F5F5] transition-colors duration-200">
-              <UserCircleIcon className="h-4 w-4 text-[#9698A0]" />
-              <span className="text-sm text-[#2E3141] font-medium">
+            <button className="w-full flex items-center space-x-4 px-6 py-4 text-left hover:bg-slate-50 transition-colors duration-300 group">
+              <UserCircleIcon className="h-5 w-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
+              <span className="text-base text-slate-700 group-hover:text-blue-600 font-semibold transition-colors">
                 View Profile
               </span>
             </button>
@@ -103,10 +103,10 @@ export const UserProfile = () => {
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-[#FDA052] hover:bg-opacity-10 transition-colors duration-200 group"
+              className="w-full flex items-center space-x-4 px-6 py-4 text-left hover:bg-red-50 transition-colors duration-300 group"
             >
-              <ArrowRightOnRectangleIcon className="h-4 w-4 text-[#9698A0] group-hover:text-[#FDA052] transition-colors" />
-              <span className="text-sm text-[#2E3141] group-hover:text-[#FDA052] font-medium transition-colors">
+              <ArrowRightOnRectangleIcon className="h-5 w-5 text-slate-400 group-hover:text-red-600 transition-colors" />
+              <span className="text-base text-slate-700 group-hover:text-red-600 font-semibold transition-colors">
                 Logout
               </span>
             </button>
