@@ -29,11 +29,22 @@ export const ChatMessages = ({
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest",
+      });
+    }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Add a small delay to ensure smooth scrolling
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [messages, isAITyping]);
 
   const handleCopyMessage = async (messageId: string, content: string) => {
@@ -65,25 +76,21 @@ export const ChatMessages = ({
   // AI Typing Indicator Component
   const AITypingIndicator = () => (
     <div className="flex justify-start group">
-      <div className="relative max-w-[80%] lg:max-w-[70%] xl:max-w-[65%] flex items-start space-x-3">
+      <div className="relative max-w-[80%] lg:max-w-[70%] xl:max-w-[65%] flex items-start space-x-4">
         {/* AI Avatar */}
         <div className="flex-shrink-0 order-first">
-          <div className="relative w-10 h-10 rounded-xl flex items-center justify-center shadow-sm border-2 bg-gradient-to-br from-cyan-500 to-blue-500 border-cyan-400 border-opacity-30 animate-pulse">
-            <div className="relative">
-              <SparklesIconSolid className="h-6 w-6 text-white" />
-              <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-yellow-400 rounded-full animate-pulse border border-white"></div>
-            </div>
+          <div className="relative w-12 h-12 rounded-xl flex items-center justify-center shadow-lg border-2 bg-blue-500 border-blue-400">
+            <SparklesIconSolid className="h-7 w-7 text-white" />
           </div>
-          <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-white shadow-sm bg-cyan-500 animate-pulse"></div>
         </div>
 
         {/* Typing Bubble */}
-        <div className="relative rounded-xl px-4 py-3 shadow-sm bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 text-gray-800 rounded-bl-md">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-700">
+        <div className="relative rounded-xl px-6 py-4 shadow-lg bg-gray-50 border border-gray-200 text-gray-800 rounded-bl-md">
+          <div className="flex items-center space-x-3">
+            <span className="text-sm font-bold text-gray-700">
               AI is typing
             </span>
-            <div className="ai-typing-dots text-cyan-500">
+            <div className="ai-typing-dots text-blue-500">
               <div></div>
               <div></div>
               <div></div>
@@ -91,7 +98,7 @@ export const ChatMessages = ({
           </div>
 
           {/* Message Tail */}
-          <div className="absolute top-6 left-[-6px] w-3 h-3 transform rotate-45 bg-gray-50 border-l border-b border-gray-200"></div>
+          <div className="absolute top-8 left-[-8px] w-4 h-4 transform rotate-45 bg-gray-50 border-l border-b border-gray-200"></div>
         </div>
       </div>
     </div>
@@ -100,19 +107,12 @@ export const ChatMessages = ({
   // Loading state for messages
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-hidden">
+      <div className="h-full flex items-center justify-center p-8 bg-gray-50 overflow-hidden">
         <div className="text-center">
-          <div className="relative mb-6">
-            <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
-            <div
-              className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-purple-500 rounded-full animate-spin mx-auto"
-              style={{
-                animationDirection: "reverse",
-                animationDuration: "1.5s",
-              }}
-            ></div>
+          <div className="relative mb-8">
+            <div className="w-20 h-20 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
           </div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h3 className="text-xl font-bold text-gray-800 mb-3">
             Loading Messages
           </h3>
           <p className="text-sm text-gray-600">
@@ -125,43 +125,28 @@ export const ChatMessages = ({
 
   if (messages.length === 0) {
     return (
-      <div className="h-full flex items-center justify-center p-6 lg:p-8 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-y-auto">
-        <div className="text-center max-w-2xl mx-auto">
+      <div className="h-full flex items-center justify-center p-8 lg:p-12 bg-gray-50 overflow-y-auto">
+        <div className="text-center max-w-3xl mx-auto">
           {/* Welcome Section */}
-          <div className="relative mb-12">
-            <div className="relative mx-auto w-20 h-20 lg:w-24 lg:h-24">
+          <div className="relative mb-16">
+            <div className="relative mx-auto w-24 h-24 lg:w-28 lg:h-28">
               {/* Main Icon */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-                <ChatBubbleLeftRightIcon className="h-10 w-10 lg:h-12 lg:w-12 text-white" />
-              </div>
-
-              {/* Floating Elements */}
-              <div
-                className="absolute -top-2 -right-2 lg:-top-3 lg:-right-3 w-6 h-6 lg:w-7 lg:h-7 bg-cyan-400 rounded-full flex items-center justify-center animate-bounce shadow-md"
-                style={{ animationDelay: "0.5s" }}
-              >
-                <SparklesIcon className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
-              </div>
-
-              <div
-                className="absolute -bottom-2 -left-2 lg:-bottom-3 lg:-left-3 w-5 h-5 lg:w-6 lg:h-6 bg-purple-400 rounded-full flex items-center justify-center animate-bounce shadow-md"
-                style={{ animationDelay: "1s" }}
-              >
-                <CheckCircleIcon className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl">
+                <ChatBubbleLeftRightIcon className="h-12 w-12 lg:h-14 lg:w-14 text-white" />
               </div>
             </div>
           </div>
 
           {/* Welcome Content */}
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
                 Welcome to ChatAI
               </h1>
-              <p className="text-lg lg:text-xl text-gray-700 font-medium">
+              <p className="text-xl lg:text-2xl text-gray-700 font-bold">
                 Your intelligent conversation partner
               </p>
-              <p className="text-sm lg:text-base text-gray-600 leading-relaxed max-w-lg mx-auto">
+              <p className="text-base lg:text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
                 Start a conversation below and experience the power of AI-driven
                 chat with enhanced intelligence and natural language
                 understanding
@@ -169,41 +154,41 @@ export const ChatMessages = ({
             </div>
 
             {/* Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mt-8">
-              <div className="group p-4 lg:p-6 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 hover:border-blue-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-3 lg:mb-4 shadow-md group-hover:scale-110 transition-transform">
-                  <SparklesIcon className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mt-12">
+              <div className="group p-6 lg:p-8 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-blue-500 rounded-xl flex items-center justify-center mb-4 lg:mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <SparklesIcon className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-2 text-sm lg:text-base">
+                <h3 className="font-bold text-gray-800 mb-3 text-base lg:text-lg">
                   Smart Responses
                 </h3>
-                <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm lg:text-base text-gray-600 leading-relaxed">
                   Get intelligent, contextual answers to all your questions with
                   advanced AI reasoning
                 </p>
               </div>
 
-              <div className="group p-4 lg:p-6 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 hover:border-cyan-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-3 lg:mb-4 shadow-md group-hover:scale-110 transition-transform">
-                  <CheckCircleIcon className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
+              <div className="group p-6 lg:p-8 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-blue-500 rounded-xl flex items-center justify-center mb-4 lg:mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <CheckCircleIcon className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-2 text-sm lg:text-base">
+                <h3 className="font-bold text-gray-800 mb-3 text-base lg:text-lg">
                   Real-time Chat
                 </h3>
-                <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm lg:text-base text-gray-600 leading-relaxed">
                   Instant responses with seamless conversation flow and live
                   interaction
                 </p>
               </div>
 
-              <div className="group p-4 lg:p-6 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 hover:border-purple-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center mb-3 lg:mb-4 shadow-md group-hover:scale-110 transition-transform">
-                  <SparklesIconSolid className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
+              <div className="group p-6 lg:p-8 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-300">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-blue-500 rounded-xl flex items-center justify-center mb-4 lg:mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                  <SparklesIconSolid className="h-6 w-6 lg:h-7 lg:w-7 text-white" />
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-2 text-sm lg:text-base">
+                <h3 className="font-bold text-gray-800 mb-3 text-base lg:text-lg">
                   AI Powered
                 </h3>
-                <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm lg:text-base text-gray-600 leading-relaxed">
                   Advanced AI technology for natural conversations and
                   intelligent assistance
                 </p>
@@ -211,20 +196,20 @@ export const ChatMessages = ({
             </div>
 
             {/* Status Indicators */}
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-6 pt-6">
-              <div className="flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 lg:py-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-full border border-cyan-200 shadow-sm">
-                <div className="w-2 h-2 lg:w-3 lg:h-3 bg-cyan-500 rounded-full animate-pulse"></div>
-                <span className="text-sm lg:text-base font-semibold text-gray-700">
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 pt-8">
+              <div className="flex items-center space-x-3 lg:space-x-4 px-4 lg:px-6 py-3 lg:py-4 bg-emerald-50 rounded-xl border border-emerald-200 shadow-lg">
+                <div className="w-3 h-3 lg:w-4 lg:h-4 bg-emerald-500 rounded-full"></div>
+                <span className="text-base lg:text-lg font-bold text-gray-700">
                   AI Ready
                 </span>
-                <SparklesIcon className="h-3 w-3 lg:h-4 lg:w-4 text-cyan-500" />
+                <SparklesIcon className="h-4 w-4 lg:h-5 lg:w-5 text-emerald-500" />
               </div>
-              <div className="flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 lg:py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full border border-blue-200 shadow-sm">
-                <div className="w-2 h-2 lg:w-3 lg:h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                <span className="text-sm lg:text-base font-semibold text-gray-700">
+              <div className="flex items-center space-x-3 lg:space-x-4 px-4 lg:px-6 py-3 lg:py-4 bg-blue-50 rounded-xl border border-blue-200 shadow-lg">
+                <div className="w-3 h-3 lg:w-4 lg:h-4 bg-blue-500 rounded-full"></div>
+                <span className="text-base lg:text-lg font-bold text-gray-700">
                   Online
                 </span>
-                <CheckCircleIcon className="h-3 w-3 lg:h-4 lg:w-4 text-blue-500" />
+                <CheckCircleIcon className="h-4 w-4 lg:h-5 lg:w-5 text-blue-500" />
               </div>
             </div>
           </div>
@@ -234,9 +219,58 @@ export const ChatMessages = ({
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-gradient-to-br from-blue-50 to-indigo-50 chat-scrollbar">
-      <div className="p-6 space-y-6 min-h-full">
-        <div className="max-w-4xl mx-auto space-y-6">
+    <div className="h-full overflow-y-auto bg-gray-50 chat-scrollbar scroll-smooth">
+      <style>{`
+        .chat-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .chat-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .chat-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(59, 130, 246, 0.3);
+          border-radius: 10px;
+          border: 2px solid transparent;
+          background-clip: content-box;
+          transition: background 0.3s ease;
+        }
+        .chat-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(59, 130, 246, 0.5);
+          background-clip: content-box;
+        }
+        .ai-typing-dots {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .ai-typing-dots div {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: currentColor;
+          animation: typing 1.4s infinite ease-in-out;
+        }
+        .ai-typing-dots div:nth-child(1) {
+          animation-delay: -0.32s;
+        }
+        .ai-typing-dots div:nth-child(2) {
+          animation-delay: -0.16s;
+        }
+        @keyframes typing {
+          0%,
+          80%,
+          100% {
+            transform: scale(0.8);
+            opacity: 0.5;
+          }
+          40% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+      `}</style>
+      <div className="p-8 space-y-8 min-h-full">
+        <div className="max-w-5xl mx-auto space-y-8">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -245,7 +279,7 @@ export const ChatMessages = ({
               } group`}
             >
               <div
-                className={`relative max-w-[80%] lg:max-w-[70%] xl:max-w-[65%] flex items-start space-x-3 ${
+                className={`relative max-w-[80%] lg:max-w-[70%] xl:max-w-[65%] flex items-start space-x-4 ${
                   message.role === "user"
                     ? "flex-row-reverse space-x-reverse"
                     : ""
@@ -258,55 +292,43 @@ export const ChatMessages = ({
                   }`}
                 >
                   <div
-                    className={`relative w-10 h-10 rounded-xl flex items-center justify-center shadow-sm border-2 transition-all duration-300 group-hover:scale-105 ${
+                    className={`relative w-12 h-12 rounded-xl flex items-center justify-center shadow-lg border-2 transition-all duration-300 group-hover:scale-110 ${
                       message.role === "user"
-                        ? "bg-gradient-to-br from-blue-500 to-blue-600 border-blue-400 border-opacity-30"
-                        : "bg-gradient-to-br from-cyan-500 to-blue-500 border-cyan-400 border-opacity-30"
+                        ? "bg-blue-500 border-blue-400"
+                        : "bg-blue-500 border-blue-400"
                     }`}
                   >
                     {message.role === "user" ? (
-                      <UserCircleIconSolid className="h-6 w-6 text-white" />
+                      <UserCircleIconSolid className="h-7 w-7 text-white" />
                     ) : (
-                      <div className="relative">
-                        <SparklesIconSolid className="h-6 w-6 text-white" />
-                        <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-yellow-400 rounded-full animate-pulse border border-white"></div>
-                      </div>
+                      <SparklesIconSolid className="h-7 w-7 text-white" />
                     )}
                   </div>
-
-                  {/* Status Indicator */}
-                  <div
-                    className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-white shadow-sm ${
-                      message.role === "user"
-                        ? "bg-cyan-500"
-                        : "bg-cyan-500 animate-pulse"
-                    }`}
-                  ></div>
                 </div>
 
                 {/* Message Bubble */}
                 <div
-                  className={`relative rounded-xl px-4 py-3 shadow-sm transition-all duration-300 hover:shadow-md group-hover:scale-[1.01] ${
+                  className={`relative rounded-xl px-6 py-4 shadow-lg transition-all duration-300 hover:shadow-xl group-hover:scale-[1.02] ${
                     message.role === "user"
-                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-md"
-                      : "bg-white/80 backdrop-blur-sm border border-white/50 text-gray-800 rounded-bl-md hover:border-gray-300"
+                      ? "bg-blue-500 text-white rounded-br-md"
+                      : "bg-white border border-gray-200 text-gray-800 rounded-bl-md hover:border-gray-300"
                   }`}
                 >
                   {/* Message Text */}
                   <div className="break-words">
                     {message.isStreaming ? (
                       <div className="flex items-end space-x-3">
-                        <div className="whitespace-pre-wrap leading-relaxed text-sm lg:text-base font-medium">
+                        <div className="whitespace-pre-wrap leading-relaxed text-sm lg:text-base font-semibold">
                           {message.content}
                         </div>
                         <div className="flex space-x-1 pb-1">
-                          <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"></div>
+                          <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
                           <div
-                            className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+                            className="w-2 h-2 bg-current rounded-full animate-bounce"
                             style={{ animationDelay: "0.1s" }}
                           ></div>
                           <div
-                            className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+                            className="w-2 h-2 bg-current rounded-full animate-bounce"
                             style={{ animationDelay: "0.2s" }}
                           ></div>
                         </div>
@@ -315,7 +337,7 @@ export const ChatMessages = ({
                       <div
                         className={`whitespace-pre-wrap leading-relaxed text-sm lg:text-base ${
                           message.role === "user"
-                            ? "font-medium"
+                            ? "font-semibold"
                             : "font-normal"
                         }`}
                       >
@@ -326,13 +348,11 @@ export const ChatMessages = ({
 
                   {/* File Attachment */}
                   {message.file && (
-                    <div className="mt-3 pt-3 border-t border-current border-opacity-20">
+                    <div className="mt-4 pt-4 border-t border-current border-opacity-20">
                       <div className="flex items-center space-x-3 text-xs opacity-90">
                         <DocumentDuplicateIcon className="h-4 w-4" />
-                        <span className="font-semibold">
-                          {message.file.name}
-                        </span>
-                        <span className="text-xs bg-current bg-opacity-10 px-2 py-1 rounded">
+                        <span className="font-bold">{message.file.name}</span>
+                        <span className="text-xs bg-current bg-opacity-10 px-2 py-1 rounded-lg">
                           ({(message.file.size / 1024).toFixed(1)} KB)
                         </span>
                       </div>
@@ -341,21 +361,21 @@ export const ChatMessages = ({
 
                   {/* Timestamp & Status */}
                   <div
-                    className={`mt-3 text-xs flex items-center justify-between ${
+                    className={`mt-4 text-xs flex items-center justify-between ${
                       message.role === "user"
                         ? "text-white text-opacity-80"
                         : "text-gray-500"
                     }`}
                   >
-                    <span className="font-semibold">
+                    <span className="font-bold">
                       {formatTimestamp(message.timestamp)}
                     </span>
 
                     {message.role === "assistant" && (
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         <div className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
-                          <span className="text-xs font-semibold text-cyan-600 uppercase tracking-wider bg-cyan-50 px-2 py-1 rounded border border-cyan-200">
+                          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                          <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200 shadow-sm">
                             AI
                           </span>
                         </div>
@@ -365,12 +385,12 @@ export const ChatMessages = ({
 
                   {/* Action Buttons - Only for AI responses */}
                   {message.role === "assistant" && (
-                    <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 flex space-x-2">
+                    <div className="absolute -top-3 -right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 flex space-x-2">
                       <button
-                        className={`p-2 backdrop-blur-sm border rounded-lg transition-all duration-300 hover:scale-110 ${
+                        className={`p-2.5 backdrop-blur-md border rounded-xl transition-all duration-300 hover:scale-110 ${
                           copiedMessageId === String(message.id)
-                            ? "bg-cyan-500 bg-opacity-20 border-cyan-500 border-opacity-30 text-cyan-600 shadow-md"
-                            : "bg-white border-gray-200 text-gray-600 hover:text-gray-800 hover:bg-white hover:shadow-md"
+                            ? "bg-blue-500 bg-opacity-20 border-blue-500 border-opacity-40 text-blue-600 shadow-lg"
+                            : "bg-white border-gray-200 text-gray-600 hover:text-gray-800 hover:bg-white hover:shadow-lg"
                         }`}
                         aria-label="Copy AI response"
                         onClick={() =>
@@ -388,10 +408,10 @@ export const ChatMessages = ({
 
                   {/* Message Tail */}
                   <div
-                    className={`absolute top-6 w-3 h-3 transform rotate-45 ${
+                    className={`absolute top-8 w-4 h-4 transform rotate-45 ${
                       message.role === "user"
-                        ? "right-[-6px] bg-blue-500"
-                        : "left-[-6px] bg-white border-l border-b border-gray-200"
+                        ? "right-[-8px] bg-blue-500"
+                        : "left-[-8px] bg-white border-l border-b border-gray-200"
                     }`}
                   ></div>
                 </div>
@@ -402,7 +422,7 @@ export const ChatMessages = ({
           {/* AI Typing Indicator */}
           {isAITyping && <AITypingIndicator />}
         </div>
-        <div ref={messagesEndRef} className="h-6" />
+        <div ref={messagesEndRef} className="h-8" />
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ const ChatServiceApp = () => {
 
   const [chats, setChats] = useState<IChat[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Start with sidebar closed on mobile
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [selectedModel, setSelectedModel] = useState<ModelType>(
     ModelType.OPENAI
@@ -59,7 +59,7 @@ const ChatServiceApp = () => {
   ): IChat[] => {
     return sessions.map((session) => ({
       id: session.id,
-      title: session.title,
+      title: session.title || "New Chat",
       timestamp: session.created_at,
       messages: [], // Messages will be loaded separately when chat is selected
       selectedModel: ModelType.OPENAI, // Default model for existing chats
@@ -72,7 +72,7 @@ const ChatServiceApp = () => {
       const transformedChats = transformSessionsToChats(chatSessions);
       setChats(transformedChats);
 
-      // Select first chat if none selected
+      // Select first chat if none selected and we have chats
       if (!selectedChatId && transformedChats.length > 0) {
         setSelectedChatId(transformedChats[0].id);
       }
@@ -299,23 +299,16 @@ const ChatServiceApp = () => {
   // Show loading state while fetching sessions
   if (isLoadingSessions) {
     return (
-      <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
-        <div className="text-center p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 max-w-sm mx-auto">
+      <div className="h-screen w-full bg-gray-50 flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-2xl shadow-xl border border-gray-200 max-w-sm mx-auto">
           <div className="relative mb-6">
-            <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
-            <div
-              className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-purple-500 rounded-full animate-spin mx-auto"
-              style={{
-                animationDirection: "reverse",
-                animationDuration: "1.5s",
-              }}
-            ></div>
+            <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
           </div>
-          <h3 className="text-xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
             Loading ChatAI
           </h3>
           <p className="text-sm text-gray-600">
-            Setting up your premium conversation experience...
+            Setting up your conversation experience...
           </p>
         </div>
       </div>
@@ -325,9 +318,9 @@ const ChatServiceApp = () => {
   // Show error state if sessions fail to load
   if (sessionsError) {
     return (
-      <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-red-50 to-pink-50 flex items-center justify-center p-4">
-        <div className="text-center max-w-md mx-auto p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20">
-          <div className="w-20 h-20 bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+      <div className="h-screen w-full bg-gray-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md mx-auto p-8 bg-white rounded-2xl shadow-xl border border-gray-200">
+          <div className="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <svg
               className="w-10 h-10 text-red-500"
               fill="none"
@@ -351,7 +344,7 @@ const ChatServiceApp = () => {
           </p>
           <button
             onClick={() => refetchSessions()}
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="inline-flex items-center px-8 py-4 bg-blue-500 text-white text-sm font-semibold rounded-xl hover:bg-blue-600 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <svg
               className="w-5 h-5 mr-3"
@@ -374,12 +367,12 @@ const ChatServiceApp = () => {
   }
 
   return (
-    <div className="h-full w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex overflow-hidden">
-      {/* Sidebar */}
+    <div className="flex h-full bg-gray-50 overflow-hidden">
+      {/* Sidebar - Hidden by default on mobile, shown on desktop */}
       <div
-        className={`relative z-30 ${
+        className={`${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto w-80 lg:w-80 xl:w-80 flex-shrink-0`}
+        } lg:translate-x-0 transition-transform duration-300 ease-in-out lg:static lg:inset-auto w-80 flex-shrink-0 z-30`}
       >
         <ChatSidebar
           chats={chats}
@@ -399,7 +392,7 @@ const ChatServiceApp = () => {
       )}
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 relative z-10 h-full overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 relative h-full overflow-hidden">
         {/* Chat Header */}
         <div className="flex-shrink-0">
           <ChatHeader
@@ -418,14 +411,14 @@ const ChatServiceApp = () => {
 
         {/* Tools Bar with Model Selector */}
         <div className="flex-shrink-0">
-          <div className="bg-white/70 backdrop-blur-sm border-b border-gray-200/50">
-            <div className="flex items-center justify-between px-6 py-3 h-14">
+          <div className="bg-white border-b border-gray-200">
+            <div className="flex items-center justify-between px-6 py-4 h-16">
               <Tools />
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-4">
                 <ModelSelector
                   selectedModel={selectedChat?.selectedModel || selectedModel}
                   onModelChange={handleModelChange}
-                  className="w-44"
+                  className="w-48"
                 />
               </div>
             </div>
@@ -433,7 +426,7 @@ const ChatServiceApp = () => {
         </div>
 
         {/* Chat Content Container */}
-        <div className="flex-1 flex flex-col min-h-0 relative bg-white/80 backdrop-blur-sm m-3 lg:m-4 rounded-2xl border border-white/50 shadow-xl overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0 relative bg-white m-4 lg:m-6 rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
           {/* Messages Area - Takes remaining space */}
           <div className="flex-1 min-h-0 relative rounded-t-2xl overflow-hidden">
             <ChatMessages

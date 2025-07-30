@@ -99,25 +99,25 @@ export const MessageInput = ({
   const hasContent = message.trim() || selectedFile;
 
   return (
-    <div className="relative bg-white/80 backdrop-blur-sm border-t border-gray-200/50 rounded-b-2xl">
+    <div className="relative bg-white border-t border-gray-200 rounded-b-2xl">
       {/* File Attachment Preview */}
       {selectedFile && (
-        <div className="mx-4 mt-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200/50 shadow-sm">
+        <div className="mx-6 mt-6 p-5 bg-blue-50 rounded-xl border border-blue-200 shadow-lg">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-                <DocumentIcon className="h-6 w-6 text-white" />
+            <div className="flex items-center space-x-4 flex-1 min-w-0">
+              <div className="flex-shrink-0 w-14 h-14 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                <DocumentIcon className="h-7 w-7 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-800 truncate">
+                <p className="text-sm font-bold text-gray-800 truncate">
                   {selectedFile.name}
                 </p>
-                <div className="flex items-center space-x-2 text-xs text-gray-600 mt-1">
-                  <span className="font-medium">
+                <div className="flex items-center space-x-3 text-xs text-gray-600 mt-2">
+                  <span className="font-bold">
                     {(selectedFile.size / 1024).toFixed(1)} KB
                   </span>
-                  <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                  <span className="capitalize font-medium bg-white/80 backdrop-blur-sm px-2 py-1 rounded-lg text-xs border border-gray-200/50">
+                  <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                  <span className="capitalize font-bold bg-white px-3 py-1.5 rounded-xl text-xs border border-gray-200 shadow-sm">
                     {selectedFile.type.split("/")[1] || "Unknown"}
                   </span>
                 </div>
@@ -125,36 +125,36 @@ export const MessageInput = ({
             </div>
             <button
               onClick={removeFile}
-              className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200 ml-3"
+              className="flex-shrink-0 p-2.5 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition-all duration-300 ml-4"
               aria-label="Remove file"
             >
-              <XMarkIcon className="h-4 w-4" />
+              <XMarkIcon className="h-5 w-5" />
             </button>
           </div>
         </div>
       )}
 
       {/* Main Input Container */}
-      <div className="p-4">
+      <div className="p-6">
         <form
           onSubmit={handleSubmit}
-          className={`relative bg-white/90 backdrop-blur-sm rounded-2xl transition-all duration-200 shadow-sm border ${
+          className={`relative bg-white rounded-xl transition-all duration-300 shadow-lg border ${
             isFocused
-              ? "ring-2 ring-indigo-500/20 shadow-lg border-indigo-300"
-              : "border-gray-200/50 hover:border-gray-300 hover:shadow-md"
+              ? "ring-2 ring-blue-500/20 shadow-xl border-blue-300"
+              : "border-gray-200 hover:border-gray-300 hover:shadow-xl"
           }`}
         >
           {/* Input Area */}
-          <div className="flex items-end space-x-3 p-4">
+          <div className="flex items-end space-x-4 p-5">
             {/* Attach Button */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isSending}
-              className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-200 ${
+              className={`flex-shrink-0 p-3 rounded-xl transition-all duration-300 ${
                 isSending
                   ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
+                  : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
               }`}
               aria-label="Attach file"
             >
@@ -185,7 +185,7 @@ export const MessageInput = ({
                     : `Type your message to ${modelNames[selectedModel]}...`
                 }
                 disabled={isSending}
-                className={`w-full bg-transparent border-0 text-gray-800 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[40px] max-h-[120px] text-sm leading-relaxed font-medium transition-colors ${
+                className={`w-full bg-transparent border-0 text-gray-800 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[44px] max-h-[120px] text-sm leading-relaxed font-semibold transition-colors ${
                   isSending ? "text-gray-400 cursor-not-allowed" : ""
                 }`}
                 rows={1}
@@ -193,7 +193,7 @@ export const MessageInput = ({
 
               {/* Character Count */}
               {message.length > 1000 && (
-                <div className="absolute -bottom-6 right-0 text-xs text-gray-500 font-medium">
+                <div className="absolute -bottom-8 right-0 text-xs text-gray-500 font-bold">
                   {message.length}/2000
                 </div>
               )}
@@ -203,10 +203,10 @@ export const MessageInput = ({
             <button
               type="submit"
               disabled={!hasContent || isSending}
-              className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-200 ${
+              className={`flex-shrink-0 p-3 rounded-xl transition-all duration-300 ${
                 !hasContent || isSending
                   ? "text-gray-300 bg-gray-100 cursor-not-allowed"
-                  : "text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-md hover:shadow-lg transform hover:scale-105"
+                  : "text-white bg-blue-500 hover:bg-blue-600 shadow-lg hover:shadow-xl"
               }`}
               aria-label={isSending ? "Sending..." : "Send message"}
             >
@@ -220,23 +220,23 @@ export const MessageInput = ({
         </form>
 
         {/* Quick Actions */}
-        <div className="flex items-center justify-between mt-4 px-2">
-          <div className="flex items-center space-x-4 text-xs text-gray-600">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-              <span className="font-semibold">AI Ready</span>
+        <div className="flex items-center justify-between mt-6 px-3">
+          <div className="flex items-center space-x-6 text-xs text-gray-600">
+            <div className="flex items-center space-x-3">
+              <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+              <span className="font-bold">AI Ready</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <ChatBubbleLeftRightIcon className="h-3 w-3 text-indigo-500" />
-              <span className="font-semibold text-indigo-600">
+            <div className="flex items-center space-x-3">
+              <ChatBubbleLeftRightIcon className="h-4 w-4 text-blue-500" />
+              <span className="font-bold text-blue-600">
                 {modelNames[selectedModel]}
               </span>
             </div>
           </div>
 
-          <div className="text-xs text-gray-500 font-medium">
+          <div className="text-xs text-gray-500 font-bold">
             Press{" "}
-            <kbd className="px-2 py-1 bg-gray-100/80 backdrop-blur-sm rounded-lg text-gray-600 font-mono text-xs border border-gray-200/50">
+            <kbd className="px-3 py-1.5 bg-gray-100 rounded-xl text-gray-600 font-mono text-xs border border-gray-200 shadow-sm">
               ⏎
             </kbd>{" "}
             to send
