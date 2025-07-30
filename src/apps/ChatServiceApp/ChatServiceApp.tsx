@@ -350,7 +350,7 @@ const ChatServiceApp = () => {
   }
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-[#FFFFFF] via-[#F5F5F5] to-[#EAEAEC] flex">
+    <div className="h-full w-full bg-gradient-to-br from-[#FFFFFF] via-[#F5F5F5] to-[#EAEAEC] flex">
       {/* Background Decorative Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[#3077F3]/5 to-[#B96AF7]/5 rounded-full blur-3xl"></div>

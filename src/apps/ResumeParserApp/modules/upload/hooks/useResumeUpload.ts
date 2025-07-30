@@ -1,6 +1,7 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import type { UploadState, UploadedFile } from "../types";
 import { uploadResume } from "../../../services/api";
+import { useToast } from "../../../../../components/ui/useToast";
 
 interface UseResumeUploadReturn {
   isUploading: boolean;
@@ -15,10 +16,14 @@ interface UseResumeUploadReturn {
   clearFiles: () => void;
   clearUploadedFiles: () => void;
   uploadFiles: (groupId: string) => Promise<void>;
+  cancelUpload: () => void;
   validateFiles: (files: File[]) => string[];
 }
 
 export const useResumeUpload = (): UseResumeUploadReturn => {
+  const { showToast } = useToast();
+  const abortControllerRef = useRef<AbortController | null>(null);
+  
   const [uploadState, setUploadState] = useState<UploadState>({
     isUploading: false,
     selectedFiles: [],
@@ -111,9 +116,19 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
     }));
   }, []);
 
+  const cancelUpload = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+  }, []);
+
   const uploadFiles = useCallback(
     async (groupId: string) => {
       if (uploadState.selectedFiles.length === 0) return;
+
+      // Create new abort controller for this upload
+      abortControllerRef.current = new AbortController();
 
       setUploadState((prev) => ({
         ...prev,
@@ -124,37 +139,82 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
       }));
 
       try {
+        const targetProgress = 90; // Target 90% before API completion
+        
         // Use the corrected API that handles multiple files in a single request
         const progressCallback = (progress: number) => {
-          // Update progress for all files since they're uploaded together
-          const progressPerFile = progress / uploadState.selectedFiles.length;
-          uploadState.selectedFiles.forEach((file) => {
-            setUploadState((prev) => ({
-              ...prev,
-              uploadProgress: {
-                ...prev.uploadProgress,
-                [file.name]: progressPerFile,
-              },
-            }));
-          });
+          // Smooth progress animation - gradually increase to 90%
+          const smoothProgress = Math.min(progress * 0.9, targetProgress);
+          
+          // Update overall progress for all files
+          setUploadState((prev) => ({
+            ...prev,
+            uploadProgress: {
+              overall: smoothProgress,
+            },
+          }));
         };
 
         const uploadResult = await uploadResume(
           uploadState.selectedFiles,
           groupId,
-          progressCallback
+          progressCallback,
+          abortControllerRef.current?.signal
         );
+
+
+
+        // Animate progress to 100%
+        const progressInterval = setInterval(() => {
+          setUploadState((prev) => {
+            const currentProgress = prev.uploadProgress.overall || 0;
+            if (currentProgress >= 100) {
+              clearInterval(progressInterval);
+              return prev;
+            }
+            return {
+              ...prev,
+              uploadProgress: {
+                overall: Math.min(currentProgress + 2, 100),
+              },
+            };
+          });
+        }, 50);
 
         // Convert UploadResult to UploadedFile array
         const uploadedFilesArray: UploadedFile[] = uploadResult.results.map(
-          (result) => ({
-            id: result.id.toString(),
-            name: result.original_filename || result.filename,
-            size: result.fileSize,
-            status: "success" as const,
-            uploadedAt: new Date(result.uploadedAt),
-          })
+          (result) => {
+            // Find the original file to get its size
+            const originalFile = uploadState.selectedFiles.find(
+              (file) =>
+                file.name === (result.original_filename || result.filename)
+            );
+
+            return {
+              id: result.id.toString(),
+              name: result.original_filename || result.filename,
+              size: originalFile?.size || 0, // Use original file size instead of API response
+              status: "success" as const,
+              uploadedAt: new Date(result.uploadedAt),
+            };
+          }
         );
+
+        // Show success toast
+        if (uploadResult.successful > 0) {
+          showToast(
+            `Successfully uploaded ${uploadResult.successful} file(s)`,
+            "success"
+          );
+        }
+
+        // Show error toast for failed uploads
+        if (uploadResult.failed > 0) {
+          showToast(
+            `${uploadResult.failed} file(s) failed to upload`,
+            "error"
+          );
+        }
 
         setUploadState((prev) => ({
           ...prev,
@@ -170,15 +230,25 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
         }));
       } catch (error) {
         console.error("Upload failed:", error);
+        
+        // Check if it's an abort error
+        if (error instanceof Error && error.name === 'AbortError') {
+          showToast("Upload cancelled", "warning");
+        } else {
+          showToast("Upload failed. Please try again.", "error");
+        }
+        
         setUploadState((prev) => ({
           ...prev,
           isUploading: false,
           uploadStatus: "error",
           errors: { upload: "Upload failed. Please try again." },
         }));
+      } finally {
+        abortControllerRef.current = null;
       }
     },
-    [uploadState.selectedFiles]
+    [uploadState.selectedFiles, showToast]
   );
 
   return {
@@ -189,6 +259,7 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
     clearFiles,
     clearUploadedFiles,
     uploadFiles,
+    cancelUpload,
     validateFiles,
   };
 };

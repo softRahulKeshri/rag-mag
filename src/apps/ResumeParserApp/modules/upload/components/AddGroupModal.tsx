@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useGroupApi } from "../../../hooks/useGroupApi";
+import { useToast } from "../../../../../components/ui/useToast";
 import type { CreateGroupRequest, Group } from "../../../types/api";
 import { UserGroupIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -20,6 +21,7 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const { createGroup } = useGroupApi();
+  const { showToast } = useToast();
 
   // Validation constants
   const MIN_LENGTH = 2;
@@ -33,7 +35,7 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
         setError(null);
       }
     },
-    [error]
+    [error, setError]
   );
 
   const validateGroupName = useCallback((name: string): string | null => {
@@ -73,7 +75,9 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
         // Reset form
         setGroupName("");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to create group");
+        const errorMessage = err instanceof Error ? err.message : "Failed to create group";
+        setError(errorMessage);
+        showToast(errorMessage, "error");
       } finally {
         setIsCreating(false);
       }
@@ -96,7 +100,7 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
   if (!open) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-[60] overflow-y-auto">
       {/* Enhanced backdrop with blur */}
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
 

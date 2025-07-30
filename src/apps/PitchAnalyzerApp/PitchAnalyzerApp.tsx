@@ -99,7 +99,7 @@ const PitchAnalyzerApp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-full bg-gray-50 flex">
       <Navigation
         activeTab={activeTab}
         onTabChange={handleTabChange}

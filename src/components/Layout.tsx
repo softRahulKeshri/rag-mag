@@ -10,11 +10,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // This component focuses purely on layout structure
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="h-screen flex flex-col bg-gray-100 overflow-hidden">
       <Navbar />
 
-      {/* Main content */}
-      <main className="flex-1 min-w-0 flex flex-col">{children}</main>
+      {/* Main content - takes remaining height and allows scrolling */}
+      <main className="flex-1 min-h-0 overflow-auto">{children}</main>
     </div>
   );
 };
