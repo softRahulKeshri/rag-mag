@@ -1,7 +1,7 @@
 import React from "react";
 
-// Common sidebar width - using w-72 (288px) for consistency
-const SIDEBAR_WIDTH = "w-72"; // 288px - consistent with ChatServiceApp
+// Common sidebar width - using w-80 (320px) for consistency
+const SIDEBAR_WIDTH = "w-80"; // 320px - consistent with ChatServiceApp
 
 interface CommonSidebarProps {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ interface CommonSidebarProps {
  * Common Sidebar Component
  *
  * Provides consistent width and base styling across all apps.
- * Uses w-72 (288px) width for premium, spacious feel.
+ * Uses w-80 (320px) width for premium, spacious feel.
  * Optimized height calculations to prevent scrolling issues.
  *
  * @param children - Sidebar content
@@ -24,7 +24,7 @@ export const CommonSidebar: React.FC<CommonSidebarProps> = ({
 }) => {
   return (
     <div
-      className={`${SIDEBAR_WIDTH} bg-white border-r border-gray-200 h-full flex flex-col shadow-lg overflow-hidden ${className}`}
+      className={`${SIDEBAR_WIDTH} bg-white/90 backdrop-blur-sm border-r border-white/50 h-full flex flex-col shadow-xl overflow-hidden ${className}`}
     >
       {children}
     </div>

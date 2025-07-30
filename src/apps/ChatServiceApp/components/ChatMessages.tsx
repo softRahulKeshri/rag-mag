@@ -17,11 +17,13 @@ import { formatTimestamp } from "../utils/chatUtils";
 interface ChatMessagesProps {
   messages: IMessage[];
   isLoading?: boolean;
+  isAITyping?: boolean;
 }
 
 export const ChatMessages = ({
   messages,
   isLoading = false,
+  isAITyping = false,
 }: ChatMessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
@@ -32,7 +34,7 @@ export const ChatMessages = ({
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isAITyping]);
 
   const handleCopyMessage = async (messageId: string, content: string) => {
     try {
@@ -60,18 +62,60 @@ export const ChatMessages = ({
     }
   };
 
+  // AI Typing Indicator Component
+  const AITypingIndicator = () => (
+    <div className="flex justify-start group">
+      <div className="relative max-w-[80%] lg:max-w-[70%] xl:max-w-[65%] flex items-start space-x-3">
+        {/* AI Avatar */}
+        <div className="flex-shrink-0 order-first">
+          <div className="relative w-10 h-10 rounded-xl flex items-center justify-center shadow-sm border-2 bg-gradient-to-br from-cyan-500 to-blue-500 border-cyan-400 border-opacity-30 animate-pulse">
+            <div className="relative">
+              <SparklesIconSolid className="h-6 w-6 text-white" />
+              <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-yellow-400 rounded-full animate-pulse border border-white"></div>
+            </div>
+          </div>
+          <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-white shadow-sm bg-cyan-500 animate-pulse"></div>
+        </div>
+
+        {/* Typing Bubble */}
+        <div className="relative rounded-xl px-4 py-3 shadow-sm bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 text-gray-800 rounded-bl-md">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm font-medium text-gray-700">
+              AI is typing
+            </span>
+            <div className="ai-typing-dots text-cyan-500">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+
+          {/* Message Tail */}
+          <div className="absolute top-6 left-[-6px] w-3 h-3 transform rotate-45 bg-gray-50 border-l border-b border-gray-200"></div>
+        </div>
+      </div>
+    </div>
+  );
+
   // Loading state for messages
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center p-6 bg-white overflow-hidden">
+      <div className="h-full flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-hidden">
         <div className="text-center">
           <div className="relative mb-6">
-            <div className="w-16 h-16 border-3 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+            <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+            <div
+              className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-purple-500 rounded-full animate-spin mx-auto"
+              style={{
+                animationDirection: "reverse",
+                animationDuration: "1.5s",
+              }}
+            ></div>
           </div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Loading Messages
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-600">
             Retrieving your conversation history...
           </p>
         </div>
@@ -81,13 +125,13 @@ export const ChatMessages = ({
 
   if (messages.length === 0) {
     return (
-      <div className="h-full flex items-center justify-center p-6 lg:p-8 bg-white overflow-y-auto">
+      <div className="h-full flex items-center justify-center p-6 lg:p-8 bg-gradient-to-br from-blue-50 to-indigo-50 overflow-y-auto">
         <div className="text-center max-w-2xl mx-auto">
           {/* Welcome Section */}
           <div className="relative mb-12">
             <div className="relative mx-auto w-20 h-20 lg:w-24 lg:h-24">
               {/* Main Icon */}
-              <div className="absolute inset-0 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
                 <ChatBubbleLeftRightIcon className="h-10 w-10 lg:h-12 lg:w-12 text-white" />
               </div>
 
@@ -111,13 +155,13 @@ export const ChatMessages = ({
           {/* Welcome Content */}
           <div className="space-y-6">
             <div className="space-y-3">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">
+              <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Welcome to ChatAI
               </h1>
-              <p className="text-lg lg:text-xl text-gray-600 font-medium">
+              <p className="text-lg lg:text-xl text-gray-700 font-medium">
                 Your intelligent conversation partner
               </p>
-              <p className="text-sm lg:text-base text-gray-500 leading-relaxed max-w-lg mx-auto">
+              <p className="text-sm lg:text-base text-gray-600 leading-relaxed max-w-lg mx-auto">
                 Start a conversation below and experience the power of AI-driven
                 chat with enhanced intelligence and natural language
                 understanding
@@ -126,8 +170,8 @@ export const ChatMessages = ({
 
             {/* Feature Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mt-8">
-              <div className="group p-4 lg:p-6 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-3 lg:mb-4 shadow-md group-hover:scale-110 transition-transform">
+              <div className="group p-4 lg:p-6 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 hover:border-blue-300 hover:shadow-lg transition-all duration-300">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-3 lg:mb-4 shadow-md group-hover:scale-110 transition-transform">
                   <SparklesIcon className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
                 </div>
                 <h3 className="font-semibold text-gray-800 mb-2 text-sm lg:text-base">
@@ -139,8 +183,8 @@ export const ChatMessages = ({
                 </p>
               </div>
 
-              <div className="group p-4 lg:p-6 bg-white rounded-xl border border-gray-200 hover:border-cyan-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-cyan-500 rounded-xl flex items-center justify-center mb-3 lg:mb-4 shadow-md group-hover:scale-110 transition-transform">
+              <div className="group p-4 lg:p-6 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 hover:border-cyan-300 hover:shadow-lg transition-all duration-300">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-3 lg:mb-4 shadow-md group-hover:scale-110 transition-transform">
                   <CheckCircleIcon className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
                 </div>
                 <h3 className="font-semibold text-gray-800 mb-2 text-sm lg:text-base">
@@ -152,8 +196,8 @@ export const ChatMessages = ({
                 </p>
               </div>
 
-              <div className="group p-4 lg:p-6 bg-white rounded-xl border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-purple-500 rounded-xl flex items-center justify-center mb-3 lg:mb-4 shadow-md group-hover:scale-110 transition-transform">
+              <div className="group p-4 lg:p-6 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 hover:border-purple-300 hover:shadow-lg transition-all duration-300">
+                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center mb-3 lg:mb-4 shadow-md group-hover:scale-110 transition-transform">
                   <SparklesIconSolid className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
                 </div>
                 <h3 className="font-semibold text-gray-800 mb-2 text-sm lg:text-base">
@@ -168,14 +212,14 @@ export const ChatMessages = ({
 
             {/* Status Indicators */}
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-6 pt-6">
-              <div className="flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 lg:py-3 bg-cyan-50 rounded-full border border-cyan-200 shadow-sm">
+              <div className="flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 lg:py-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-full border border-cyan-200 shadow-sm">
                 <div className="w-2 h-2 lg:w-3 lg:h-3 bg-cyan-500 rounded-full animate-pulse"></div>
                 <span className="text-sm lg:text-base font-semibold text-gray-700">
                   AI Ready
                 </span>
                 <SparklesIcon className="h-3 w-3 lg:h-4 lg:w-4 text-cyan-500" />
               </div>
-              <div className="flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 lg:py-3 bg-blue-50 rounded-full border border-blue-200 shadow-sm">
+              <div className="flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 lg:py-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full border border-blue-200 shadow-sm">
                 <div className="w-2 h-2 lg:w-3 lg:h-3 bg-blue-500 rounded-full animate-pulse"></div>
                 <span className="text-sm lg:text-base font-semibold text-gray-700">
                   Online
@@ -190,7 +234,7 @@ export const ChatMessages = ({
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-white chat-scrollbar">
+    <div className="h-full overflow-y-auto bg-gradient-to-br from-blue-50 to-indigo-50 chat-scrollbar">
       <div className="p-6 space-y-6 min-h-full">
         <div className="max-w-4xl mx-auto space-y-6">
           {messages.map((message) => (
@@ -216,8 +260,8 @@ export const ChatMessages = ({
                   <div
                     className={`relative w-10 h-10 rounded-xl flex items-center justify-center shadow-sm border-2 transition-all duration-300 group-hover:scale-105 ${
                       message.role === "user"
-                        ? "bg-blue-500 border-blue-400 border-opacity-30"
-                        : "bg-cyan-500 border-cyan-400 border-opacity-30"
+                        ? "bg-gradient-to-br from-blue-500 to-blue-600 border-blue-400 border-opacity-30"
+                        : "bg-gradient-to-br from-cyan-500 to-blue-500 border-cyan-400 border-opacity-30"
                     }`}
                   >
                     {message.role === "user" ? (
@@ -244,8 +288,8 @@ export const ChatMessages = ({
                 <div
                   className={`relative rounded-xl px-4 py-3 shadow-sm transition-all duration-300 hover:shadow-md group-hover:scale-[1.01] ${
                     message.role === "user"
-                      ? "bg-blue-500 text-white rounded-br-md"
-                      : "bg-gray-50 border border-gray-200 text-gray-800 rounded-bl-md hover:border-gray-300"
+                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-md"
+                      : "bg-white/80 backdrop-blur-sm border border-white/50 text-gray-800 rounded-bl-md hover:border-gray-300"
                   }`}
                 >
                   {/* Message Text */}
@@ -347,13 +391,16 @@ export const ChatMessages = ({
                     className={`absolute top-6 w-3 h-3 transform rotate-45 ${
                       message.role === "user"
                         ? "right-[-6px] bg-blue-500"
-                        : "left-[-6px] bg-gray-50 border-l border-b border-gray-200"
+                        : "left-[-6px] bg-white border-l border-b border-gray-200"
                     }`}
                   ></div>
                 </div>
               </div>
             </div>
           ))}
+
+          {/* AI Typing Indicator */}
+          {isAITyping && <AITypingIndicator />}
         </div>
         <div ref={messagesEndRef} className="h-6" />
       </div>

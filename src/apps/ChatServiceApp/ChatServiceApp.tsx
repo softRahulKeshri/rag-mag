@@ -299,16 +299,23 @@ const ChatServiceApp = () => {
   // Show loading state while fetching sessions
   if (isLoadingSessions) {
     return (
-      <div className="h-screen w-full bg-white flex items-center justify-center">
-        <div className="text-center p-8 bg-white rounded-xl shadow-sm border border-gray-100 max-w-sm mx-auto">
+      <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 max-w-sm mx-auto">
           <div className="relative mb-6">
-            <div className="w-12 h-12 border-3 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+            <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+            <div
+              className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-purple-500 rounded-full animate-spin mx-auto"
+              style={{
+                animationDirection: "reverse",
+                animationDuration: "1.5s",
+              }}
+            ></div>
           </div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+          <h3 className="text-xl font-bold text-gray-800 mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Loading ChatAI
           </h3>
-          <p className="text-sm text-gray-500">
-            Setting up your conversation experience...
+          <p className="text-sm text-gray-600">
+            Setting up your premium conversation experience...
           </p>
         </div>
       </div>
@@ -318,11 +325,11 @@ const ChatServiceApp = () => {
   // Show error state if sessions fail to load
   if (sessionsError) {
     return (
-      <div className="h-screen w-full bg-white flex items-center justify-center p-4">
-        <div className="text-center max-w-md mx-auto p-6 bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="w-16 h-16 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+      <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-red-50 to-pink-50 flex items-center justify-center p-4">
+        <div className="text-center max-w-md mx-auto p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20">
+          <div className="w-20 h-20 bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <svg
-              className="w-8 h-8 text-red-500"
+              className="w-10 h-10 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -335,19 +342,19 @@ const ChatServiceApp = () => {
               />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-3">
+          <h3 className="text-2xl font-bold text-gray-800 mb-4">
             Connection Failed
           </h3>
-          <p className="text-sm text-gray-600 mb-6">
+          <p className="text-sm text-gray-600 mb-8 leading-relaxed">
             {sessionsError.message ||
               "Unable to load your conversations. Please check your connection and try again."}
           </p>
           <button
             onClick={() => refetchSessions()}
-            className="inline-flex items-center px-6 py-3 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors"
+            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             <svg
-              className="w-4 h-4 mr-2"
+              className="w-5 h-5 mr-3"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -367,12 +374,12 @@ const ChatServiceApp = () => {
   }
 
   return (
-    <div className="h-full w-full bg-white flex overflow-hidden">
+    <div className="h-full w-full bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex overflow-hidden">
       {/* Sidebar */}
       <div
         className={`relative z-30 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto w-80 lg:w-80 xl:w-96 flex-shrink-0`}
+        } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto w-80 lg:w-80 xl:w-80 flex-shrink-0`}
       >
         <ChatSidebar
           chats={chats}
@@ -411,14 +418,14 @@ const ChatServiceApp = () => {
 
         {/* Tools Bar with Model Selector */}
         <div className="flex-shrink-0">
-          <div className="bg-gray-50 border-b border-gray-200">
-            <div className="flex items-center justify-between px-4 py-3 h-12">
+          <div className="bg-white/70 backdrop-blur-sm border-b border-gray-200/50">
+            <div className="flex items-center justify-between px-6 py-3 h-14">
               <Tools />
               <div className="flex items-center space-x-3">
                 <ModelSelector
                   selectedModel={selectedChat?.selectedModel || selectedModel}
                   onModelChange={handleModelChange}
-                  className="w-40"
+                  className="w-44"
                 />
               </div>
             </div>
@@ -426,12 +433,13 @@ const ChatServiceApp = () => {
         </div>
 
         {/* Chat Content Container */}
-        <div className="flex-1 flex flex-col min-h-0 relative bg-white m-4 lg:m-6 rounded-xl border border-gray-100 overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0 relative bg-white/80 backdrop-blur-sm m-3 lg:m-4 rounded-2xl border border-white/50 shadow-xl overflow-hidden">
           {/* Messages Area - Takes remaining space */}
-          <div className="flex-1 min-h-0 relative rounded-t-xl overflow-hidden">
+          <div className="flex-1 min-h-0 relative rounded-t-2xl overflow-hidden">
             <ChatMessages
               messages={selectedChat?.messages || []}
               isLoading={isLoadingMessages}
+              isAITyping={isConversationLoading}
             />
           </div>
 
