@@ -41,33 +41,33 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm border-b border-white/20 shadow-lg">
-      <div className="flex items-center justify-between px-6 lg:px-8 py-4 lg:py-6 h-16 lg:h-20">
+    <div className="bg-white border-b border-gray-100">
+      <div className="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4 h-14 lg:h-16">
         {/* Left Section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           {/* Menu Button */}
           <button
             onClick={onMenuToggle}
-            className="p-2 lg:p-3 text-slate-600 hover:text-blue-600 rounded-xl hover:bg-blue-50 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-lg"
+            className="p-2 text-gray-500 hover:text-blue-500 rounded-lg hover:bg-gray-50 transition-colors"
             aria-label="Toggle menu"
           >
-            <Bars3Icon className="h-5 w-5 lg:h-6 lg:w-6" />
+            <Bars3Icon className="h-4 w-4 lg:h-5 lg:w-5" />
           </button>
 
           {/* Title Section */}
-          <div className="flex items-center space-x-4">
-            <div className="relative w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <ChatBubbleLeftRightIcon className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 lg:w-4 lg:h-4 bg-cyan-400 rounded-full animate-pulse border-2 border-white shadow-md"></div>
+          <div className="flex items-center space-x-3">
+            <div className="relative w-8 h-8 lg:w-10 lg:h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+              <ChatBubbleLeftRightIcon className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
+              <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 lg:w-3 lg:h-3 bg-cyan-400 rounded-full animate-pulse border border-white"></div>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg lg:text-xl font-bold text-slate-800 leading-tight tracking-tight">
+              <h1 className="text-base lg:text-lg font-semibold text-gray-800 leading-tight">
                 {title}
               </h1>
               {subtitle && (
-                <div className="flex items-center space-x-2 lg:space-x-3 text-sm text-slate-500 mt-1">
-                  <ClockIcon className="h-3 w-3 lg:h-4 lg:w-4" />
-                  <span className="font-semibold">{subtitle}</span>
+                <div className="flex items-center space-x-2 text-xs text-gray-500">
+                  <ClockIcon className="h-3 w-3" />
+                  <span className="font-medium">{subtitle}</span>
                 </div>
               )}
             </div>
@@ -75,35 +75,37 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2">
           {/* AI Status Indicator */}
-          <div className="hidden sm:flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 lg:py-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-full border border-cyan-200/50 shadow-lg">
-            <div className="w-2 h-2 lg:w-3 lg:h-3 bg-cyan-500 rounded-full animate-pulse shadow-sm"></div>
-            <span className="text-sm font-bold text-slate-700">AI Ready</span>
-            <SparklesIcon className="h-3 w-3 lg:h-4 lg:w-4 text-cyan-500 animate-pulse" />
+          <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-cyan-50 rounded-full border border-cyan-200">
+            <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+            <span className="text-xs font-semibold text-gray-700">
+              AI Ready
+            </span>
+            <SparklesIcon className="h-3 w-3 text-cyan-500" />
           </div>
 
           {/* Menu Button */}
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 lg:p-3 text-slate-600 hover:text-blue-600 rounded-xl hover:bg-blue-50 transition-all duration-300 hover:scale-110 shadow-md hover:shadow-lg"
+              className="p-2 text-gray-500 hover:text-blue-500 rounded-lg hover:bg-gray-50 transition-colors"
               aria-label="More options"
             >
-              <EllipsisVerticalIcon className="h-5 w-5 lg:h-6 lg:w-6" />
+              <EllipsisVerticalIcon className="h-4 w-4 lg:h-5 lg:w-5" />
             </button>
 
             {/* Dropdown Menu */}
             {isMenuOpen && (
-              <div className="absolute right-0 top-full mt-3 w-56 lg:w-64 bg-white/95 backdrop-blur-sm border border-white/20 rounded-2xl shadow-xl z-50 overflow-hidden">
-                <div className="py-3">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+                <div className="py-2">
                   <button
                     onClick={handleRename}
-                    className="w-full px-4 lg:px-6 py-3 lg:py-4 text-left text-sm lg:text-base text-slate-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 font-semibold flex items-center space-x-3 lg:space-x-4"
+                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors font-medium flex items-center space-x-3"
                   >
-                    <div className="w-10 h-10 lg:w-12 lg:h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                       <svg
-                        className="h-5 w-5 lg:h-6 lg:w-6 text-white"
+                        className="h-4 w-4 text-white"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -118,7 +120,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                     </div>
                     <div>
                       <span className="block">Rename Chat</span>
-                      <span className="text-xs text-slate-500 font-normal">
+                      <span className="text-xs text-gray-500 font-normal">
                         Change conversation title
                       </span>
                     </div>
@@ -126,11 +128,11 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
                   <button
                     onClick={handleClearChat}
-                    className="w-full px-4 lg:px-6 py-3 lg:py-4 text-left text-sm lg:text-base text-slate-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 font-semibold flex items-center space-x-3 lg:space-x-4 group"
+                    className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors font-medium flex items-center space-x-3 group"
                   >
-                    <div className="w-10 h-10 lg:w-12 lg:h-12 bg-red-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
                       <svg
-                        className="h-5 w-5 lg:h-6 lg:w-6 text-white"
+                        className="h-4 w-4 text-white"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -145,7 +147,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                     </div>
                     <div>
                       <span className="block">Clear Chat</span>
-                      <span className="text-xs text-slate-500 group-hover:text-red-500 font-normal">
+                      <span className="text-xs text-gray-500 group-hover:text-red-500 font-normal">
                         Remove all messages
                       </span>
                     </div>
@@ -153,7 +155,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 </div>
 
                 {/* Menu Arrow */}
-                <div className="absolute -top-2 right-6 w-4 h-4 bg-white/95 backdrop-blur-sm border-l border-t border-white/20 transform rotate-45 shadow-lg"></div>
+                <div className="absolute -top-1 right-4 w-2 h-2 bg-white border-l border-t border-gray-200 transform rotate-45"></div>
               </div>
             )}
           </div>
@@ -161,7 +163,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
       </div>
 
       {/* Bottom Border */}
-      <div className="h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent"></div>
+      <div className="h-px bg-gradient-to-r from-transparent via-blue-200 to-transparent"></div>
     </div>
   );
 };

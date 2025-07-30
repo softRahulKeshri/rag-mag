@@ -19,8 +19,8 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
 }) => {
   const lastMessage = chat.messages[chat.messages.length - 1];
   const previewText = lastMessage?.content
-    ? lastMessage.content.length > 40
-      ? lastMessage.content.substring(0, 40) + "..."
+    ? lastMessage.content.length > 30
+      ? lastMessage.content.substring(0, 30) + "..."
       : lastMessage.content
     : "No messages yet";
 
@@ -34,29 +34,29 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`group relative p-3 rounded-lg transition-colors cursor-pointer ${
+      className={`group relative p-2.5 rounded-lg transition-colors cursor-pointer ${
         isSelected
           ? "bg-blue-50 border border-blue-200"
           : "hover:bg-gray-50 border border-transparent hover:border-gray-200"
       }`}
     >
       {/* Chat Item Content */}
-      <div className="flex items-start space-x-3">
+      <div className="flex items-start space-x-2.5">
         {/* Avatar */}
         <div className="flex-shrink-0">
           <div
-            className={`relative w-10 h-10 rounded-lg flex items-center justify-center shadow-sm border transition-colors ${
+            className={`relative w-8 h-8 rounded-lg flex items-center justify-center border transition-colors ${
               isSelected
-                ? "bg-blue-600 border-blue-500"
-                : "bg-gray-100 border-gray-200 group-hover:bg-blue-600 group-hover:border-blue-500"
+                ? "bg-blue-500 border-blue-400"
+                : "bg-gray-100 border-gray-200 group-hover:bg-blue-500 group-hover:border-blue-400"
             }`}
           >
-            <ChatBubbleLeftRightIconSolid className="h-5 w-5 text-white" />
+            <ChatBubbleLeftRightIconSolid className="h-4 w-4 text-white" />
 
             {/* AI Status Indicator */}
             {hasAIMessage && (
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse border border-white">
-                <SparklesIcon className="h-1.5 w-1.5 text-white absolute inset-0.5" />
+              <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full animate-pulse border border-white">
+                <SparklesIcon className="h-1 w-1 text-white absolute inset-0.5" />
               </div>
             )}
           </div>
@@ -97,10 +97,10 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
 
           {/* Message Count & Status */}
           {chat.messages.length > 0 && (
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-between mt-1.5">
+              <div className="flex items-center space-x-1.5">
                 <div
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                  className={`w-1 h-1 rounded-full transition-colors ${
                     isSelected
                       ? "bg-blue-600"
                       : "bg-gray-300 group-hover:bg-blue-600"
@@ -120,9 +120,9 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
 
               {/* AI Conversation Indicator */}
               {hasAIMessage && (
-                <div className="flex items-center space-x-2">
-                  <SparklesIcon className="h-3 w-3 text-green-500" />
-                  <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded border border-green-200">
+                <div className="flex items-center space-x-1.5">
+                  <SparklesIcon className="h-2.5 w-2.5 text-green-500" />
+                  <span className="text-xs font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded border border-green-200">
                     AI
                   </span>
                 </div>
@@ -134,21 +134,21 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
         {/* Action Button */}
         <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
-            className="p-1.5 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors"
+            className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100 transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               // Handle menu click
             }}
             aria-label="Chat options"
           >
-            <EllipsisVerticalIcon className="h-4 w-4" />
+            <EllipsisVerticalIcon className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
       {/* Selection Indicator */}
       {isSelected && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full"></div>
+        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-600 rounded-r-full"></div>
       )}
     </div>
   );

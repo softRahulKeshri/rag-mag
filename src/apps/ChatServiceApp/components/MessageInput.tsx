@@ -46,7 +46,7 @@ export const MessageInput = ({
         fileInputRef.current.value = "";
       }
       if (textareaRef.current) {
-        textareaRef.current.style.height = "56px";
+        textareaRef.current.style.height = "40px";
       }
     }
   };
@@ -78,7 +78,7 @@ export const MessageInput = ({
   const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const target = e.target as HTMLTextAreaElement;
     target.style.height = "auto";
-    target.style.height = `${Math.min(target.scrollHeight, 140)}px`;
+    target.style.height = `${Math.min(target.scrollHeight, 120)}px`;
   };
 
   const removeFile = () => {
@@ -91,25 +91,25 @@ export const MessageInput = ({
   const hasContent = message.trim() || selectedFile;
 
   return (
-    <div className="relative bg-white border-t border-white/20 shadow-2xl rounded-b-3xl">
-      {/* Premium File Attachment Preview */}
+    <div className="relative bg-white border-t border-gray-100 rounded-b-xl">
+      {/* File Attachment Preview */}
       {selectedFile && (
-        <div className="mx-8 mt-8 p-8 bg-gradient-to-r from-blue-50/50 via-indigo-50/50 to-blue-50/50 rounded-3xl border border-blue-200/50 shadow-xl">
+        <div className="mx-4 mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6 flex-1 min-w-0">
-              <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl flex items-center justify-center shadow-xl">
-                <DocumentIcon className="h-10 w-10 text-white" />
+            <div className="flex items-center space-x-3 flex-1 min-w-0">
+              <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                <DocumentIcon className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-lg font-bold text-slate-800 truncate">
+                <p className="text-sm font-semibold text-gray-800 truncate">
                   {selectedFile.name}
                 </p>
-                <div className="flex items-center space-x-4 text-base text-slate-600 mt-3">
-                  <span className="font-bold">
+                <div className="flex items-center space-x-2 text-xs text-gray-600 mt-1">
+                  <span className="font-medium">
                     {(selectedFile.size / 1024).toFixed(1)} KB
                   </span>
-                  <span className="w-2 h-2 bg-slate-300 rounded-full"></span>
-                  <span className="capitalize font-bold bg-white px-4 py-2 rounded-full text-sm shadow-lg border border-slate-200">
+                  <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                  <span className="capitalize font-medium bg-white px-2 py-1 rounded text-xs border border-gray-200">
                     {selectedFile.type.split("/")[1] || "Unknown"}
                   </span>
                 </div>
@@ -117,40 +117,40 @@ export const MessageInput = ({
             </div>
             <button
               onClick={removeFile}
-              className="flex-shrink-0 p-4 text-slate-400 hover:text-slate-600 rounded-2xl hover:bg-slate-50 transition-all duration-300 ml-6 hover:scale-110"
+              className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors ml-3"
               aria-label="Remove file"
             >
-              <XMarkIcon className="h-7 w-7" />
+              <XMarkIcon className="h-4 w-4" />
             </button>
           </div>
         </div>
       )}
 
-      {/* Premium Main Input Container */}
-      <div className="p-8">
+      {/* Main Input Container */}
+      <div className="p-4">
         <form
           onSubmit={handleSubmit}
-          className={`relative bg-white rounded-3xl transition-all duration-300 shadow-xl ${
+          className={`relative bg-white rounded-xl transition-all duration-300 shadow-sm border ${
             isFocused
-              ? "ring-2 ring-blue-500/20 shadow-2xl border-2 border-blue-500/30"
-              : "border-2 border-slate-200 hover:border-slate-300 hover:shadow-2xl"
+              ? "ring-2 ring-blue-500/20 shadow-md border-blue-300"
+              : "border-gray-200 hover:border-gray-300 hover:shadow-md"
           }`}
         >
-          {/* Premium Input Area */}
-          <div className="flex items-end space-x-8 p-8">
-            {/* Premium Attach Button */}
+          {/* Input Area */}
+          <div className="flex items-end space-x-3 p-3">
+            {/* Attach Button */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isSending}
-              className={`flex-shrink-0 p-5 rounded-2xl transition-all duration-300 ${
+              className={`flex-shrink-0 p-2 rounded-lg transition-colors ${
                 isSending
-                  ? "text-slate-200 cursor-not-allowed"
-                  : "text-slate-500 hover:text-blue-600 hover:bg-blue-50 hover:scale-110 shadow-lg hover:shadow-xl"
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-500 hover:text-blue-500 hover:bg-blue-50"
               }`}
               aria-label="Attach file"
             >
-              <PaperClipIcon className="h-7 w-7" />
+              <PaperClipIcon className="h-4 w-4" />
               <input
                 type="file"
                 ref={fileInputRef}
@@ -161,7 +161,7 @@ export const MessageInput = ({
               />
             </button>
 
-            {/* Premium Text Input */}
+            {/* Text Input */}
             <div className="flex-1 relative">
               <textarea
                 ref={textareaRef}
@@ -175,92 +175,66 @@ export const MessageInput = ({
                   isSending ? "AI is thinking..." : "Type your message..."
                 }
                 disabled={isSending}
-                className={`w-full bg-transparent border-0 text-slate-800 placeholder-slate-400 focus:ring-0 focus:outline-none resize-none py-5 px-0 min-h-[56px] max-h-[140px] text-base lg:text-lg leading-relaxed font-medium transition-all duration-300 ${
-                  isSending ? "text-slate-400 cursor-not-allowed" : ""
+                className={`w-full bg-transparent border-0 text-gray-800 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[40px] max-h-[120px] text-sm leading-relaxed font-medium transition-colors ${
+                  isSending ? "text-gray-400 cursor-not-allowed" : ""
                 }`}
                 rows={1}
               />
 
-              {/* Premium Character Count */}
+              {/* Character Count */}
               {message.length > 1000 && (
-                <div className="absolute -bottom-10 right-0 text-sm text-slate-500 font-bold">
+                <div className="absolute -bottom-6 right-0 text-xs text-gray-500 font-medium">
                   {message.length}/2000
                 </div>
               )}
             </div>
 
-            {/* Premium Send Button */}
+            {/* Send Button */}
             <button
               type="submit"
               disabled={!hasContent || isSending}
-              className={`flex-shrink-0 p-5 rounded-2xl transition-all duration-300 ${
+              className={`flex-shrink-0 p-2 rounded-lg transition-colors ${
                 !hasContent || isSending
-                  ? "text-slate-300 bg-slate-100 cursor-not-allowed shadow-inner"
-                  : "text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-xl hover:shadow-2xl hover:scale-110 transform"
+                  ? "text-gray-300 bg-gray-100 cursor-not-allowed"
+                  : "text-white bg-blue-500 hover:bg-blue-600 shadow-sm hover:shadow-md"
               }`}
               aria-label={isSending ? "Sending..." : "Send message"}
             >
               {isSending ? (
-                <ArrowPathIcon className="h-7 w-7 animate-spin" />
+                <ArrowPathIcon className="h-4 w-4 animate-spin" />
               ) : (
-                <div className="relative">
-                  <PaperAirplaneIcon className="h-7 w-7" />
-                  {hasContent && (
-                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-ping shadow-lg"></div>
-                  )}
-                </div>
+                <PaperAirplaneIcon className="h-4 w-4" />
               )}
             </button>
           </div>
         </form>
 
-        {/* Premium Quick Actions */}
-        <div className="flex items-center justify-between mt-8 px-6">
-          <div className="flex items-center space-x-8 text-base text-slate-500">
-            <div className="flex items-center space-x-4">
-              <div className="w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></div>
-              <span className="font-bold">AI Ready</span>
+        {/* Quick Actions */}
+        <div className="flex items-center justify-between mt-4 px-2">
+          <div className="flex items-center space-x-4 text-xs text-gray-500">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+              <span className="font-medium">AI Ready</span>
             </div>
-            <div className="flex items-center space-x-4">
-              <SparklesIcon className="h-5 w-5 text-indigo-500 animate-pulse" />
-              <span className="font-bold">Enhanced with AI</span>
+            <div className="flex items-center space-x-2">
+              <SparklesIcon className="h-3 w-3 text-indigo-500" />
+              <span className="font-medium">Enhanced with AI</span>
             </div>
-            <div className="flex items-center space-x-4">
-              <ChatBubbleLeftRightIcon className="h-5 w-5 text-blue-600" />
-              <span className="font-bold">Real-time Chat</span>
+            <div className="flex items-center space-x-2">
+              <ChatBubbleLeftRightIcon className="h-3 w-3 text-blue-500" />
+              <span className="font-medium">Real-time Chat</span>
             </div>
           </div>
 
-          <div className="text-base text-slate-500 font-bold">
+          <div className="text-xs text-gray-500 font-medium">
             Press{" "}
-            <kbd className="px-4 py-2 bg-slate-100 rounded-xl text-slate-600 font-mono text-sm shadow-lg border border-slate-200">
+            <kbd className="px-2 py-1 bg-gray-100 rounded text-gray-600 font-mono text-xs border border-gray-200">
               ⏎
             </kbd>{" "}
             to send
           </div>
         </div>
       </div>
-
-      {/* Premium Mobile Floating Send Button */}
-      {hasContent && (
-        <div className="fixed bottom-12 right-12 md:hidden z-50">
-          <button
-            onClick={handleSubmit}
-            disabled={isSending}
-            className="w-24 h-24 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center hover:scale-110 transform"
-            aria-label="Send message"
-          >
-            {isSending ? (
-              <ArrowPathIcon className="h-12 w-12 animate-spin" />
-            ) : (
-              <div className="relative">
-                <PaperAirplaneIcon className="h-12 w-12" />
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-ping shadow-lg"></div>
-              </div>
-            )}
-          </button>
-        </div>
-      )}
     </div>
   );
 };

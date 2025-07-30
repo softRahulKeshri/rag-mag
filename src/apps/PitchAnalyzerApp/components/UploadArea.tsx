@@ -192,12 +192,12 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
       {/* Enhanced Header Section */}
       <div className="text-center mb-10">
         <div className="flex items-center justify-center mb-6">
-          <div className="relative">
+          {/* <div className="relative">
             <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
               <CloudArrowUpIcon className="w-10 h-10 text-white" />
             </div>
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full animate-pulse border-2 border-white"></div>
-          </div>
+          </div> */}
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Upload Pitch Deck

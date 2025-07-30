@@ -210,13 +210,13 @@ const FloatingChatBot = ({
             </div>
             <div className="flex-1">
               <p className="text-xs font-medium text-red-800">{error}</p>
-              <button
-                onClick={clearError}
-                className="mt-1 text-xs text-red-600 hover:text-red-700 font-medium"
-              >
-                Dismiss
-              </button>
             </div>
+            <button
+              onClick={clearError}
+              className="flex-shrink-0 p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded transition-colors duration-200"
+            >
+              <XMarkIcon className="w-3 h-3" />
+            </button>
           </div>
         </div>
       )}

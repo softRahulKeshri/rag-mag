@@ -275,18 +275,15 @@ const ChatServiceApp = () => {
   // Show loading state while fetching sessions
   if (isLoadingSessions) {
     return (
-      <div className="h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center p-10 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 max-w-md mx-auto">
-          <div className="relative mb-8">
-            <div className="w-16 h-16 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mx-auto shadow-lg"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-8 h-8 border-4 border-transparent border-t-indigo-500 rounded-full animate-spin"></div>
-            </div>
+      <div className="h-screen w-full bg-white flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-xl shadow-sm border border-gray-100 max-w-sm mx-auto">
+          <div className="relative mb-6">
+            <div className="w-12 h-12 border-3 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
           </div>
-          <h3 className="text-xl font-bold text-slate-800 mb-3">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
             Loading ChatAI
           </h3>
-          <p className="text-slate-600 text-base">
+          <p className="text-sm text-gray-500">
             Setting up your conversation experience...
           </p>
         </div>
@@ -297,11 +294,11 @@ const ChatServiceApp = () => {
   // Show error state if sessions fail to load
   if (sessionsError) {
     return (
-      <div className="h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
-        <div className="text-center max-w-lg mx-auto p-10 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20">
-          <div className="w-20 h-20 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+      <div className="h-screen w-full bg-white flex items-center justify-center p-4">
+        <div className="text-center max-w-md mx-auto p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="w-16 h-16 bg-red-100 rounded-xl flex items-center justify-center mx-auto mb-4">
             <svg
-              className="w-10 h-10 text-white"
+              className="w-8 h-8 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -314,19 +311,19 @@ const ChatServiceApp = () => {
               />
             </svg>
           </div>
-          <h3 className="text-2xl font-bold text-slate-800 mb-4">
+          <h3 className="text-xl font-semibold text-gray-800 mb-3">
             Connection Failed
           </h3>
-          <p className="text-slate-600 text-base mb-8 leading-relaxed">
+          <p className="text-sm text-gray-600 mb-6">
             {sessionsError.message ||
               "Unable to load your conversations. Please check your connection and try again."}
           </p>
           <button
             onClick={() => refetchSessions()}
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-base font-semibold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="inline-flex items-center px-6 py-3 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors"
           >
             <svg
-              className="w-5 h-5 mr-3"
+              className="w-4 h-4 mr-2"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -346,13 +343,7 @@ const ChatServiceApp = () => {
   }
 
   return (
-    <div className="h-full w-full bg-gradient-to-br from-slate-50 to-blue-50 flex overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-indigo-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/10 to-pink-500/10 rounded-full blur-3xl"></div>
-      </div>
-
+    <div className="h-full w-full bg-white flex overflow-hidden">
       {/* Sidebar */}
       <div
         className={`relative z-30 ${
@@ -377,16 +368,16 @@ const ChatServiceApp = () => {
       )}
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 relative z-10 h-full">
+      <div className="flex-1 flex flex-col min-w-0 relative z-10 h-full overflow-hidden">
         {/* Chat Header */}
         <div className="flex-shrink-0">
           <ChatHeader
             onMenuToggle={toggleSidebar}
-            title={selectedChat?.title || "Select a Chat"}
+            title={selectedChat?.title || "New Chat"}
             subtitle={
               selectedChat
                 ? `${selectedChat.messages.length} messages`
-                : "Choose a conversation to start chatting"
+                : "0 messages"
             }
             onClearChat={handleClearChat}
             onRenameChat={handleRenameChat}
@@ -399,9 +390,9 @@ const ChatServiceApp = () => {
         </div>
 
         {/* Chat Content Container */}
-        <div className="flex-1 flex flex-col min-h-0 relative bg-white/80 backdrop-blur-sm m-4 lg:m-6 rounded-2xl shadow-xl border border-white/30">
+        <div className="flex-1 flex flex-col min-h-0 relative bg-white m-4 lg:m-6 rounded-xl border border-gray-100 overflow-hidden">
           {/* Messages Area - Takes remaining space */}
-          <div className="flex-1 min-h-0 relative rounded-t-2xl overflow-hidden">
+          <div className="flex-1 min-h-0 relative rounded-t-xl overflow-hidden">
             <ChatMessages
               messages={selectedChat?.messages || []}
               isLoading={isLoadingMessages}

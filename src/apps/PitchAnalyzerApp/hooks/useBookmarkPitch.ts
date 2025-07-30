@@ -1,51 +1,66 @@
 import { useState, useCallback } from "react";
 import { pitchApi } from "../../../lib/axios";
 
-import type { BookmarkPitchResponse } from "../types/types";
+import type {
+  BookmarkPitchRequest,
+  BookmarkPitchResponse,
+} from "../types/types";
 
 export const useBookmarkPitch = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastBookmarkAction, setLastBookmarkAction] = useState<{
-    pitchId: string;
-    isBookmarked: boolean;
     success: boolean;
+    isBookmarked: boolean;
   } | null>(null);
 
-  const bookmarkPitch = useCallback(
-    async (pitchId: string, isBookmarked: boolean) => {
+  const toggleBookmark = useCallback(
+    async (pitchId: string, currentBookmarkState: boolean) => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const payload = {
+        const payload: BookmarkPitchRequest = {
+          userEmail: "member1@company1.com", // Default user email
           pitchId,
-          isBookmarked,
+          isBookmarked: !currentBookmarkState,
         };
 
         const response = await pitchApi.post("/bookmark-pitch", payload);
-
         const result: BookmarkPitchResponse = response.data;
 
-        // Update last bookmark action for potential UI feedback
+        const success = result.status === 200 || result.status === 201;
+        const newBookmarkState = !currentBookmarkState;
+
         setLastBookmarkAction({
-          pitchId,
-          isBookmarked,
-          success: true,
+          success,
+          isBookmarked: newBookmarkState,
         });
 
         return result;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Bookmark operation failed";
-        setError(errorMessage);
+        // Show user-friendly error messages instead of technical details
+        let userFriendlyMessage =
+          "Something went wrong while updating bookmark";
 
-        // Update last bookmark action to indicate failure
-        setLastBookmarkAction({
-          pitchId,
-          isBookmarked,
-          success: false,
-        });
+        if (error instanceof Error) {
+          if (error.message.includes("404")) {
+            userFriendlyMessage = "Pitch not found. It may have been removed";
+          } else if (error.message.includes("500")) {
+            userFriendlyMessage =
+              "Server is temporarily unavailable. Please try again later";
+          } else if (
+            error.message.includes("network") ||
+            error.message.includes("fetch")
+          ) {
+            userFriendlyMessage =
+              "Unable to connect to the server. Please check your internet connection";
+          } else if (error.message.includes("timeout")) {
+            userFriendlyMessage = "Request timed out. Please try again";
+          }
+        }
+
+        setError(userFriendlyMessage);
 
         throw error;
       } finally {
@@ -55,47 +70,20 @@ export const useBookmarkPitch = () => {
     []
   );
 
-  const toggleBookmark = useCallback(
-    async (
-      pitchId: string,
-      currentBookmarkState: boolean
-    ) => {
-      return await bookmarkPitch(pitchId, !currentBookmarkState);
-    },
-    [bookmarkPitch]
-  );
-
-  const addBookmark = useCallback(
-    async (pitchId: string) => {
-      return await bookmarkPitch(pitchId, true);
-    },
-    [bookmarkPitch]
-  );
-
-  const removeBookmark = useCallback(
-    async (pitchId: string) => {
-      return await bookmarkPitch(pitchId, false);
-    },
-    [bookmarkPitch]
-  );
-
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
-  const clearLastBookmarkAction = useCallback(() => {
+  const clearLastAction = useCallback(() => {
     setLastBookmarkAction(null);
   }, []);
 
   return {
-    bookmarkPitch,
     toggleBookmark,
-    addBookmark,
-    removeBookmark,
     isLoading,
     error,
     lastBookmarkAction,
     clearError,
-    clearLastBookmarkAction,
+    clearLastAction,
   };
 };

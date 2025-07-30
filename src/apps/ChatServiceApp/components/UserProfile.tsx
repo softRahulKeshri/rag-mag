@@ -39,63 +39,63 @@ export const UserProfile = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Premium Profile Trigger Button */}
+      {/* Profile Trigger Button */}
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="w-full flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-lg hover:shadow-xl transition-all duration-300 group"
+        className="w-full flex items-center justify-between p-3 rounded-lg bg-white border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-colors group"
       >
-        <div className="flex items-center space-x-4">
-          {/* Premium Avatar */}
+        <div className="flex items-center space-x-3">
+          {/* Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg border border-blue-500 border-opacity-30 transition-all duration-300 group-hover:scale-110">
-              <UserCircleIcon className="h-6 w-6 text-white" />
+            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center shadow-sm border border-blue-400 border-opacity-30 transition-colors group-hover:scale-105">
+              <UserCircleIcon className="h-5 w-5 text-white" />
             </div>
           </div>
 
-          {/* Premium User Info */}
+          {/* User Info */}
           <div className="flex-1 text-left min-w-0">
-            <p className="text-base font-bold text-slate-800 truncate">
+            <p className="text-sm font-semibold text-gray-800 truncate">
               {displayName}
             </p>
           </div>
         </div>
 
-        {/* Premium Dropdown Arrow */}
-        <div className="flex-shrink-0 ml-3">
+        {/* Dropdown Arrow */}
+        <div className="flex-shrink-0 ml-2">
           {isDropdownOpen ? (
-            <ChevronUpIcon className="h-5 w-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            <ChevronUpIcon className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
           ) : (
-            <ChevronDownIcon className="h-5 w-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            <ChevronDownIcon className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
           )}
         </div>
       </button>
 
-      {/* Premium Dropdown Menu */}
+      {/* Dropdown Menu */}
       {isDropdownOpen && (
-        <div className="absolute bottom-full left-0 right-0 mb-3 bg-white/95 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl z-50 overflow-hidden">
-          {/* Premium User Account Section */}
-          <div className="p-6 border-b border-slate-100">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg border border-blue-500 border-opacity-30">
-                <UserCircleIcon className="h-7 w-7 text-white" />
+        <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg border border-gray-200 shadow-lg z-50 overflow-hidden">
+          {/* User Account Section */}
+          <div className="p-4 border-b border-gray-100">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shadow-sm border border-blue-400 border-opacity-30">
+                <UserCircleIcon className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-800">
+                <h3 className="text-sm font-semibold text-gray-800">
                   User Account
                 </h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-xs text-gray-500">
                   Manage your profile and settings
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Premium Menu Options */}
-          <div className="py-3">
+          {/* Menu Options */}
+          <div className="py-2">
             {/* View Profile */}
-            <button className="w-full flex items-center space-x-4 px-6 py-4 text-left hover:bg-slate-50 transition-colors duration-300 group">
-              <UserCircleIcon className="h-5 w-5 text-slate-400 group-hover:text-blue-600 transition-colors" />
-              <span className="text-base text-slate-700 group-hover:text-blue-600 font-semibold transition-colors">
+            <button className="w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-gray-50 transition-colors group">
+              <UserCircleIcon className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
+              <span className="text-sm text-gray-700 group-hover:text-blue-600 font-medium transition-colors">
                 View Profile
               </span>
             </button>
@@ -103,10 +103,10 @@ export const UserProfile = () => {
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-4 px-6 py-4 text-left hover:bg-red-50 transition-colors duration-300 group"
+              className="w-full flex items-center space-x-3 px-4 py-2.5 text-left hover:bg-red-50 transition-colors group"
             >
-              <ArrowRightOnRectangleIcon className="h-5 w-5 text-slate-400 group-hover:text-red-600 transition-colors" />
-              <span className="text-base text-slate-700 group-hover:text-red-600 font-semibold transition-colors">
+              <ArrowRightOnRectangleIcon className="h-4 w-4 text-gray-400 group-hover:text-red-600 transition-colors" />
+              <span className="text-sm text-gray-700 group-hover:text-red-600 font-medium transition-colors">
                 Logout
               </span>
             </button>

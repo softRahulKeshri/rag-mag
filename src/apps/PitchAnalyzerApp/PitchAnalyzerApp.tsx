@@ -1,8 +1,9 @@
 import { useState } from "react";
 import {
   ExclamationTriangleIcon,
-  CheckCircleIcon,
   BookmarkIcon,
+  XMarkIcon,
+  CheckIcon,
 } from "@heroicons/react/24/outline";
 import { useCompanyPitches } from "./hooks/useCompanyPitches";
 import { useBookmarkPitch } from "./hooks/useBookmarkPitch";
@@ -63,7 +64,7 @@ const PitchAnalyzerApp = () => {
 
     // Fetch bookmarked pitches when switching to bookmarked tab
     if (tabId === "bookmarked") {
-      fetchBookmarkedPitches([], true);
+      fetchBookmarkedPitches();
     }
     // Note: Chat tab will fetch pitches automatically via ChatInterface component
   };
@@ -77,7 +78,7 @@ const PitchAnalyzerApp = () => {
 
       // Refresh the bookmarked pitches list if we're on the bookmarked tab
       if (activeTab === "bookmarked") {
-        await fetchBookmarkedPitches([], true);
+        await fetchBookmarkedPitches();
       }
     } catch (error) {
       console.error("Failed to toggle bookmark:", error);
@@ -469,66 +470,68 @@ const PitchAnalyzerApp = () => {
             {/* Error Display */}
             {pitchesError && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
-                <div className="flex">
+                <div className="flex items-center space-x-3">
                   <div className="flex-shrink-0">
                     <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
                   </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-red-800">Error</h3>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-medium text-red-800">
+                      Error Loading Pitches
+                    </h3>
                     <p className="text-red-700 mt-1">{pitchesError}</p>
-                    <button
-                      onClick={clearPitchesError}
-                      className="mt-3 text-sm text-red-600 hover:text-red-500 font-medium"
-                    >
-                      Dismiss
-                    </button>
                   </div>
+                  <button
+                    onClick={clearPitchesError}
+                    className="flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
             )}
 
             {bookmarkedPitchesError && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
-                <div className="flex">
+                <div className="flex items-center space-x-3">
                   <div className="flex-shrink-0">
                     <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
                   </div>
-                  <div className="ml-4">
+                  <div className="flex-1">
                     <h3 className="text-lg font-medium text-red-800">
-                      Bookmarked Pitches Error
+                      Error Loading Bookmarked Pitches
                     </h3>
                     <p className="text-red-700 mt-1">
                       {bookmarkedPitchesError}
                     </p>
-                    <button
-                      onClick={clearBookmarkedPitchesError}
-                      className="mt-3 text-sm text-red-600 hover:text-red-500 font-medium"
-                    >
-                      Dismiss
-                    </button>
                   </div>
+                  <button
+                    onClick={clearBookmarkedPitchesError}
+                    className="flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
             )}
 
             {bookmarkError && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
-                <div className="flex">
+                <div className="flex items-center space-x-3">
                   <div className="flex-shrink-0">
                     <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
                   </div>
-                  <div className="ml-4">
+                  <div className="flex-1">
                     <h3 className="text-lg font-medium text-red-800">
                       Bookmark Error
                     </h3>
                     <p className="text-red-700 mt-1">{bookmarkError}</p>
-                    <button
-                      onClick={clearBookmarkError}
-                      className="mt-3 text-sm text-red-600 hover:text-red-500 font-medium"
-                    >
-                      Dismiss
-                    </button>
                   </div>
+                  <button
+                    onClick={clearBookmarkError}
+                    className="flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
             )}
@@ -542,15 +545,15 @@ const PitchAnalyzerApp = () => {
                     : "bg-red-50 border border-red-200"
                 }`}
               >
-                <div className="flex">
+                <div className="flex items-center space-x-3">
                   <div className="flex-shrink-0">
                     {lastBookmarkAction.success ? (
-                      <CheckCircleIcon className="h-6 w-6 text-green-400" />
+                      <CheckIcon className="h-6 w-6 text-green-400" />
                     ) : (
                       <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
                     )}
                   </div>
-                  <div className="ml-4">
+                  <div className="flex-1">
                     <h3
                       className={`text-lg font-medium ${
                         lastBookmarkAction.success
@@ -573,6 +576,12 @@ const PitchAnalyzerApp = () => {
                         : "unbookmarked"}
                     </p>
                   </div>
+                  <button
+                    onClick={clearBookmarkError}
+                    className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
             )}

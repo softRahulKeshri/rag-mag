@@ -4,6 +4,7 @@ import {
   DocumentMagnifyingGlassIcon,
   SparklesIcon,
   ChartBarIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { usePitchDetails } from "../hooks/usePitchDetails";
 import PitchDetailsView from "./PitchDetailsView";
@@ -105,13 +106,13 @@ const PitchChat = ({ pitch, userEmail, onBack }: PitchChatProps) => {
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-red-800">{detailsError}</p>
-              <button
-                onClick={clearDetailsError}
-                className="mt-1 text-xs text-red-600 hover:text-red-700 font-medium"
-              >
-                Dismiss
-              </button>
             </div>
+            <button
+              onClick={clearDetailsError}
+              className="flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
+            >
+              <XMarkIcon className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}

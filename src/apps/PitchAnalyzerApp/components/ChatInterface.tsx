@@ -7,6 +7,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   BookmarkIcon,
+  XMarkIcon,
+  ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import { useCompanyPitches } from "../hooks/useCompanyPitches";
 import { useBookmarkPitch } from "../hooks/useBookmarkPitch";
@@ -39,8 +41,8 @@ const ChatInterface = ({
 
   // Fetch pitches on component mount
   useEffect(() => {
-    fetchCompanyPitches([], showOnlyBookmarked);
-  }, [showOnlyBookmarked, fetchCompanyPitches]);
+    fetchCompanyPitches();
+  }, [fetchCompanyPitches]);
 
   // Filter and search pitches
   const filteredPitches = useMemo(() => {
@@ -87,12 +89,12 @@ const ChatInterface = ({
       try {
         await toggleBookmark(pitchId, currentBookmarkState);
         // Refresh the pitches list
-        await fetchCompanyPitches([], showOnlyBookmarked);
+        await fetchCompanyPitches();
       } catch (error) {
         console.error("Failed to toggle bookmark:", error);
       }
     },
-    [toggleBookmark, fetchCompanyPitches, showOnlyBookmarked]
+    [toggleBookmark, fetchCompanyPitches]
   );
 
   const handlePageChange = useCallback((page: number) => {
@@ -227,67 +229,45 @@ const ChatInterface = ({
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6">
-          <div className="flex">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+          <div className="flex items-center space-x-3">
             <div className="flex-shrink-0">
-              <svg
-                className="h-6 w-6 text-red-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
+              <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
             </div>
-            <div className="ml-4">
-              <h3 className="text-lg font-medium text-red-800">Error</h3>
+            <div className="flex-1">
+              <h3 className="text-lg font-medium text-red-800">
+                Error Loading Pitches
+              </h3>
               <p className="text-red-700 mt-1">{error}</p>
-              <button
-                onClick={clearError}
-                className="mt-3 text-sm text-red-600 hover:text-red-500 font-medium"
-              >
-                Dismiss
-              </button>
             </div>
+            <button
+              onClick={clearError}
+              className="flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
           </div>
         </div>
       )}
 
       {bookmarkError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6">
-          <div className="flex">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+          <div className="flex items-center space-x-3">
             <div className="flex-shrink-0">
-              <svg
-                className="h-6 w-6 text-red-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
+              <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
             </div>
-            <div className="ml-4">
+            <div className="flex-1">
               <h3 className="text-lg font-medium text-red-800">
                 Bookmark Error
               </h3>
               <p className="text-red-700 mt-1">{bookmarkError}</p>
-              <button
-                onClick={clearBookmarkError}
-                className="mt-3 text-sm text-red-600 hover:text-red-500 font-medium"
-              >
-                Dismiss
-              </button>
             </div>
+            <button
+              onClick={clearBookmarkError}
+              className="flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
           </div>
         </div>
       )}
