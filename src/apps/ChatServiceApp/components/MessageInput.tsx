@@ -9,21 +9,29 @@ import {
   PaperClipIcon,
   PaperAirplaneIcon,
   ArrowPathIcon,
-  SparklesIcon,
   XMarkIcon,
   DocumentIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 import type { IFileAttachment } from "../types/types";
+import { ModelType } from "../types/types";
 
 interface MessageInputProps {
   onSendMessage: (message: string, file?: File) => void;
   isSending: boolean;
+  selectedModel?: ModelType;
 }
+
+const modelNames = {
+  [ModelType.OPENAI]: "OpenAI GPT",
+  [ModelType.ANTHROPIC]: "Anthropic Claude",
+  [ModelType.OLLAMA]: "Ollama",
+};
 
 export const MessageInput = ({
   onSendMessage,
   isSending,
+  selectedModel = ModelType.OPENAI,
 }: MessageInputProps) => {
   const [message, setMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState<IFileAttachment | null>(
@@ -91,13 +99,13 @@ export const MessageInput = ({
   const hasContent = message.trim() || selectedFile;
 
   return (
-    <div className="relative bg-white border-t border-gray-100 rounded-b-xl">
+    <div className="relative bg-white border-t border-gray-200 rounded-b-xl">
       {/* File Attachment Preview */}
       {selectedFile && (
-        <div className="mx-4 mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="mx-4 mt-4 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+              <div className="flex-shrink-0 w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center">
                 <DocumentIcon className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1 min-w-0">
@@ -130,9 +138,9 @@ export const MessageInput = ({
       <div className="p-4">
         <form
           onSubmit={handleSubmit}
-          className={`relative bg-white rounded-xl transition-all duration-300 shadow-sm border ${
+          className={`relative bg-white rounded-xl transition-all duration-200 shadow-sm border ${
             isFocused
-              ? "ring-2 ring-blue-500/20 shadow-md border-blue-300"
+              ? "ring-2 ring-indigo-500/20 shadow-md border-indigo-300"
               : "border-gray-200 hover:border-gray-300 hover:shadow-md"
           }`}
         >
@@ -146,7 +154,7 @@ export const MessageInput = ({
               className={`flex-shrink-0 p-2 rounded-lg transition-colors ${
                 isSending
                   ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-500 hover:text-blue-500 hover:bg-blue-50"
+                  : "text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
               }`}
               aria-label="Attach file"
             >
@@ -172,7 +180,9 @@ export const MessageInput = ({
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 placeholder={
-                  isSending ? "AI is thinking..." : "Type your message..."
+                  isSending
+                    ? "AI is thinking..."
+                    : `Type your message to ${modelNames[selectedModel]}...`
                 }
                 disabled={isSending}
                 className={`w-full bg-transparent border-0 text-gray-800 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[40px] max-h-[120px] text-sm leading-relaxed font-medium transition-colors ${
@@ -193,10 +203,10 @@ export const MessageInput = ({
             <button
               type="submit"
               disabled={!hasContent || isSending}
-              className={`flex-shrink-0 p-2 rounded-lg transition-colors ${
+              className={`flex-shrink-0 p-2 rounded-lg transition-all duration-200 ${
                 !hasContent || isSending
                   ? "text-gray-300 bg-gray-100 cursor-not-allowed"
-                  : "text-white bg-blue-500 hover:bg-blue-600 shadow-sm hover:shadow-md"
+                  : "text-white bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-sm hover:shadow-md"
               }`}
               aria-label={isSending ? "Sending..." : "Send message"}
             >
@@ -213,16 +223,12 @@ export const MessageInput = ({
         <div className="flex items-center justify-between mt-4 px-2">
           <div className="flex items-center space-x-4 text-xs text-gray-500">
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
               <span className="font-medium">AI Ready</span>
             </div>
             <div className="flex items-center space-x-2">
-              <SparklesIcon className="h-3 w-3 text-indigo-500" />
-              <span className="font-medium">Enhanced with AI</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <ChatBubbleLeftRightIcon className="h-3 w-3 text-blue-500" />
-              <span className="font-medium">Real-time Chat</span>
+              <ChatBubbleLeftRightIcon className="h-3 w-3 text-indigo-500" />
+              <span className="font-medium">{modelNames[selectedModel]}</span>
             </div>
           </div>
 

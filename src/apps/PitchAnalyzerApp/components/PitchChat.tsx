@@ -14,11 +14,10 @@ import type { Pitch } from "../types/types";
 
 interface PitchChatProps {
   pitch: Pitch;
-  userEmail: string;
   onBack: () => void;
 }
 
-const PitchChat = ({ pitch, userEmail, onBack }: PitchChatProps) => {
+const PitchChat = ({ pitch, onBack }: PitchChatProps) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   const {
@@ -45,7 +44,7 @@ const PitchChat = ({ pitch, userEmail, onBack }: PitchChatProps) => {
   return (
     <div className="h-full flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200">
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 rounded-t-2xl">
         <div className="flex items-center space-x-4">
           <button
             onClick={onBack}
@@ -123,7 +122,6 @@ const PitchChat = ({ pitch, userEmail, onBack }: PitchChatProps) => {
       {/* Floating Chat Bot */}
       <FloatingChatBot
         pitch={pitch}
-        userEmail={userEmail}
         isOpen={isChatOpen}
         onClose={handleCloseChat}
       />

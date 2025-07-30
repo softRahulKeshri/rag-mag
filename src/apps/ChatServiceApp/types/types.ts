@@ -4,6 +4,15 @@ export interface IFileAttachment {
   type: string;
 }
 
+// Model Type Constants
+export const ModelType = {
+  OLLAMA: "ollama",
+  OPENAI: "openai",
+  ANTHROPIC: "anthropic",
+} as const;
+
+export type ModelType = (typeof ModelType)[keyof typeof ModelType];
+
 export interface IMessage {
   id: number | string;
   content: string;
@@ -18,6 +27,7 @@ export interface IChat {
   title: string;
   timestamp: string;
   messages: IMessage[];
+  selectedModel?: ModelType; // Add model selection to chat
 }
 
 // Chat Session API Types
@@ -59,6 +69,7 @@ export interface ConversationRequest {
   chat_id: string;
   user_id: string;
   role: "user" | "assistant";
+  modelType?: ModelType; // Add modelType field
 }
 
 export interface ConversationResponse {

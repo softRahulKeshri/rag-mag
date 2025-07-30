@@ -25,21 +25,20 @@ export const ChatSidebar = ({
   isCreatingSession = false,
 }: ChatSidebarProps) => {
   return (
-    <CommonSidebar className="bg-white shadow-sm border-r border-gray-100">
+    <CommonSidebar className="bg-white shadow-sm border-r border-gray-200">
       {/* Header Section */}
-      <div className="flex-shrink-0 p-4 border-b border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <div className="relative">
-              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                <ChatBubbleLeftRightIcon className="h-4 w-4 text-white" />
-              </div>
-              <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse border border-white"></div>
+      <div className="flex-shrink-0 p-6 border-b border-gray-200">
+        <div className="flex items-center space-x-3 mb-4">
+          {/* Enhanced Brand Icon */}
+          <div className="relative">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
+              <ChatBubbleLeftRightIcon className="h-5 w-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-base font-semibold text-gray-900">ChatAI</h1>
-              <p className="text-xs text-gray-500">AI-Powered Conversations</p>
-            </div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white"></div>
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">ChatAI</h1>
+            <p className="text-sm text-gray-500">AI-Powered Conversations</p>
           </div>
         </div>
 
@@ -47,10 +46,10 @@ export const ChatSidebar = ({
         <button
           onClick={onNewChat}
           disabled={isCreatingSession}
-          className={`w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg transition-colors text-sm font-medium ${
+          className={`w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium ${
             isCreatingSession
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-600 text-white"
+              : "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-md hover:shadow-lg"
           }`}
         >
           <PlusIcon className="h-4 w-4" />
@@ -60,7 +59,7 @@ export const ChatSidebar = ({
       </div>
 
       {/* Search Section */}
-      <div className="flex-shrink-0 p-3 border-b border-gray-100">
+      <div className="flex-shrink-0 p-4 border-b border-gray-200">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />
@@ -68,13 +67,13 @@ export const ChatSidebar = ({
           <input
             type="text"
             placeholder="Search conversations..."
-            className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
       </div>
 
       {/* Chat List */}
-      <div className="flex-1 overflow-y-auto min-h-0 p-3 space-y-1">
+      <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-1">
         {chats.length === 0 ? (
           <div className="text-center py-8 px-3">
             <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -86,9 +85,9 @@ export const ChatSidebar = ({
             <p className="text-xs text-gray-500">
               Start your first AI conversation to see it appear here
             </p>
-            <div className="mt-3 px-2 py-1 bg-blue-50 rounded border border-blue-200 inline-flex items-center space-x-1">
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="text-xs font-medium text-blue-700">
+            <div className="mt-3 px-2 py-1 bg-emerald-50 rounded border border-emerald-200 inline-flex items-center space-x-1">
+              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+              <span className="text-xs font-medium text-emerald-700">
                 Ready to chat
               </span>
             </div>
@@ -106,7 +105,7 @@ export const ChatSidebar = ({
       </div>
 
       {/* Footer */}
-      <div className="flex-shrink-0 p-3 border-t border-gray-100">
+      <div className="flex-shrink-0 p-4 border-t border-gray-200">
         <UserProfile />
       </div>
     </CommonSidebar>

@@ -5,6 +5,7 @@ import { ChatSidebar } from "./components/ChatSidebar";
 import { ChatMessages } from "./components/ChatMessages";
 import { MessageInput } from "./components/MessageInput";
 import { Tools } from "./components/Tools";
+import { ModelSelector } from "./components/ModelSelector";
 import {
   useCreateChatSessionApi,
   useChatSessionsEnhanced,
@@ -13,6 +14,7 @@ import {
 } from "./hooks";
 import { getChatTitle } from "./utils/chatUtils";
 import type { IChat, IMessage, CreateChatSessionResponse } from "./types/types";
+import { ModelType } from "./types/types";
 
 const ChatServiceApp = () => {
   // Get user ID from global store
@@ -23,6 +25,9 @@ const ChatServiceApp = () => {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<ModelType>(
+    ModelType.OPENAI
+  );
 
   // API hooks for chat sessions
   const {
@@ -57,6 +62,7 @@ const ChatServiceApp = () => {
       title: session.title,
       timestamp: session.created_at,
       messages: [], // Messages will be loaded separately when chat is selected
+      selectedModel: ModelType.OPENAI, // Default model for existing chats
     }));
   };
 
@@ -136,6 +142,7 @@ const ChatServiceApp = () => {
         title: newSession.title,
         timestamp: newSession.created_at,
         messages: [],
+        selectedModel: selectedModel, // Use currently selected model
       };
 
       // Add to local state immediately
@@ -172,8 +179,24 @@ const ChatServiceApp = () => {
     );
   };
 
+  const handleModelChange = (model: ModelType) => {
+    setSelectedModel(model);
+
+    // Update the selected chat's model
+    if (selectedChatId) {
+      setChats((prevChats) =>
+        prevChats.map((chat) =>
+          chat.id === selectedChatId ? { ...chat, selectedModel: model } : chat
+        )
+      );
+    }
+  };
+
   const handleSendMessage = async (content: string, file?: File) => {
     if (!selectedChatId || (!content.trim() && !file)) return;
+
+    // Get the model for the selected chat
+    const chatModel = selectedChat?.selectedModel || selectedModel;
 
     // Create user message for immediate UI update
     const userMessage: IMessage = {
@@ -213,11 +236,12 @@ const ChatServiceApp = () => {
       // Clear any previous conversation errors
       clearConversationError();
 
-      // Send message and get AI response using the conversation API
+      // Send message and get AI response using the conversation API with selected model
       const aiResponse = await sendUserMessageAndGetResponse(
         content,
         selectedChatId,
-        userId
+        userId,
+        chatModel
       );
 
       console.log("✅ AI response received:", aiResponse);
@@ -379,14 +403,26 @@ const ChatServiceApp = () => {
                 ? `${selectedChat.messages.length} messages`
                 : "0 messages"
             }
+            selectedModel={selectedChat?.selectedModel || selectedModel}
             onClearChat={handleClearChat}
             onRenameChat={handleRenameChat}
           />
         </div>
 
-        {/* Tools Bar */}
+        {/* Tools Bar with Model Selector */}
         <div className="flex-shrink-0">
-          <Tools />
+          <div className="bg-gray-50 border-b border-gray-200">
+            <div className="flex items-center justify-between px-4 py-3 h-12">
+              <Tools />
+              <div className="flex items-center space-x-3">
+                <ModelSelector
+                  selectedModel={selectedChat?.selectedModel || selectedModel}
+                  onModelChange={handleModelChange}
+                  className="w-40"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Chat Content Container */}
@@ -404,6 +440,7 @@ const ChatServiceApp = () => {
             <MessageInput
               onSendMessage={handleSendMessage}
               isSending={isConversationLoading}
+              selectedModel={selectedChat?.selectedModel || selectedModel}
             />
           </div>
         </div>

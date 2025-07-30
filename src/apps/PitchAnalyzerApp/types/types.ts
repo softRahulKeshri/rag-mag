@@ -141,13 +141,12 @@ export interface PitchDetailsResponse {
 
 // Chat with AI Types
 export interface ChatWithAIRequest {
-  query: string;
-  userEmail: string;
+  pitch_id: string;
+  question: string;
 }
 
 export interface ChatWithAIResponse {
-  queryRespFromAi: string;
-  userQuery: string;
+  answer: string;
 }
 
 export interface UseChatWithAIReturn {

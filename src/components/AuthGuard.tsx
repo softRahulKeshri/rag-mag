@@ -190,7 +190,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
    */
   if (isInitializing || !authCheckComplete) {
     return (
-      <LoadingScreen message="Verifying credentials..." fullScreen={true} />
+      <LoadingScreen message="" fullScreen={true} />
     );
   }
 

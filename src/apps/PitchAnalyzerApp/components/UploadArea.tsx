@@ -5,9 +5,6 @@ import {
   DocumentIcon,
   DocumentMagnifyingGlassIcon,
   SparklesIcon,
-  ChartBarIcon,
-  LightBulbIcon,
-  RocketLaunchIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { usePitchUpload } from "../hooks/usePitchUpload";
@@ -143,29 +140,29 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
 
   if (showLoadingScreen) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-indigo-200/50 p-12 max-w-md w-full mx-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#F5F5F5] to-[#EAEAEC] flex items-center justify-center">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-[#BFD6FF]/50 p-12 max-w-md w-full mx-4">
           <div className="text-center">
             {/* Animated Icon */}
             <div className="relative mb-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg mx-auto">
+              <div className="w-20 h-20 bg-gradient-to-br from-[#3077F3] to-[#1E50A8] rounded-2xl flex items-center justify-center shadow-lg mx-auto">
                 <SparklesIcon className="w-10 h-10 text-white animate-pulse" />
               </div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-400 rounded-full animate-ping border-2 border-white"></div>
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#10B981] rounded-full animate-ping border-2 border-white"></div>
             </div>
 
             {/* Loading Text */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl font-bold text-[#2E3141] mb-4">
               Analyzing Pitch Deck
             </h2>
-            <p className="text-gray-600 mb-8 leading-relaxed">
+            <p className="text-[#6D6F7A] mb-8 leading-relaxed">
               {loadingMessage}
             </p>
 
             {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+            <div className="w-full bg-[#D5D6D9] rounded-full h-2 mb-6">
               <div
-                className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full animate-pulse"
+                className="bg-gradient-to-r from-[#3077F3] to-[#1E50A8] h-2 rounded-full animate-pulse"
                 style={{ width: "60%" }}
               ></div>
             </div>
@@ -176,7 +173,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
                 <div
                   key={index}
                   className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index <= messageIndex ? "bg-indigo-500" : "bg-gray-300"
+                    index <= messageIndex ? "bg-[#3077F3]" : "bg-[#C0C1C6]"
                   }`}
                 />
               ))}
@@ -193,55 +190,32 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
       <div className="text-center mb-10">
         <div className="flex items-center justify-center mb-6">
           {/* <div className="relative">
-            <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="w-20 h-20 bg-gradient-to-br from-[#3077F3] to-[#1E50A8] rounded-2xl flex items-center justify-center shadow-lg">
               <CloudArrowUpIcon className="w-10 h-10 text-white" />
             </div>
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full animate-pulse border-2 border-white"></div>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#10B981] rounded-full animate-pulse border-2 border-white"></div>
           </div> */}
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-bold text-[#2E3141] mb-4">
           Upload Pitch Deck
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg text-[#6D6F7A] max-w-2xl mx-auto leading-relaxed">
           AI-Powered Pitch Analysis - Upload your pitch deck for comprehensive
           analysis and insights
         </p>
       </div>
 
-      {/* Premium Stats Card */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-indigo-200/50 p-8 mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-              <DocumentIcon className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-indigo-600 uppercase tracking-wider mb-1">
-                Total Pitches
-              </p>
-              <p className="text-2xl font-bold text-gray-900">
-                {pitches.length}
-              </p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-600">Analyzed pitches</p>
-            <p className="text-xs text-gray-500">Ready for review</p>
-          </div>
-        </div>
-      </div>
-
       {/* Upload Area */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-[#D5D6D9]/50 p-8">
         <div className="flex items-start space-x-4 mb-6">
-          <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-            <CloudArrowUpIcon className="w-5 h-5 text-indigo-600" />
+          <div className="w-8 h-8 bg-[#EFF5FF] rounded-lg flex items-center justify-center flex-shrink-0">
+            <CloudArrowUpIcon className="w-5 h-5 text-[#3077F3]" />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900 mb-1">
+            <h2 className="text-xl font-semibold text-[#2E3141] mb-1">
               Upload Pitch Deck
             </h2>
-            <p className="text-gray-600">
+            <p className="text-[#6D6F7A]">
               Drag and drop your PDF pitch deck or click to browse files
             </p>
           </div>
@@ -251,8 +225,8 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
         <div
           className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
             isDragOver
-              ? "border-indigo-400 bg-indigo-50/50"
-              : "border-gray-300 hover:border-indigo-300 hover:bg-gray-50/50"
+              ? "border-[#3077F3] bg-[#EFF5FF]/50"
+              : "border-[#C0C1C6] hover:border-[#94BAFD] hover:bg-[#F5F5F5]/50"
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -267,17 +241,17 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
           />
 
           <div className="space-y-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto">
-              <CloudArrowUpIcon className="w-8 h-8 text-indigo-600" />
+            <div className="w-16 h-16 bg-gradient-to-br from-[#EFF5FF] to-[#E3EDFF] rounded-2xl flex items-center justify-center mx-auto">
+              <CloudArrowUpIcon className="w-8 h-8 text-[#3077F3]" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-[#2E3141] mb-2">
                 Drop your pitch deck here
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-[#6D6F7A] mb-4">
                 Supports PDF files up to 50MB
               </p>
-              <button className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+              <button className="inline-flex items-center px-4 py-2 bg-[#3077F3] text-white rounded-lg hover:bg-[#1E50A8] transition-colors duration-200">
                 Browse Files
               </button>
             </div>
@@ -287,29 +261,29 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
         {/* Selected Files */}
         {selectedFiles.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3 className="text-lg font-semibold text-[#2E3141] mb-4">
               Selected Files ({selectedFiles.length})
             </h3>
             <div className="space-y-3">
               {selectedFiles.map((file, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200"
+                  className="flex items-center justify-between p-4 bg-[#F5F5F5] rounded-xl border border-[#D5D6D9]"
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                      <DocumentIcon className="w-5 h-5 text-red-600" />
+                    <div className="w-10 h-10 bg-[#FEF2F2] rounded-lg flex items-center justify-center">
+                      <DocumentIcon className="w-5 h-5 text-[#EF4444]" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{file.name}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="font-medium text-[#2E3141]">{file.name}</p>
+                      <p className="text-sm text-[#6D6F7A]">
                         {(file.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => removeFile(index)}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                    className="p-2 text-[#ABADB3] hover:text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg transition-colors duration-200"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
@@ -320,7 +294,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
               <button
                 onClick={handleUpload}
                 disabled={isUploading}
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#3077F3] to-[#1E50A8] text-white rounded-xl hover:from-[#1E50A8] hover:to-[#11397E] transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isUploading ? (
                   <>
@@ -340,19 +314,19 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
 
         {/* Error Display */}
         {error && (
-          <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4">
+          <div className="mt-6 bg-[#FEF2F2] border border-[#FECACA] rounded-xl p-4">
             <div className="flex">
               <div className="flex-shrink-0">
-                <XMarkIcon className="h-5 w-5 text-red-400" />
+                <XMarkIcon className="h-5 w-5 text-[#F87171]" />
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">
+                <h3 className="text-sm font-medium text-[#991B1B]">
                   Upload Error
                 </h3>
-                <p className="text-sm text-red-700 mt-1">{error}</p>
+                <p className="text-sm text-[#B91C1C] mt-1">{error}</p>
                 <button
                   onClick={clearError}
-                  className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
+                  className="mt-2 text-sm text-[#DC2626] hover:text-[#B91C1C] font-medium"
                 >
                   Dismiss
                 </button>
@@ -364,16 +338,16 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
 
       {/* Recent Pitches Section */}
       {getRecentPitches().length > 0 && (
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-[#D5D6D9]/50 p-8">
           <div className="flex items-start space-x-4 mb-6">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <DocumentMagnifyingGlassIcon className="w-5 h-5 text-green-600" />
+            <div className="w-8 h-8 bg-[#ECFDF5] rounded-lg flex items-center justify-center flex-shrink-0">
+              <DocumentMagnifyingGlassIcon className="w-5 h-5 text-[#10B981]" />
             </div>
             <div className="flex-1">
-              <h2 className="text-xl font-semibold text-gray-900 mb-1">
+              <h2 className="text-xl font-semibold text-[#2E3141] mb-1">
                 Recent Pitches
               </h2>
-              <p className="text-gray-600">
+              <p className="text-[#6D6F7A]">
                 Your recently uploaded pitch decks
               </p>
             </div>
@@ -383,22 +357,22 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
             {getRecentPitches().map((pitch) => (
               <div
                 key={pitch.id}
-                className="group relative p-4 border border-gray-200 rounded-xl hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
+                className="group relative p-4 border border-[#D5D6D9] rounded-xl hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#3077F3] to-[#1E50A8] rounded-lg flex items-center justify-center shadow-lg">
                     <DocumentIcon className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-semibold text-[#2E3141]">
                       {pitch.title || pitch.filename}
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-[#6D6F7A]">
                       Uploaded {formatDate(pitch.created_at)}
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#ECFDF5] text-[#065F46]">
                       <CheckCircleIcon className="w-3 h-3 mr-1" />
                       Analyzed
                     </span>
@@ -409,62 +383,6 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
           </div>
         </div>
       )}
-
-      {/* Features Section */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
-        <div className="flex items-start space-x-4 mb-8">
-          <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-            <SparklesIcon className="w-5 h-5 text-purple-600" />
-          </div>
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900 mb-1">
-              AI-Powered Analysis Features
-            </h2>
-            <p className="text-gray-600">
-              Comprehensive insights and recommendations for your pitch deck
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
-              <ChartBarIcon className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold text-gray-900 mb-2">
-              Financial Analysis
-            </h3>
-            <p className="text-sm text-gray-600">
-              Deep dive into financial metrics, projections, and valuation
-              analysis
-            </p>
-          </div>
-
-          <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200/50">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
-              <LightBulbIcon className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold text-gray-900 mb-2">
-              Market Insights
-            </h3>
-            <p className="text-sm text-gray-600">
-              Market opportunity analysis and competitive landscape evaluation
-            </p>
-          </div>
-
-          <div className="p-6 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-200/50">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
-              <RocketLaunchIcon className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="font-semibold text-gray-900 mb-2">
-              Growth Strategy
-            </h3>
-            <p className="text-sm text-gray-600">
-              Strategic recommendations for scaling and market expansion
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

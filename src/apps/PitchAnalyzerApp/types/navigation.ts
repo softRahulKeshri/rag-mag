@@ -1,9 +1,8 @@
 export interface NavigationItem {
   id: string;
-  label: string;
-  icon: string;
-  path: string;
-  isActive: boolean;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 export interface NavigationProps {

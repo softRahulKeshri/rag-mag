@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useApiService } from "./useApiService";
 import type { ConversationRequest, ConversationResponse } from "../types/types";
+import { ModelType } from "../types/types";
 
 /**
  * Conversation API Hook
@@ -16,6 +17,7 @@ import type { ConversationRequest, ConversationResponse } from "../types/types";
  * - Comprehensive logging for debugging
  * - JWT Bearer token authentication
  * - Returns both user message and AI response
+ * - Support for model selection (OpenAI, Anthropic, Ollama)
  *
  * @example
  * ```typescript
@@ -27,7 +29,8 @@ import type { ConversationRequest, ConversationResponse } from "../types/types";
  *       content: "Hello, how are you?",
  *       chat_id: "chat-123",
  *       user_id: "user-456",
- *       role: "user"
+ *       role: "user",
+ *       modelType: ModelType.OPENAI
  *     });
  *     console.log("AI Response:", response);
  *   } catch (error) {
@@ -93,6 +96,7 @@ export const useConversationApi = () => {
           chat_id: messageData.chat_id,
           user_id: messageData.user_id,
           role: messageData.role,
+          modelType: messageData.modelType || "openai",
           endpoint: "/chat/messages",
         });
 
@@ -115,6 +119,7 @@ export const useConversationApi = () => {
           chat_id: messageData.chat_id,
           user_id: messageData.user_id,
           role: messageData.role,
+          modelType: messageData.modelType,
           error,
         });
 
@@ -158,13 +163,15 @@ export const useConversationApi = () => {
     async (
       content: string,
       chatId: string,
-      userId: string
+      userId: string,
+      modelType: ModelType = ModelType.OPENAI
     ): Promise<ConversationResponse> => {
       return sendConversationMessage({
         content,
         chat_id: chatId,
         user_id: userId,
         role: "user",
+        modelType,
       });
     },
     [sendConversationMessage]
