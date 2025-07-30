@@ -19,6 +19,7 @@ const UploadCenter: React.FC = () => {
     clearFiles,
     clearUploadedFiles,
     uploadFiles,
+    cancelUpload,
   } = useResumeUpload();
 
   const handleGroupSelect = useCallback((group: Group | null) => {
@@ -40,28 +41,19 @@ const UploadCenter: React.FC = () => {
   }, [selectedGroup, selectedFiles.length, uploadFiles]);
 
   // Calculate overall upload progress
-  const overallProgress =
-    Object.keys(uploadProgress).length > 0
-      ? Object.values(uploadProgress).reduce(
-          (sum, progress) => sum + progress,
-          0
-        ) / Object.keys(uploadProgress).length
-      : 0;
+  const overallProgress = uploadProgress.overall || 0;
 
   return (
-    <div className="h-full bg-gradient-to-br from-gray-50 to-white">
-      <div className="h-full overflow-y-auto relative">
+    <div className="h-full bg-gradient-to-br from-gray-50 to-white overflow-y-auto pb-24">
+      <div className="h-full relative">
         <div className="max-w-5xl mx-auto px-6 py-8">
           {/* Enhanced Header */}
           <div className="text-center mb-10">
             <div className="flex items-center justify-center mb-6">
               <div className="relative">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                {/* <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
                   <CloudArrowUpIcon className="w-10 h-10 text-white" />
-                </div>
-                {/* Animated rings */}
-                <div className="absolute inset-0 rounded-2xl border-2 border-blue-300 animate-ping opacity-20"></div>
-                <div className="absolute inset-0 rounded-2xl border border-purple-300 animate-pulse opacity-30"></div>
+                </div> */}
               </div>
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -73,8 +65,8 @@ const UploadCenter: React.FC = () => {
             </p>
           </div>
 
-          {/* Select Group Section */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 mb-8" style={{ overflow: 'visible' }}>
+          {/* Select Group Section - Fixed positioning context */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 mb-8 relative overflow-visible">
             <div className="flex items-start space-x-4 mb-6">
               <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <svg
@@ -155,6 +147,69 @@ const UploadCenter: React.FC = () => {
             />
           </div>
 
+          {/* Upload Guidelines */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 mb-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-6">
+                {/* Supported Formats */}
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg
+                      className="w-4 h-4 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    Supported formats:
+                  </span>
+                  <div className="flex items-center space-x-2">
+                    <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                      PDF
+                    </span>
+                    <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                      DOCX
+                    </span>
+                  </div>
+                </div>
+
+                {/* Separator */}
+                <div className="w-px h-6 bg-gray-300"></div>
+
+                {/* Total Size Limit */}
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm font-medium text-gray-700">
+                    Total size limit:
+                  </span>
+                  <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                    200MB total
+                  </span>
+                </div>
+
+                {/* Separator */}
+                <div className="w-px h-6 bg-gray-300"></div>
+
+                {/* File Limit */}
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm font-medium text-gray-700">
+                    File limit:
+                  </span>
+                  <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                    100 files max
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Enhanced Upload Progress */}
           {isUploading && (
             <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
@@ -190,8 +245,16 @@ const UploadCenter: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <div className="text-sm font-medium text-blue-800">
-                  {Math.round(overallProgress)}%
+                <div className="flex items-center space-x-3">
+                  <div className="text-sm font-medium text-blue-800">
+                    {Math.round(overallProgress)}%
+                  </div>
+                  <button
+                    onClick={cancelUpload}
+                    className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200 border border-red-200 hover:border-red-300"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
               <div className="w-full bg-blue-200 rounded-full h-2 mb-2">
@@ -206,24 +269,54 @@ const UploadCenter: React.FC = () => {
             </div>
           )}
 
-          {/* Upload Button */}
-          <div className="flex justify-center">
-            <button
-              onClick={handleUpload}
-              disabled={
-                !selectedGroup || selectedFiles.length === 0 || isUploading
-              }
-              className={`inline-flex items-center px-8 py-4 border border-transparent text-base font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
-                selectedGroup && selectedFiles.length > 0 && !isUploading
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 focus:ring-blue-500 transform hover:-translate-y-0.5 hover:shadow-xl"
-                  : "bg-gray-200 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              <CloudArrowUpIcon className="w-6 h-6 mr-3" />
-              {isUploading
-                ? `Uploading ${selectedFiles.length} Files...`
-                : `Upload ${selectedFiles.length || ""} CVs`.trim()}
-            </button>
+          {/* Upload Button Section - At Bottom */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8 mb-8">
+            <div className="text-center">
+              <div className="flex items-center justify-center space-x-4 mb-4">
+                {/* <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <CloudArrowUpIcon className="w-6 h-6 text-white" />
+                </div> */}
+                <div className="text-left">
+                  <h3 className="text-lg text-center font-semibold text-gray-900">
+                    Ready to Upload
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {selectedFiles.length > 0
+                      ? `${selectedFiles.length} file${
+                          selectedFiles.length > 1 ? "s" : ""
+                        } selected for upload`
+                      : "Select files to begin upload process"}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleUpload}
+                disabled={
+                  !selectedGroup || selectedFiles.length === 0 || isUploading
+                }
+                className={`inline-flex items-center px-10 py-4 border-2 border-transparent text-base font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-offset-2 transition-all duration-300 ${
+                  selectedGroup && selectedFiles.length > 0 && !isUploading
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 focus:ring-blue-500/30 transform hover:-translate-y-1 hover:shadow-2xl border-blue-500/20"
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
+                }`}
+              >
+                <CloudArrowUpIcon className="w-6 h-6 mr-3" />
+                {isUploading
+                  ? `Uploading ${selectedFiles.length} Files...`
+                  : `Upload ${selectedFiles.length || ""} CVs`.trim()}
+              </button>
+
+              {selectedGroup && selectedFiles.length > 0 && !isUploading && (
+                <p className="text-xs text-gray-500 mt-3">
+                  Files will be uploaded to{" "}
+                  <span className="font-medium text-blue-600">
+                    {selectedGroup.name}
+                  </span>{" "}
+                  group
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

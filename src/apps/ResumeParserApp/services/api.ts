@@ -29,7 +29,8 @@ interface UploadApiResponse {
 export const uploadResume = async (
   files: File | File[],
   groupId: string,
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
+  signal?: AbortSignal
 ): Promise<UploadResult> => {
   const fileArray = Array.isArray(files) ? files : [files];
 
@@ -43,8 +44,22 @@ export const uploadResume = async (
   // Add group ID to the form data with 'group' field name
   formData.append("group", groupId);
 
+  // Create a mapping of filenames to their sizes for accurate size reporting
+  const fileSizeMap = new Map<string, number>();
+  fileArray.forEach((file) => {
+    fileSizeMap.set(file.name, file.size);
+  });
+
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
+
+    // Handle abort signal
+    if (signal) {
+      signal.addEventListener('abort', () => {
+        xhr.abort();
+        reject(new Error('Upload cancelled'));
+      });
+    }
 
     // Progress tracking
     xhr.upload.addEventListener("progress", (event) => {
@@ -77,7 +92,7 @@ export const uploadResume = async (
                 original_filename: item.original_filename,
                 stored_filename: item.stored_filename,
                 filepath: item.filepath,
-                fileSize: 0, // Not provided in response
+                fileSize: fileSizeMap.get(item.original_filename) || 0, // Use actual file size from mapping
                 fileType: "pdf", // Assuming PDF based on context
                 uploadedAt: item.upload_time,
                 status: "uploaded" as const,

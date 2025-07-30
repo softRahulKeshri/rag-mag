@@ -1,26 +1,17 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useGroupApi } from "../../../hooks/useGroupApi";
+import { useToast } from "../../../../../components/ui/useToast";
 import type { Group } from "../../../types/api";
 import AddGroupModal from "./AddGroupModal";
 import DeleteGroupModal from "./DeleteGroupModal";
 import CannotDeleteGroupModal from "./CannotDeleteGroupModal";
 import {
   ChevronDownIcon,
-  PlusIcon,
   ArrowPathIcon,
   UserGroupIcon,
   TrashIcon,
   CheckIcon,
-  BriefcaseIcon,
-  AcademicCapIcon,
-  BuildingOfficeIcon,
-  CodeBracketIcon,
-  HeartIcon,
-  LightBulbIcon,
-  RocketLaunchIcon,
-  ShieldCheckIcon,
-  StarIcon,
-  CpuChipIcon,
 } from "@heroicons/react/24/outline";
 
 interface GroupSelectorProps {
@@ -28,12 +19,26 @@ interface GroupSelectorProps {
   selectedGroup: Group | null;
 }
 
+interface DropdownPosition {
+  top: number;
+  left: number;
+  width: number;
+  direction: "down" | "up";
+}
+
 const GroupSelector: React.FC<GroupSelectorProps> = ({
   onGroupSelect,
   selectedGroup,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({
+    top: 0,
+    left: 0,
+    width: 0,
+    direction: "down",
+  });
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCannotDeleteModal, setShowCannotDeleteModal] = useState(false);
@@ -43,62 +48,31 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const { getGroups, deleteGroup, isLoading, clearError } = useGroupApi();
+  const { showToast } = useToast();
 
-  // Function to get varied icons for different groups
-  const getGroupIcon = useCallback((groupName: string, index: number) => {
-    const iconMap = [
-      UserGroupIcon,
-      BriefcaseIcon,
-      AcademicCapIcon,
-      BuildingOfficeIcon,
-      CodeBracketIcon,
-      HeartIcon,
-      LightBulbIcon,
-      RocketLaunchIcon,
-      ShieldCheckIcon,
-      StarIcon,
-      CpuChipIcon,
-    ];
+  // Calculate dropdown position
+  const calculateDropdownPosition = useCallback(() => {
+    if (!buttonRef.current) return;
 
-    // Use a combination of group name hash and index for consistent but varied icons
-    const nameHash = groupName.split("").reduce((a, b) => {
-      a = (a << 5) - a + b.charCodeAt(0);
-      return a & a;
-    }, 0);
+    const buttonRect = buttonRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const dropdownHeight = 400; // Approximate max height
+    const spaceBelow = viewportHeight - buttonRect.bottom;
+    const spaceAbove = buttonRect.top;
 
-    const iconIndex = Math.abs(nameHash + index) % iconMap.length;
-    return iconMap[iconIndex];
-  }, []);
+    const direction =
+      spaceBelow >= dropdownHeight || spaceBelow > spaceAbove ? "down" : "up";
+    const top =
+      direction === "down"
+        ? buttonRect.bottom + window.scrollY + 8
+        : buttonRect.top + window.scrollY - dropdownHeight - 8;
 
-  // Professional color scheme using brand colors
-  const getGroupColor = useCallback((groupName: string, index: number) => {
-    const colorMap = [
-      // Primary UI Blue variations
-      { bg: "#EFF5FF", text: "#1E50A8", selectedBg: "#E3EDFF" }, // p100 bg, p600 text, p200 selected
-      { bg: "#E3EDFF", text: "#11397E", selectedBg: "#BFD6FF" }, // p200 bg, p700 text, p300 selected
-
-      // Brand gradient colors with neutral backgrounds
-      { bg: "#F5F5F5", text: "#FDA052", selectedBg: "#EAEAEC" }, // Orange with neutral
-      { bg: "#F5F5F5", text: "#B96AF7", selectedBg: "#EAEAEC" }, // Purple with neutral
-      { bg: "#F5F5F5", text: "#3077F3", selectedBg: "#EAEAEC" }, // Blue with neutral
-      { bg: "#F5F5F5", text: "#41E6F8", selectedBg: "#EAEAEC" }, // Cyan with neutral
-
-      // Neutral palette variations
-      { bg: "#EAEAEC", text: "#2E3141", selectedBg: "#D5D6D9" }, // n150 bg, n1000 text, n200 selected
-      { bg: "#D5D6D9", text: "#434654", selectedBg: "#C0C1C6" }, // n200 bg, n900 text, n300 selected
-      { bg: "#C0C1C6", text: "#585A67", selectedBg: "#ABADB3" }, // n300 bg, n800 text, n400 selected
-
-      // Additional professional combinations
-      { bg: "#ECECEC", text: "#414141", selectedBg: "#D9D9D9" }, // Greyscale combination
-    ];
-
-    const nameHash = groupName.split("").reduce((a, b) => {
-      a = (a << 5) - a + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-
-    const colorIndex = Math.abs(nameHash + index) % colorMap.length;
-    return colorMap[colorIndex];
+    setDropdownPosition({
+      top,
+      left: buttonRect.left + window.scrollX,
+      width: buttonRect.width,
+      direction,
+    });
   }, []);
 
   const fetchGroups = useCallback(async () => {
@@ -172,6 +146,12 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
       const result = await deleteGroup(groupToDelete.id);
 
       if (result.success) {
+        // Show success toast
+        showToast(
+          `Group "${groupToDelete.name}" deleted successfully`,
+          "success"
+        );
+
         // Refetch groups and validate selection
         await fetchGroupsAndValidateSelection();
 
@@ -190,9 +170,10 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
           setShowCannotDeleteModal(true);
         } else {
           // Handle other API error responses
-          setDeleteError(
-            result.message || "Failed to delete group. Please try again."
-          );
+          const errorMsg =
+            result.message || "Failed to delete group. Please try again.";
+          setDeleteError(errorMsg);
+          showToast(errorMsg, "error");
         }
       }
     } catch (error) {
@@ -203,10 +184,11 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
           ? error.message
           : "An unexpected error occurred while deleting the group. Please try again.";
       setDeleteError(errorMessage);
+      showToast(errorMessage, "error");
     } finally {
       setIsDeleting(false);
     }
-  }, [groupToDelete, deleteGroup, fetchGroupsAndValidateSelection]);
+  }, [groupToDelete, deleteGroup, fetchGroupsAndValidateSelection, showToast]);
 
   const handleDeleteCancel = useCallback(() => {
     setShowDeleteModal(false);
@@ -225,20 +207,26 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
 
   const handleGroupCreated = useCallback(
     async (newGroup: Group) => {
+      // Show success toast
+      showToast(`Group "${newGroup.name}" created successfully`, "success");
+
       // Refetch all groups to ensure we have the latest data
       await fetchGroups();
       // Auto-select the newly created group
       handleGroupSelect(newGroup);
     },
-    [fetchGroups, handleGroupSelect]
+    [fetchGroups, handleGroupSelect, showToast]
   );
 
   const toggleDropdown = useCallback(() => {
+    if (!isOpen) {
+      calculateDropdownPosition();
+    }
     setIsOpen(!isOpen);
     if (!isOpen) {
       clearError();
     }
-  }, [isOpen, clearError]);
+  }, [isOpen, clearError, calculateDropdownPosition]);
 
   // Handle click outside to close dropdown and window resize
   useEffect(() => {
@@ -246,7 +234,9 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
       if (
         isOpen &&
         buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
+        dropdownRef.current &&
+        !buttonRef.current.contains(event.target as Node) &&
+        !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
       }
@@ -254,20 +244,28 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
 
     const handleResize = () => {
       if (isOpen) {
-        setIsOpen(false);
+        calculateDropdownPosition();
+      }
+    };
+
+    const handleScroll = () => {
+      if (isOpen) {
+        calculateDropdownPosition();
       }
     };
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       window.addEventListener("resize", handleResize);
+      window.addEventListener("scroll", handleScroll, true);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll, true);
     };
-  }, [isOpen]);
+  }, [isOpen, calculateDropdownPosition]);
 
   const openAddModal = useCallback(() => {
     setShowAddModal(true);
@@ -278,48 +276,136 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
     setShowAddModal(false);
   }, []);
 
-  // Get icon and color for selected group using professional colors
-  const selectedGroupIcon = selectedGroup
-    ? getGroupIcon(selectedGroup.name, 0)
-    : UserGroupIcon;
-  const selectedGroupColor = selectedGroup
-    ? getGroupColor(selectedGroup.name, 0)
-    : { bg: "#F5F5F5", text: "#6D6F7A", selectedBg: "#EAEAEC" };
+  // Render dropdown using portal
+  const renderDropdown = () => {
+    if (!isOpen) return null;
+
+    const dropdownContent = (
+      <div
+        ref={dropdownRef}
+        className="fixed bg-white border border-gray-200 rounded-xl shadow-2xl max-h-96 overflow-hidden"
+        style={{
+          top: dropdownPosition.top,
+          left: dropdownPosition.left,
+          width: dropdownPosition.width,
+          zIndex: 40,
+        }}
+      >
+        <div className="py-2">
+          {/* Header Actions */}
+          <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
+            <div className="flex space-x-2">
+              <button
+                onClick={openAddModal}
+                className="flex-1 flex items-center justify-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100"
+              >
+                Create New Group
+              </button>
+              <button
+                onClick={handleRefreshGroups}
+                disabled={isLoading}
+                className="flex items-center justify-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Refresh groups"
+              >
+                <ArrowPathIcon
+                  className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* Simplified Groups List */}
+          <div className="max-h-80 overflow-y-auto">
+            {isLoading ? (
+              <div className="px-4 py-6">
+                <div className="flex items-center justify-center space-x-3">
+                  <ArrowPathIcon className="animate-spin w-5 h-5 text-gray-400" />
+                  <span className="text-sm text-gray-500">
+                    Loading groups...
+                  </span>
+                </div>
+              </div>
+            ) : groups.length === 0 ? (
+              <div className="px-4 py-8 text-center">
+                <p className="text-sm text-gray-500 font-medium mb-1">
+                  No groups available
+                </p>
+                <p className="text-xs text-gray-400">
+                  Create your first group to get started
+                </p>
+              </div>
+            ) : (
+              groups.map((group) => {
+                const isSelected = selectedGroup?.id === group.id;
+
+                return (
+                  <button
+                    key={group.id}
+                    onClick={() => handleGroupSelect(group)}
+                    className={`w-full text-left px-4 py-4 hover:bg-gray-50 transition-all duration-200 border-l-4 ${
+                      isSelected
+                        ? "text-blue-900 border-l-blue-500 bg-blue-50"
+                        : "border-l-transparent text-gray-700 hover:border-l-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-medium truncate">
+                              {group.name}
+                            </span>
+                            {isSelected && (
+                              <CheckIcon className="w-4 h-4 flex-shrink-0 text-blue-600" />
+                            )}
+                          </div>
+                          {group.description && (
+                            <p className="text-xs text-gray-500 mt-1 truncate">
+                              {group.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center ml-3">
+                        <button
+                          onClick={(e) => handleDeleteGroup(group, e)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
+                          title="Delete group"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
+    );
+
+    // Use portal to render dropdown at document body level
+    return createPortal(dropdownContent, document.body);
+  };
 
   return (
-    <div className="relative z-10">
-      {/* Enhanced Main Select Button */}
+    <div className="relative">
+      {/* Simplified Main Select Button */}
       <button
         ref={buttonRef}
         onClick={toggleDropdown}
         disabled={isLoading}
         className={`w-full flex items-center justify-between px-6 py-4 border-2 rounded-xl shadow-sm bg-white text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
           selectedGroup
-            ? "border-blue-300 hover:bg-blue-100"
+            ? "border-blue-300 hover:bg-blue-50"
             : "border-gray-200 hover:border-gray-300"
         }`}
-        style={{
-          backgroundColor: selectedGroup
-            ? selectedGroupColor.selectedBg
-            : undefined,
-        }}
       >
         <div className="flex items-center space-x-4 flex-1 min-w-0">
-          {/* Dynamic Icon with Professional Colors */}
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{
-              backgroundColor: selectedGroup
-                ? selectedGroupColor.bg
-                : "#F5F5F5",
-            }}
-          >
-            {React.createElement(selectedGroupIcon, {
-              className: "w-6 h-6",
-              style: {
-                color: selectedGroup ? selectedGroupColor.text : "#6D6F7A",
-              },
-            })}
+          {/* Simple Icon */}
+          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <UserGroupIcon className="w-6 h-6 text-blue-600" />
           </div>
 
           {/* Text Content */}
@@ -369,163 +455,8 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
         </div>
       </button>
 
-      {/* Enhanced Dropdown Menu */}
-      {isOpen && (
-        <div className="absolute z-[99999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-96 overflow-hidden">
-            <div className="py-2">
-              {/* Header Actions with Professional Colors */}
-              <div
-                className="px-4 py-3 border-b border-gray-100"
-                style={{ backgroundColor: "#F5F5F5" }}
-              >
-                <div className="flex space-x-2">
-                  <button
-                    onClick={openAddModal}
-                    className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border"
-                    style={{
-                      color: "#1E50A8",
-                      backgroundColor: "#EFF5FF",
-                      borderColor: "#BFD6FF",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "#E3EDFF";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "#EFF5FF";
-                    }}
-                  >
-                    <PlusIcon className="w-4 h-4" />
-                    <span>Create New Group</span>
-                  </button>
-                  <button
-                    onClick={handleRefreshGroups}
-                    disabled={isLoading}
-                    className="flex items-center justify-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      color: "#585A67",
-                      backgroundColor: "#F5F5F5",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isLoading) {
-                        e.currentTarget.style.backgroundColor = "#EAEAEC";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "#F5F5F5";
-                    }}
-                    title="Refresh groups"
-                  >
-                    <ArrowPathIcon
-                      className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
-                    />
-                  </button>
-                </div>
-              </div>
-
-              {/* Enhanced Groups List */}
-              <div className="max-h-80 overflow-y-auto">
-                {isLoading ? (
-                  <div className="px-4 py-6">
-                    <div className="flex items-center justify-center space-x-3">
-                      <ArrowPathIcon className="animate-spin w-5 h-5 text-gray-400" />
-                      <span className="text-sm text-gray-500">
-                        Loading groups...
-                      </span>
-                    </div>
-                  </div>
-                ) : groups.length === 0 ? (
-                  <div className="px-4 py-8 text-center">
-                    <UserGroupIcon className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-sm text-gray-500 font-medium mb-1">
-                      No groups available
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      Create your first group to get started
-                    </p>
-                  </div>
-                ) : (
-                  groups.map((group, index) => {
-                    const GroupIcon = getGroupIcon(group.name, index);
-                    const groupColor = getGroupColor(group.name, index);
-                    const isSelected = selectedGroup?.id === group.id;
-
-                    return (
-                      <button
-                        key={group.id}
-                        onClick={() => handleGroupSelect(group)}
-                        className={`w-full text-left px-4 py-4 hover:bg-gray-50 transition-all duration-200 border-l-4 ${
-                          isSelected
-                            ? "text-blue-900 border-l-blue-500"
-                            : "border-l-transparent text-gray-700 hover:border-l-gray-300"
-                        }`}
-                        style={{
-                          backgroundColor: isSelected ? "#EFF5FF" : undefined,
-                        }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3 flex-1 min-w-0">
-                            <div
-                              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                              style={{
-                                backgroundColor: isSelected
-                                  ? "#E3EDFF"
-                                  : groupColor.bg,
-                              }}
-                            >
-                              <GroupIcon
-                                className="w-4 h-4"
-                                style={{
-                                  color: isSelected
-                                    ? "#1E50A8"
-                                    : groupColor.text,
-                                }}
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center space-x-2">
-                                <span className="font-medium truncate">
-                                  {group.name}
-                                </span>
-                                {isSelected && (
-                                  <CheckIcon
-                                    className="w-4 h-4 flex-shrink-0"
-                                    style={{ color: "#1E50A8" }}
-                                  />
-                                )}
-                              </div>
-                              {group.description && (
-                                <p className="text-xs text-gray-500 mt-1 truncate">
-                                  {group.description}
-                                </p>
-                              )}
-                              {group.resumeCount !== undefined && (
-                                <p className="text-xs text-gray-400 mt-1">
-                                  {group.resumeCount}{" "}
-                                  {group.resumeCount === 1
-                                    ? "resume"
-                                    : "resumes"}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex items-center ml-3">
-                            <button
-                              onClick={(e) => handleDeleteGroup(group, e)}
-                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
-                              title="Delete group"
-                            >
-                              <TrashIcon className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })
-                )}
-                          </div>
-          </div>
-        </div>
-      )}
+      {/* Render dropdown using portal */}
+      {renderDropdown()}
 
       {/* Add Group Modal */}
       <AddGroupModal

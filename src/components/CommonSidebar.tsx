@@ -24,7 +24,7 @@ export const CommonSidebar: React.FC<CommonSidebarProps> = ({
 }) => {
   return (
     <div
-      className={`${SIDEBAR_WIDTH} bg-white border-r border-gray-200 h-screen flex flex-col shadow-lg overflow-hidden ${className}`}
+      className={`${SIDEBAR_WIDTH} bg-white border-r border-gray-200 h-full flex flex-col shadow-lg overflow-hidden ${className}`}
     >
       {children}
     </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { ChartBarIcon, FolderIcon } from "@heroicons/react/24/outline";
+import { FolderIcon } from "@heroicons/react/24/outline";
 
 interface AnalyticsHeaderProps {
   totalFiles: number;
@@ -16,12 +16,12 @@ const AnalyticsHeader: React.FC<AnalyticsHeaderProps> = ({
       <div className="text-center mb-10">
         <div className="flex items-center justify-center mb-6">
           <div className="relative">
-            <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+            {/* <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
               <ChartBarIcon className="w-10 h-10 text-white" />
-            </div>
+            </div> */}
             {/* Animated rings */}
-            <div className="absolute inset-0 rounded-2xl border-2 border-purple-300 animate-ping opacity-20"></div>
-            <div className="absolute inset-0 rounded-2xl border border-blue-300 animate-pulse opacity-30"></div>
+            {/* <div className="absolute inset-0 rounded-2xl border-2 border-purple-300 animate-ping opacity-20"></div>
+              <div className="absolute inset-0 rounded-2xl border border-blue-300 animate-pulse opacity-30"></div> */}
           </div>
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-4">

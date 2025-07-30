@@ -22,10 +22,11 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
           {/* Main Empty Search Icon */}
           <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
             <svg
-              className="w-12 h-12 text-gray-400"
+              className="w-12 h-12 text-gray-400 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -39,9 +40,10 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
           {/* Empty Indicator */}
           <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
             <svg
-              className="w-4 h-4 text-orange-500"
+              className="w-4 h-4 text-orange-500 flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
@@ -169,7 +171,12 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
           onClick={onClearSearch}
           className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all duration-200 flex items-center justify-center gap-2"
         >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-5 h-5 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
             <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
           </svg>
           Try New Search
@@ -179,7 +186,12 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 flex items-center justify-center gap-2"
         >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-5 h-5 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
             <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
           </svg>
           Back to Top

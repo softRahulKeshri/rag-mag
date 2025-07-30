@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useActions } from "../store";
+import { useActions, useUser } from "../store";
 import { ROUTES } from "../constants";
 
 // Apps configuration for navbar
@@ -35,6 +35,7 @@ const Navbar = () => {
 
   // Global store hooks
   const { logout } = useActions();
+  const user = useUser();
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -54,6 +55,9 @@ const Navbar = () => {
     logout();
     navigate("/login");
   };
+
+  // Get display name from user data
+  const displayName = user?.username || "User";
 
   return (
     <nav
@@ -162,7 +166,7 @@ const Navbar = () => {
                   {/* Status indicator */}
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
                 </div>
-                <span>Profile</span>
+                <span>{displayName}</span>
                 <ChevronDownIcon
                   className={`h-4 w-4 transition-transform duration-300 ${
                     isProfileOpen ? "rotate-180" : ""
@@ -188,10 +192,10 @@ const Navbar = () => {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-900">
-                          User Account
+                          Hi, {displayName}
                         </p>
                         <p className="text-xs text-gray-500">
-                          Manage your profile and settings
+                          {user?.email || "User Account"}
                         </p>
                       </div>
                     </div>

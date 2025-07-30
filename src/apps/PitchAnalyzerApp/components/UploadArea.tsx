@@ -20,18 +20,13 @@ interface UploadAreaProps {
 const UploadArea = ({ userEmail }: UploadAreaProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [messageIndex, setMessageIndex] = useState(0);
 
   const { uploadMultiplePitches, isUploading, error, clearError } =
     usePitchUpload();
-  const {
-    fetchCompanyPitches,
-    pitches,
-    isLoading: isLoadingPitches,
-  } = useCompanyPitches();
+  const { fetchCompanyPitches, pitches } = useCompanyPitches();
 
   // Fetch recent pitches on component mount
   useEffect(() => {
@@ -100,115 +95,91 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
     if (selectedFiles.length === 0 || !userEmail) return;
 
     setShowLoadingScreen(true);
-    setMessageIndex(0);
-
-    const messageInterval = setInterval(() => {
-      setMessageIndex((prev) => {
-        const newIndex = prev + 1;
-        setLoadingMessage(loadingMessages[newIndex % loadingMessages.length]);
-        return newIndex;
-      });
-    }, 2000);
+    setLoadingMessage(loadingMessages[0]);
 
     try {
-      const results = await uploadMultiplePitches(selectedFiles);
-      const successfulUploads = results
-        .filter((result) => result.status === 200)
-        .map((result) => result.message);
-
-      setUploadedFiles((prev) => [...prev, ...successfulUploads]);
+      await uploadMultiplePitches(selectedFiles);
       setSelectedFiles([]);
-
-      // Refresh the pitches list
-      await fetchCompanyPitches();
+      fetchCompanyPitches();
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {
-      clearInterval(messageInterval);
       setShowLoadingScreen(false);
       setLoadingMessage("");
+      setMessageIndex(0);
     }
   }, [
     selectedFiles,
     userEmail,
     uploadMultiplePitches,
-    fetchCompanyPitches,
     loadingMessages,
+    fetchCompanyPitches,
   ]);
 
+  // Rotate loading messages
+  useEffect(() => {
+    if (showLoadingScreen) {
+      const interval = setInterval(() => {
+        setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+        setLoadingMessage(loadingMessages[messageIndex]);
+      }, 2000);
+
+      return () => clearInterval(interval);
+    }
+  }, [showLoadingScreen, loadingMessages, messageIndex]);
+
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+      year: "numeric",
     });
   };
 
   const getRecentPitches = () => {
-    return pitches
-      .sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
-      .slice(0, 5);
+    return pitches.slice(0, 3);
   };
 
-  // Loading Screen Component
   if (showLoadingScreen) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-2xl shadow-2xl p-10 max-w-sm w-full mx-4">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-indigo-200/50 p-12 max-w-md w-full mx-4">
           <div className="text-center">
             {/* Animated Icon */}
-            <div className="relative mb-6">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto shadow-lg">
-                <DocumentMagnifyingGlassIcon className="w-8 h-8 text-gray-600 animate-pulse" />
+            <div className="relative mb-8">
+              <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg mx-auto">
+                <SparklesIcon className="w-10 h-10 text-white animate-pulse" />
               </div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center">
-                <SparklesIcon className="w-4 h-4 text-gray-600" />
-              </div>
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-400 rounded-full animate-ping border-2 border-white"></div>
             </div>
 
-            {/* Loading Title */}
-            <h2 className="text-xl font-bold text-gray-900 mb-3">
-              Processing Your Pitch Deck
+            {/* Loading Text */}
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Analyzing Pitch Deck
             </h2>
-
-            {/* Loading Message */}
-            <p className="text-gray-600 mb-8 min-h-[3rem] flex items-center justify-center">
+            <p className="text-gray-600 mb-8 leading-relaxed">
               {loadingMessage}
             </p>
 
-            {/* Progress Indicators */}
-            <div className="flex justify-center space-x-2 mb-8">
-              {[1, 2, 3, 4, 5, 6].map((step) => (
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+              <div
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full animate-pulse"
+                style={{ width: "60%" }}
+              ></div>
+            </div>
+
+            {/* Status Indicators */}
+            <div className="flex justify-center space-x-2">
+              {loadingMessages.map((_, index) => (
                 <div
-                  key={step}
-                  className={`w-3 h-3 rounded-full transition-all duration-500 ${
-                    step <= Math.floor(messageIndex / 2) + 1
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600"
-                      : "bg-gray-200"
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index <= messageIndex ? "bg-indigo-500" : "bg-gray-300"
                   }`}
                 />
               ))}
-            </div>
-
-            {/* Feature Icons */}
-            <div className="grid grid-cols-3 gap-4 mt-8">
-              <div className="text-center">
-                <ChartBarIcon className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-                <p className="text-xs text-gray-600">Financial Analysis</p>
-              </div>
-              <div className="text-center">
-                <LightBulbIcon className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-                <p className="text-xs text-gray-600">Market Insights</p>
-              </div>
-              <div className="text-center">
-                <RocketLaunchIcon className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-                <p className="text-xs text-gray-600">Growth Potential</p>
-              </div>
             </div>
           </div>
         </div>
@@ -217,122 +188,151 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="space-y-8">
+      {/* Enhanced Header Section */}
+      <div className="text-center mb-10">
+        <div className="flex items-center justify-center mb-6">
+          <div className="relative">
+            <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <CloudArrowUpIcon className="w-10 h-10 text-white" />
+            </div>
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full animate-pulse border-2 border-white"></div>
+          </div>
+        </div>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Upload Pitch Deck
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          AI-Powered Pitch Analysis - Upload your pitch deck for comprehensive
+          analysis and insights
+        </p>
+      </div>
+
+      {/* Premium Stats Card */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-indigo-200/50 p-8 mb-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <DocumentIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-indigo-600 uppercase tracking-wider mb-1">
+                Total Pitches
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                {pitches.length}
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-gray-600">Analyzed pitches</p>
+            <p className="text-xs text-gray-500">Ready for review</p>
+          </div>
+        </div>
+      </div>
+
       {/* Upload Area */}
-      <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-dashed border-gray-300 p-8 shadow-lg">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+        <div className="flex items-start space-x-4 mb-6">
+          <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <CloudArrowUpIcon className="w-5 h-5 text-indigo-600" />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">
+              Upload Pitch Deck
+            </h2>
+            <p className="text-gray-600">
+              Drag and drop your PDF pitch deck or click to browse files
+            </p>
+          </div>
+        </div>
+
+        {/* Drag & Drop Zone */}
         <div
-          className={`text-center transition-all duration-300 ${
+          className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
             isDragOver
-              ? "border-blue-400 bg-blue-50 scale-105"
-              : "border-gray-300 hover:border-gray-400 hover:scale-[1.02]"
+              ? "border-indigo-400 bg-indigo-50/50"
+              : "border-gray-300 hover:border-indigo-300 hover:bg-gray-50/50"
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          {/* Premium Upload Icon */}
-          <div className="relative mb-6">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto shadow-lg">
-              <CloudArrowUpIcon className="w-12 h-12 text-gray-600" />
-            </div>
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center shadow-md">
-              <DocumentMagnifyingGlassIcon className="w-5 h-5 text-gray-600" />
-            </div>
-          </div>
+          <input
+            type="file"
+            multiple
+            accept=".pdf"
+            onChange={handleFileSelect}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
 
           <div className="space-y-4">
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                Upload Your Pitch Deck
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto">
+              <CloudArrowUpIcon className="w-8 h-8 text-indigo-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Drop your pitch deck here
               </h3>
-              <p className="text-lg text-gray-600 mb-4">
-                Drop your pitch deck here or{" "}
-                <span className="text-blue-600 hover:text-blue-500 font-semibold underline">
-                  browse files
-                </span>
+              <p className="text-gray-600 mb-4">
+                Supports PDF files up to 50MB
               </p>
-              <input
-                id="file-upload"
-                name="file-upload"
-                type="file"
-                className="sr-only"
-                multiple
-                accept=".pdf"
-                onChange={handleFileSelect}
-              />
-            </label>
-            <p className="text-sm text-gray-500 flex items-center justify-center space-x-2">
-              <DocumentIcon className="w-4 h-4" />
-              <span>Only PDF files are supported</span>
-            </p>
+              <button className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+                Browse Files
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Selected Files */}
         {selectedFiles.length > 0 && (
-          <div className="mt-8 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
-                <DocumentMagnifyingGlassIcon className="w-5 h-5 text-gray-600" />
-                <span>Selected Files ({selectedFiles.length})</span>
-              </h3>
-            </div>
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Selected Files ({selectedFiles.length})
+            </h3>
             <div className="space-y-3">
               {selectedFiles.map((file, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200"
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200"
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <DocumentIcon className="w-6 h-6 text-gray-600" />
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                      <DocumentIcon className="w-5 h-5 text-red-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {file.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="font-medium text-gray-900">{file.name}</p>
+                      <p className="text-sm text-gray-500">
                         {(file.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => removeFile(index)}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors duration-200"
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
                 </div>
               ))}
             </div>
-
-            <div className="mt-6 flex space-x-4">
+            <div className="mt-6 flex justify-end">
               <button
                 onClick={handleUpload}
                 disabled={isUploading}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl transition-all duration-200"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isUploading ? (
                   <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span className="font-semibold">Processing...</span>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Uploading...
                   </>
                 ) : (
                   <>
-                    <RocketLaunchIcon className="w-5 h-5" />
-                    <span className="font-semibold">
-                      Analyze {selectedFiles.length} Pitch Deck
-                      {selectedFiles.length > 1 ? "s" : ""}
-                    </span>
+                    <SparklesIcon className="w-5 h-5 mr-2" />
+                    Analyze Pitch Deck
                   </>
                 )}
-              </button>
-
-              <button
-                onClick={() => setSelectedFiles([])}
-                className="px-6 py-3 text-gray-600 border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-medium"
-              >
-                Clear All
               </button>
             </div>
           </div>
@@ -340,16 +340,19 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
 
         {/* Error Display */}
         {error && (
-          <div className="mt-6 p-4 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                <XMarkIcon className="w-5 h-5 text-red-600" />
+          <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <XMarkIcon className="h-5 w-5 text-red-400" />
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-red-800">{error}</p>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">
+                  Upload Error
+                </h3>
+                <p className="text-sm text-red-700 mt-1">{error}</p>
                 <button
                   onClick={clearError}
-                  className="mt-1 text-xs text-red-600 hover:text-red-700 font-medium"
+                  className="mt-2 text-sm text-red-600 hover:text-red-500 font-medium"
                 >
                   Dismiss
                 </button>
@@ -357,98 +360,110 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
             </div>
           </div>
         )}
+      </div>
 
-        {/* Success Messages */}
-        {uploadedFiles.length > 0 && (
-          <div className="mt-6 space-y-3">
-            {uploadedFiles.map((message, index) => (
+      {/* Recent Pitches Section */}
+      {getRecentPitches().length > 0 && (
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+          <div className="flex items-start space-x-4 mb-6">
+            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <DocumentMagnifyingGlassIcon className="w-5 h-5 text-green-600" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold text-gray-900 mb-1">
+                Recent Pitches
+              </h2>
+              <p className="text-gray-600">
+                Your recently uploaded pitch decks
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-4">
+            {getRecentPitches().map((pitch) => (
               <div
-                key={index}
-                className="flex items-center space-x-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl"
+                key={pitch.id}
+                className="group relative p-4 border border-gray-200 rounded-xl hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
               >
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircleIcon className="w-5 h-5 text-green-600" />
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                    <DocumentIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">
+                      {pitch.title || pitch.filename}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      Uploaded {formatDate(pitch.created_at)}
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <CheckCircleIcon className="w-3 h-3 mr-1" />
+                      Analyzed
+                    </span>
+                  </div>
                 </div>
-                <span className="text-sm font-medium text-green-800">
-                  {message}
-                </span>
               </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Recent Uploads Section */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
-            <DocumentMagnifyingGlassIcon className="w-6 h-6 text-gray-600" />
+      {/* Features Section */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-8">
+        <div className="flex items-start space-x-4 mb-8">
+          <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <SparklesIcon className="w-5 h-5 text-purple-600" />
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Recent Uploads</h2>
-            <p className="text-sm text-gray-500">
-              Your latest pitch deck analyses
+          <div className="flex-1">
+            <h2 className="text-xl font-semibold text-gray-900 mb-1">
+              AI-Powered Analysis Features
+            </h2>
+            <p className="text-gray-600">
+              Comprehensive insights and recommendations for your pitch deck
             </p>
           </div>
         </div>
 
-        {isLoadingPitches ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="flex items-center space-x-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
-              <span className="text-gray-600">Loading recent uploads...</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
+              <ChartBarIcon className="w-6 h-6 text-white" />
             </div>
-          </div>
-        ) : getRecentPitches().length > 0 ? (
-          <div className="space-y-4">
-            {getRecentPitches().map((pitch) => (
-              <div
-                key={pitch.id}
-                className="flex items-center justify-between p-6 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:shadow-md"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
-                    <DocumentIcon className="w-7 h-7 text-gray-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">
-                      {pitch.title || pitch.filename}
-                    </p>
-                    <p className="text-xs text-gray-500 flex items-center space-x-2">
-                      <span>{formatDate(pitch.created_at)}</span>
-                      <span>•</span>
-                      <span>{(Math.random() * 100).toFixed(1)}% analyzed</span>
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  {pitch.is_bookmarked && (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">
-                      <SparklesIcon className="w-3 h-3 mr-1" />
-                      Bookmarked
-                    </span>
-                  )}
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                    {pitch.sector_category || "Analyzed"}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <DocumentMagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No pitches uploaded yet
+            <h3 className="font-semibold text-gray-900 mb-2">
+              Financial Analysis
             </h3>
-            <p className="text-sm text-gray-500">
-              Upload your first pitch deck above to get started with AI-powered
-              analysis.
+            <p className="text-sm text-gray-600">
+              Deep dive into financial metrics, projections, and valuation
+              analysis
             </p>
           </div>
-        )}
+
+          <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200/50">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
+              <LightBulbIcon className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2">
+              Market Insights
+            </h3>
+            <p className="text-sm text-gray-600">
+              Market opportunity analysis and competitive landscape evaluation
+            </p>
+          </div>
+
+          <div className="p-6 bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl border border-purple-200/50">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
+              <RocketLaunchIcon className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="font-semibold text-gray-900 mb-2">
+              Growth Strategy
+            </h3>
+            <p className="text-sm text-gray-600">
+              Strategic recommendations for scaling and market expansion
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

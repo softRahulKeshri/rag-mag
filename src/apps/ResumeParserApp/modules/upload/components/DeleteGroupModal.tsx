@@ -27,7 +27,7 @@ const DeleteGroupModal: React.FC<DeleteGroupModalProps> = ({
   if (!open || !group) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0 z-[60] overflow-y-auto">
       {/* Enhanced backdrop */}
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
 

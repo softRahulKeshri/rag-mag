@@ -37,7 +37,7 @@ export const formatTimestamp = (timestamp: string | undefined): string => {
 };
 
 export const createNewChat = (): IChat => ({
-  id: Date.now(),
+  id: `temp-${Date.now()}`, // Temporary ID for local chats
   title: 'New Chat',
   timestamp: dayjs().toISOString(),
   messages: []

@@ -40,8 +40,8 @@ const Login = () => {
     if (name === "password") {
       if (!value) {
         errors.password = "Password is required";
-      } else if (value.length < 6) {
-        errors.password = "Password must be at least 6 characters";
+      } else if (value.length < 4) {
+        errors.password = "Password must be at least 4 characters";
       }
     }
 
@@ -153,7 +153,7 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  const isFormValid = username.trim().length >= 3 && password.length >= 6;
+  const isFormValid = username.trim().length >= 3 && password.length >= 4;
   const isButtonDisabled = isLoading || isSubmitting || !isFormValid;
 
   const renderLoadingButton = () => {

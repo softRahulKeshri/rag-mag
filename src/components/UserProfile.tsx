@@ -6,6 +6,7 @@ import {
   SunIcon,
   MoonIcon,
 } from "@heroicons/react/24/outline";
+import ChatSessionsList from "../apps/ChatServiceApp/components/ChatSessionsList";
 
 /**
  * UserProfile Component
@@ -214,6 +215,17 @@ const UserProfile: React.FC = () => {
           <p>Auto Save: {settings.autoSave ? "Enabled" : "Disabled"}</p>
           <p>Sidebar Collapsed: {settings.sidebarCollapsed ? "Yes" : "No"}</p>
         </div>
+      </div>
+
+      {/* Chat Sessions */}
+      <div className="mt-6">
+        <ChatSessionsList
+          userId={user.id}
+          onSessionSelect={(sessionId) => {
+            console.log("Selected chat session:", sessionId);
+            // TODO: Navigate to chat session or open in modal
+          }}
+        />
       </div>
     </div>
   );
