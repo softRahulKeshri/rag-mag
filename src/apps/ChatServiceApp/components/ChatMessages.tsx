@@ -202,6 +202,20 @@ export const ChatMessages = ({
         .chat-scrollbar > div:first-child {
           min-height: 100%;
         }
+        /* Premium user message styling */
+        .user-message-bubble {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .user-message-bubble:hover {
+          background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+          box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+          transform: translateY(-1px);
+        }
+        .user-avatar-glow {
+          box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+        }
       `}</style>
 
       <div className="flex-1 max-w-4xl mx-auto w-full">
@@ -210,7 +224,7 @@ export const ChatMessages = ({
             key={message.id}
             className={`group ${
               message.role === "user"
-                ? "bg-white/50"
+                ? "bg-gradient-to-r from-indigo-50/30 to-purple-50/30"
                 : "bg-gradient-to-r from-gray-50/50 to-white/50"
             }`}
           >
@@ -238,10 +252,10 @@ export const ChatMessages = ({
                   <div className="relative">
                     {/* Message Bubble */}
                     <div
-                      className={`rounded-2xl px-6 py-4 shadow-lg ${
+                      className={`rounded-2xl px-6 py-4 transition-all duration-300 ${
                         message.role === "user"
-                          ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-blue-500/25"
-                          : "bg-white text-gray-900 shadow-gray-200/50 border border-gray-100"
+                          ? "user-message-bubble text-white backdrop-blur-sm"
+                          : "bg-white text-gray-900 shadow-gray-200/50 border border-gray-100 shadow-lg"
                       }`}
                     >
                       {/* Message Text */}
@@ -272,13 +286,31 @@ export const ChatMessages = ({
 
                       {/* File Attachment */}
                       {message.file && (
-                        <div className="mt-4 pt-4 border-t border-gray-200/60">
-                          <div className="flex items-center space-x-2 text-xs text-gray-500">
+                        <div
+                          className={`mt-4 pt-4 ${
+                            message.role === "user"
+                              ? "border-t border-white/20"
+                              : "border-t border-gray-200/60"
+                          }`}
+                        >
+                          <div
+                            className={`flex items-center space-x-2 text-xs ${
+                              message.role === "user"
+                                ? "text-white/80"
+                                : "text-gray-500"
+                            }`}
+                          >
                             <DocumentDuplicateIcon className="h-4 w-4" />
                             <span className="font-medium">
                               {message.file.name}
                             </span>
-                            <span className="text-xs bg-gray-100 px-2 py-1 rounded-md">
+                            <span
+                              className={`text-xs px-2 py-1 rounded-md ${
+                                message.role === "user"
+                                  ? "bg-white/20 text-white/90"
+                                  : "bg-gray-100 text-gray-600"
+                              }`}
+                            >
                               ({(message.file.size / 1024).toFixed(1)} KB)
                             </span>
                           </div>
@@ -286,7 +318,13 @@ export const ChatMessages = ({
                       )}
 
                       {/* Timestamp */}
-                      <div className="mt-3 text-xs text-gray-400">
+                      <div
+                        className={`mt-3 text-xs ${
+                          message.role === "user"
+                            ? "text-white/60"
+                            : "text-gray-400"
+                        }`}
+                      >
                         {formatTimestamp(message.timestamp)}
                       </div>
                     </div>
@@ -322,7 +360,7 @@ export const ChatMessages = ({
                 {/* Avatar - Only show for user messages on the right */}
                 {message.role === "user" && (
                   <div className="flex-shrink-0">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg user-avatar-glow">
                       <UserIcon className="h-5 w-5 text-white" />
                     </div>
                   </div>

@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser } from "../../store";
 import { ChatHeader } from "./components/ChatHeader";
 import { ChatSidebar } from "./components/ChatSidebar";
 import { ChatMessages } from "./components/ChatMessages";
-import { MessageInput } from "./components/MessageInput";
+import { MessageInput, type MessageInputRef } from "./components/MessageInput";
 import { ChatLoader } from "./components/ChatLoader";
 import {
   useCreateChatSessionApi,
@@ -33,6 +33,9 @@ const ChatServiceApp = () => {
     ModelType.OPENAI
   );
 
+  // Ref for MessageInput to focus when needed
+  const messageInputRef = useRef<MessageInputRef>(null);
+
   // API hooks for chat sessions
   const {
     createDefaultSession,
@@ -55,7 +58,7 @@ const ChatServiceApp = () => {
   } = useConversationApi();
 
   // Messages API for fetching chat messages
-  const { fetchMessages, clearMessages } = useFetchChatMessages();
+  const { fetchMessages } = useFetchChatMessages();
 
   // Transform API sessions to local chat format
   const transformSessionsToChats = (
@@ -98,7 +101,7 @@ const ChatServiceApp = () => {
             timestamp: msg.created_at,
           }));
 
-          // Update the selected chat with loaded messages
+          // Update chat with messages
           setChats((prevChats) =>
             prevChats.map((chat) =>
               chat.id === selectedChatId
@@ -106,12 +109,13 @@ const ChatServiceApp = () => {
                 : chat
             )
           );
+
+          // Focus the input after a short delay to ensure the component is rendered
+          setTimeout(() => {
+            messageInputRef.current?.focus();
+          }, 100);
         } catch (error) {
-          console.error(
-            "Failed to load messages for chat:",
-            selectedChatId,
-            error
-          );
+          console.error("Failed to load messages:", error);
         } finally {
           setIsLoadingMessages(false);
         }
@@ -121,13 +125,17 @@ const ChatServiceApp = () => {
     loadChatMessages();
   }, [selectedChatId, fetchMessages]);
 
-  const selectedChat = chats.find((chat) => chat.id === selectedChatId) || null;
+  // Get the currently selected chat
+  const selectedChat = chats.find((chat) => chat.id === selectedChatId);
 
   const handleChatSelect = (chatId: string) => {
-    // Clear messages before switching to avoid showing old messages
-    clearMessages();
     setSelectedChatId(chatId);
     setIsSidebarOpen(false); // Close sidebar on mobile after selection
+
+    // Focus the input when a chat is selected
+    setTimeout(() => {
+      messageInputRef.current?.focus();
+    }, 100);
   };
 
   const handleNewChat = async () => {
@@ -157,6 +165,11 @@ const ChatServiceApp = () => {
       // Refetch sessions to update the cache with the new session
       refetchSessions();
 
+      // Focus the input after creating a new chat
+      setTimeout(() => {
+        messageInputRef.current?.focus();
+      }, 200);
+
       console.log("🎉 New chat session rendered successfully!");
     } catch (error) {
       console.error("❌ Error in handleNewChat:", error);
@@ -181,6 +194,11 @@ const ChatServiceApp = () => {
         chat.id === selectedChatId ? { ...chat, messages: [] } : chat
       )
     );
+
+    // Focus the input after clearing chat
+    setTimeout(() => {
+      messageInputRef.current?.focus();
+    }, 100);
   };
 
   const handleModelChange = (model: ModelType) => {
@@ -428,6 +446,7 @@ const ChatServiceApp = () => {
           {/* Message Input - Fixed at bottom */}
           <div className="flex-shrink-0 bg-white border-t border-[#EAEAEC] shadow-lg">
             <MessageInput
+              ref={messageInputRef}
               onSendMessage={handleSendMessage}
               isSending={isConversationLoading}
             />
