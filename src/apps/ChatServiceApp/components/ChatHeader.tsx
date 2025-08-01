@@ -58,7 +58,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           {/* Menu Button */}
           <button
             onClick={onMenuToggle}
-            className="p-3 text-gray-500 hover:text-blue-600 rounded-xl hover:bg-gray-50 transition-all duration-300"
+            className="p-3 text-gray-500 hover:text-blue-600 rounded-xl hover:bg-gray-50 transition-all duration-300 cursor-pointer"
             aria-label="Toggle menu"
           >
             <Bars3Icon className="h-5 w-5" />
@@ -105,7 +105,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-3 text-gray-500 hover:text-blue-600 rounded-xl hover:bg-gray-50 transition-all duration-300"
+              className="p-3 text-gray-500 hover:text-blue-600 rounded-xl hover:bg-gray-50 transition-all duration-300 cursor-pointer"
               aria-label="More options"
             >
               <EllipsisVerticalIcon className="h-5 w-5" />
@@ -117,7 +117,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 <div className="py-3">
                   <button
                     onClick={handleRename}
-                    className="w-full px-5 py-4 text-left text-sm text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-300 font-semibold flex items-center space-x-4 group"
+                    className="w-full px-5 py-4 text-left text-sm text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-300 font-semibold flex items-center space-x-4 group cursor-pointer"
                   >
                     <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                       <PencilIcon className="h-6 w-6 text-blue-600" />
@@ -134,7 +134,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
                   <button
                     onClick={handleClearChat}
-                    className="w-full px-5 py-4 text-left text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 font-semibold flex items-center space-x-4 group"
+                    className="w-full px-5 py-4 text-left text-sm text-gray-700 hover:text-red-600 hover:bg-red-50 transition-all duration-300 font-semibold flex items-center space-x-4 group cursor-pointer"
                   >
                     <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                       <TrashIcon className="h-6 w-6 text-red-600" />

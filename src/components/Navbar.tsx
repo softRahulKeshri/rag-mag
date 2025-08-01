@@ -1,6 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useActions, useUser } from "../store";
 import { ROUTES } from "../constants";
+import {
+  formatDisplayName,
+  formatAccountText,
+  createGreeting,
+} from "../utils/textUtils";
+import { Tooltip } from "./ui/Tooltip";
 
 // Apps configuration for navbar
 const apps = [
@@ -56,8 +62,8 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  // Get display name from user data
-  const displayName = user?.username || "User";
+  // Get display name from user data with proper noun case formatting
+  const displayName = formatDisplayName(user?.username);
 
   return (
     <nav
@@ -73,7 +79,7 @@ const Navbar = () => {
           <div className="flex-shrink-0">
             <button
               onClick={() => handleAppChange("/")}
-              className={`relative flex items-center space-x-3 px-4 py-2.5 rounded-2xl transition-all duration-300 ease-out group ${
+              className={`relative flex items-center space-x-3 px-4 py-2.5 rounded-2xl transition-all duration-300 ease-out group cursor-pointer ${
                 currentPath === "/"
                   ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg"
                   : "text-gray-900 hover:text-purple-600 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-indigo-50/50"
@@ -115,7 +121,7 @@ const Navbar = () => {
                 <button
                   key={app.name}
                   onClick={() => handleAppChange(app.path)}
-                  className={`relative group px-5 py-3 rounded-2xl text-sm font-medium transition-all duration-300 ease-out ${
+                  className={`relative group px-5 py-3 rounded-2xl text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
                     isActive
                       ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg"
                       : "text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80"
@@ -149,7 +155,7 @@ const Navbar = () => {
             <div className="relative">
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className={`flex items-center space-x-3 px-4 py-2.5 rounded-2xl text-sm font-medium transition-all duration-300 ease-out group ${
+                className={`flex items-center space-x-3 px-4 py-2.5 rounded-2xl text-sm font-medium transition-all duration-300 ease-out group cursor-pointer ${
                   isProfileOpen
                     ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg"
                     : "text-gray-700 hover:text-gray-900 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80"
@@ -163,10 +169,15 @@ const Navbar = () => {
                         : "text-gray-400 group-hover:text-gray-600"
                     }`}
                   />
-                  {/* Status indicator */}
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
                 </div>
-                <span>{displayName}</span>
+                <Tooltip
+                  content={createGreeting(displayName)}
+                  className="flex-1 min-w-0"
+                >
+                  <span className="truncate block">
+                    {createGreeting(displayName)}
+                  </span>
+                </Tooltip>
                 <ChevronDownIcon
                   className={`h-4 w-4 transition-transform duration-300 ${
                     isProfileOpen ? "rotate-180" : ""
@@ -188,15 +199,24 @@ const Navbar = () => {
                     <div className="flex items-center space-x-3">
                       <div className="relative">
                         <UserCircleIcon className="h-10 w-10 text-purple-500" />
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
                       </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900">
-                          Hi, {displayName}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {user?.email || "User Account"}
-                        </p>
+                      <div className="flex-1 min-w-0">
+                        <Tooltip
+                          content={createGreeting(displayName)}
+                          className="block"
+                        >
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {createGreeting(displayName)}
+                          </p>
+                        </Tooltip>
+                        <Tooltip
+                          content={formatAccountText(user?.email)}
+                          className="block"
+                        >
+                          <p className="text-xs text-gray-500 truncate">
+                            {formatAccountText(user?.email)}
+                          </p>
+                        </Tooltip>
                       </div>
                     </div>
                   </div>
@@ -208,7 +228,7 @@ const Navbar = () => {
                         handleAppChange("/profile");
                         setIsProfileOpen(false);
                       }}
-                      className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 transition-all duration-200 ease-out group"
+                      className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 transition-all duration-200 ease-out group border-l-4 border-transparent hover:border-purple-200"
                     >
                       <UserCircleIcon className="h-4 w-4 mr-3 text-gray-400 group-hover:text-purple-600 transition-colors duration-200" />
                       <span>View Profile</span>
@@ -219,20 +239,20 @@ const Navbar = () => {
                         // Handle settings
                         setIsProfileOpen(false);
                       }}
-                      className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 transition-all duration-200 ease-out group"
+                      className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 transition-all duration-200 ease-out group border-l-4 border-transparent hover:border-purple-200"
                     >
                       <Cog6ToothIcon className="h-4 w-4 mr-3 text-gray-400 group-hover:text-purple-600 transition-colors duration-200" />
                       <span>Settings</span>
                     </button>
 
-                    <div className="border-t border-gray-100/50 my-2"></div>
+                    <div className="border-t border-gray-200/60 my-2"></div>
 
                     <button
                       onClick={handleLogout}
-                      className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all duration-200 ease-out group"
+                      className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 transition-all duration-200 ease-out group border-l-4 border-transparent hover:border-red-200"
                     >
-                      <ArrowRightOnRectangleIcon className="h-4 w-4 mr-3 text-red-400 group-hover:text-red-600 transition-colors duration-200" />
-                      <span>Logout</span>
+                      <ArrowRightOnRectangleIcon className="h-4 w-4 mr-3 text-red-500 group-hover:text-red-600 transition-colors duration-200" />
+                      <span className="font-medium">Logout</span>
                     </button>
                   </div>
                 </div>
@@ -242,7 +262,7 @@ const Navbar = () => {
             {/* Click outside to close */}
             {isProfileOpen && (
               <div
-                className="fixed inset-0 z-40"
+                className="fixed inset-0 z-40 cursor-pointer"
                 onClick={() => setIsProfileOpen(false)}
               />
             )}

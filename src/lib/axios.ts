@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { AxiosInstance, AxiosRequestConfig } from "axios";
+import type { AxiosInstance } from "axios";
 import { STORAGE_KEYS } from "../types/global";
 
 /**
@@ -245,27 +245,6 @@ export const apiServices = {
 } as const;
 
 /**
- * Helper function to get API instance by service type
- */
-export const getApiInstance = (
-  service: keyof typeof apiServices
-): AxiosInstance => {
-  return apiServices[service];
-};
-
-/**
- * Generic API call helper with service selection
- */
-export const makeApiCall = async <T = unknown>(
-  service: keyof typeof apiServices,
-  config: AxiosRequestConfig
-): Promise<T> => {
-  const api = getApiInstance(service);
-  const response = await api.request<T>(config);
-  return response.data;
-};
-
-/**
  * Authentication utilities for manual token management
  */
 export const authUtils = {
@@ -305,27 +284,4 @@ export const getApiConfig = () => {
       PITCH: `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PITCH}`,
     },
   };
-};
-
-/**
- * Debug helper to log current API configuration
- */
-export const logApiConfig = () => {
-  const config = getApiConfig();
-  const isAuthenticated = authUtils.isAuthenticated();
-  const accessToken = TokenManager.getAccessToken();
-
-  console.group("🔧 API Configuration");
-  console.log("Base URL:", config.BASE_URL);
-  console.log("Environment:", import.meta.env.MODE);
-  console.log("Service URLs:", config.FULL_URLS);
-  console.log(
-    "Authentication Status:",
-    isAuthenticated ? "✅ Authenticated" : "❌ Not Authenticated"
-  );
-  console.log("Access Token Present:", accessToken ? "✅ Yes" : "❌ No");
-  if (accessToken && !isAuthenticated) {
-    console.log("⚠️ Token is expired");
-  }
-  console.groupEnd();
 };

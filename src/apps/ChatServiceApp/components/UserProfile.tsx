@@ -1,29 +1,15 @@
-import { useRef, useEffect } from "react";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { useUser } from "../../../store/useGlobalStore";
+import {
+  formatDisplayName,
+  formatAccountText,
+  createGreeting,
+} from "../../../utils/textUtils";
+import { Tooltip } from "../../../components/ui/Tooltip";
 
 export const UserProfile = () => {
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const user = useUser();
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        // Dropdown close logic removed since dropdown is not used
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const displayName = user?.username || "User";
+  const displayName = formatDisplayName(user?.username);
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200/60 shadow-md p-3">
@@ -37,12 +23,16 @@ export const UserProfile = () => {
 
         {/* User Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-semibold text-slate-800 truncate">
-            {displayName}
-          </h3>
-          <p className="text-xs text-slate-500 truncate">
-            {user?.email || "User Account"}
-          </p>
+          <Tooltip content={createGreeting(displayName)} className="block">
+            <h3 className="text-sm font-semibold text-slate-800 truncate">
+              {createGreeting(displayName)}
+            </h3>
+          </Tooltip>
+          <Tooltip content={formatAccountText(user?.email)} className="block">
+            <p className="text-xs text-slate-500 truncate">
+              {formatAccountText(user?.email)}
+            </p>
+          </Tooltip>
         </div>
       </div>
     </div>

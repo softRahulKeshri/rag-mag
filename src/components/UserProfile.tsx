@@ -7,6 +7,7 @@ import {
   MoonIcon,
 } from "@heroicons/react/24/outline";
 import ChatSessionsList from "../apps/ChatServiceApp/components/ChatSessionsList";
+import { formatDisplayName, formatAccountText } from "../utils/textUtils";
 
 /**
  * UserProfile Component
@@ -64,9 +65,11 @@ const UserProfile: React.FC = () => {
           <UserCircleIcon className="h-16 w-16 text-blue-600" />
           <div>
             <h3 className="text-xl font-semibold text-gray-900">
-              {user.username}
+              {formatDisplayName(user.username)}
             </h3>
-            <p className="text-gray-600">{user.email || "No email provided"}</p>
+            <p className="text-gray-600">
+              {formatAccountText(user.email, "No email provided")}
+            </p>
             <p className="text-sm text-gray-500">User ID: {user.id}</p>
           </div>
         </div>

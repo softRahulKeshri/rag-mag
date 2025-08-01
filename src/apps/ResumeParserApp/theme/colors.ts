@@ -71,23 +71,6 @@ export type NeutralColor = keyof typeof BrandColors.neutral;
 export type GreyscaleColor = keyof typeof BrandColors.greyscale;
 export type UIBlueColor = keyof typeof BrandColors.uiBlue;
 
-// Utility functions for getting color values
-export const getBrandGradientColor = (color: BrandGradientColor): string => {
-  return BrandColors.gradient[color];
-};
-
-export const getNeutralColor = (color: NeutralColor): string => {
-  return BrandColors.neutral[color];
-};
-
-export const getGreyscaleColor = (color: GreyscaleColor): string => {
-  return BrandColors.greyscale[color];
-};
-
-export const getUIBlueColor = (color: UIBlueColor): string => {
-  return BrandColors.uiBlue[color];
-};
-
 // Common color combinations for different UI states
 export const ColorSchemes = {
   // Primary button colors
