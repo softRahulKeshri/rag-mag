@@ -1,11 +1,4 @@
-import {
-  ChatBubbleLeftRightIcon as ChatBubbleLeftRightIconSolid,
-  SparklesIcon,
-  CpuChipIcon,
-  CloudIcon,
-} from "@heroicons/react/24/solid";
 import type { IChat } from "../types/types";
-import { ModelType } from "../types/types";
 
 interface IChatListItemProps {
   chat: IChat;
@@ -14,71 +7,26 @@ interface IChatListItemProps {
   isCollapsed?: boolean;
 }
 
-const modelIcons = {
-  [ModelType.OPENAI]: SparklesIcon,
-  [ModelType.ANTHROPIC]: CpuChipIcon,
-  [ModelType.OLLAMA]: CloudIcon,
-};
-
-const modelColors = {
-  [ModelType.OPENAI]: "text-[#3077F3]",
-  [ModelType.ANTHROPIC]: "text-[#B96AF7]",
-  [ModelType.OLLAMA]: "text-[#6D6F7A]",
-};
-
 const ChatListItem: React.FC<IChatListItemProps> = ({
   chat,
   isSelected,
   onClick,
   isCollapsed = false,
 }) => {
-  const lastMessage = chat.messages[chat.messages.length - 1];
-  const previewText = lastMessage?.content
-    ? lastMessage.content.length > 30
-      ? lastMessage.content.substring(0, 30) + "..."
-      : lastMessage.content
-    : "No messages yet";
-
-  const selectedModel = chat.selectedModel || ModelType.OPENAI;
-  const ModelIcon = modelIcons[selectedModel];
-
   if (isCollapsed) {
     return (
       <div
         onClick={onClick}
-        className={`group relative p-2 rounded-lg transition-all duration-300 ease-in-out cursor-pointer transform hover:scale-110 ${
+        className={`group relative p-2 rounded-lg transition-all duration-300 ease-in-out cursor-pointer ${
           isSelected
-            ? "text-[#3077F3] bg-gradient-to-r from-[#EFF5FF] to-[#F8F5FF] shadow-lg border border-[#94BAFD]"
-            : "hover:bg-gradient-to-r hover:from-[#F5F5F5] hover:to-[#EFF5FF] border border-transparent"
+            ? "bg-[#F7F7F8] text-[#2E3141]"
+            : "hover:bg-[#F5F5F5] text-[#2E3141]"
         }`}
         title={chat.title || "New Chat"}
       >
-        <div className="flex items-center justify-center relative">
-          <div
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
-              isSelected
-                ? "bg-[#3077F3] text-white"
-                : "text-[#6D6F7A] group-hover:text-[#2E3141]"
-            }`}
-          >
-            <ChatBubbleLeftRightIconSolid className="h-4 w-4" />
-          </div>
-
-          {/* Tooltip for collapsed state */}
-          <div className="absolute left-full ml-2 px-2 py-1 bg-[#2E3141] text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 min-w-max">
-            <div className="font-semibold">{chat.title || "New Chat"}</div>
-            <div className="text-[#C0C1C6] mt-1">
-              {chat.messages.length} message
-              {chat.messages.length !== 1 ? "s" : ""}
-            </div>
-            <div className="absolute top-1/2 -left-1 transform -translate-y-1/2 w-0 h-0 border-r-4 border-l-0 border-t-4 border-b-4 border-transparent border-r-[#2E3141]"></div>
-          </div>
+        <div className="flex items-center justify-center">
+          <div className="w-2 h-2 bg-[#3077F3] rounded-full"></div>
         </div>
-
-        {/* Active indicator */}
-        {isSelected && (
-          <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1.5 h-1.5 bg-gradient-to-r from-[#3077F3] to-[#B96AF7] rounded-full shadow-sm animate-pulse" />
-        )}
       </div>
     );
   }
@@ -86,78 +34,21 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`group relative p-3 rounded-lg transition-all duration-300 ease-in-out cursor-pointer transform hover:scale-[1.02] ${
+      className={`group relative p-3 rounded-lg transition-all duration-300 ease-in-out cursor-pointer ${
         isSelected
-          ? "text-[#3077F3] bg-gradient-to-r from-[#EFF5FF] to-[#F8F5FF] shadow-lg border border-[#94BAFD]"
-          : "hover:bg-gradient-to-r hover:from-[#F5F5F5] hover:to-[#EFF5FF] border border-transparent"
+          ? "bg-[#F7F7F8] text-[#2E3141]"
+          : "hover:bg-[#F5F5F5] text-[#2E3141]"
       }`}
     >
-      {/* Chat Item Content */}
-      <div className="flex items-start space-x-3">
-        {/* Avatar */}
-        <div className="flex-shrink-0">
-          <div
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
-              isSelected
-                ? "bg-[#3077F3] text-white"
-                : "text-[#6D6F7A] group-hover:text-[#2E3141]"
-            }`}
-          >
-            <ChatBubbleLeftRightIconSolid className="h-4 w-4" />
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <h3
-            className={`text-sm font-medium transition-colors duration-300 truncate ${
-              isSelected ? "text-[#2E3141]" : "text-[#2E3141]"
-            }`}
-            title={chat.title || "New Chat"}
-          >
-            {chat.title || "New Chat"}
-          </h3>
-          <p className="text-xs text-[#6D6F7A] mt-1 leading-relaxed line-clamp-2">
-            {previewText}
-          </p>
-
-          {/* Message Count & Model */}
-          {chat.messages.length > 0 && (
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-xs text-[#6D6F7A]">
-                {chat.messages.length} message
-                {chat.messages.length !== 1 ? "s" : ""}
-              </span>
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center justify-center">
-                  <ModelIcon
-                    className={`h-3 w-3 ${modelColors[selectedModel]}`}
-                  />
-                </div>
-                <span
-                  className={`text-xs font-bold px-2 py-1 rounded-lg border ${
-                    modelColors[selectedModel]
-                  } bg-opacity-10 border-opacity-30 ${modelColors[selectedModel]
-                    .replace("text-", "bg-")
-                    .replace("-600", "-50")} ${modelColors[selectedModel]
-                    .replace("text-", "border-")
-                    .replace("-600", "-200")}`}
-                >
-                  {selectedModel.toUpperCase()}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Active indicator */}
-        {isSelected && (
-          <div className="absolute right-3 w-1.5 h-1.5 bg-gradient-to-r from-[#3077F3] to-[#B96AF7] rounded-full shadow-sm animate-pulse" />
-        )}
+      {/* Simple Chat Title */}
+      <div className="flex items-center">
+        <h3
+          className="text-sm font-medium transition-colors duration-300 truncate"
+          title={chat.title || "New Chat"}
+        >
+          {chat.title || "New Chat"}
+        </h3>
       </div>
-
-      {/* Hover background effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#EFF5FF]/80 to-[#F8F5FF]/80 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
     </div>
   );
 };

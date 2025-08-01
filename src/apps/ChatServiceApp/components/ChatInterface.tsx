@@ -11,6 +11,7 @@ import {
   ExclamationTriangleIcon,
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
+import { ChatLoader } from "./ChatLoader";
 
 interface ChatInterfaceProps {
   chatId: string;
@@ -207,13 +208,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {isLoadingMessages ? (
           <div className="flex items-center justify-center py-8">
-            <div className="relative">
-              <div className="w-8 h-8 border-4 border-[#D5D6D9] border-t-[#3077F3] rounded-full animate-spin"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-6 h-6 border-4 border-transparent border-t-[#B96AF7] rounded-full animate-spin"></div>
-              </div>
-            </div>
-            <span className="ml-2 text-[#6D6F7A]">Loading messages...</span>
+            <ChatLoader />
           </div>
         ) : sortedMessages.length === 0 ? (
           <div className="text-center py-8">

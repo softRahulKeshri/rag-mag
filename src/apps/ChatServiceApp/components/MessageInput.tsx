@@ -8,7 +8,6 @@ import {
 import {
   PaperClipIcon,
   PaperAirplaneIcon,
-  ArrowPathIcon,
   XMarkIcon,
   DocumentIcon,
 } from "@heroicons/react/24/outline";
@@ -135,7 +134,7 @@ export const MessageInput = ({
           }`}
         >
           {/* Input Area */}
-          <div className="flex items-end space-x-2 p-3">
+          <div className="flex items-center space-x-2 p-3">
             {/* Attach Button */}
             <button
               type="button"
@@ -199,7 +198,7 @@ export const MessageInput = ({
               aria-label={isSending ? "Sending..." : "Send message"}
             >
               {isSending ? (
-                <ArrowPathIcon className="h-4 w-4 animate-spin" />
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <PaperAirplaneIcon className="h-4 w-4" />
               )}

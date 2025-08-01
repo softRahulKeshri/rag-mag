@@ -137,10 +137,10 @@ export const ChatSidebar = ({
           isCollapsed ? "p-2" : "p-3"
         } space-y-2 scroll-smooth`}
       >
-        {chats.length === 0 ? (
-          <div className={`text-center ${isCollapsed ? "py-4" : "py-8"} px-2`}>
-            {!isCollapsed ? (
-              <>
+        {!isCollapsed && (
+          <>
+            {chats.length === 0 ? (
+              <div className="text-center py-8 px-2">
                 <div className="w-16 h-16 bg-[#F5F5F5] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                   <ChatBubbleLeftRightIcon className="h-8 w-8 text-[#6D6F7A]" />
                 </div>
@@ -150,29 +150,25 @@ export const ChatSidebar = ({
                 <p className="text-xs text-[#6D6F7A] mb-4 leading-relaxed">
                   Start your first AI conversation to see it appear here
                 </p>
-              </>
+              </div>
             ) : (
-              <div className="w-8 h-8 bg-[#F5F5F5] rounded-lg flex items-center justify-center mx-auto">
-                <ChatBubbleLeftRightIcon className="h-4 w-4 text-[#6D6F7A]" />
+              <div className="space-y-2">
+                {chats.map((chat) => (
+                  <div
+                    key={chat.id}
+                    className="transition-all duration-300 ease-in-out transform hover:scale-[1.02]"
+                  >
+                    <ChatListItem
+                      chat={chat}
+                      isSelected={selectedChatId === chat.id}
+                      onClick={() => onSelectChat(chat.id)}
+                      isCollapsed={isCollapsed}
+                    />
+                  </div>
+                ))}
               </div>
             )}
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {chats.map((chat) => (
-              <div
-                key={chat.id}
-                className="transition-all duration-300 ease-in-out transform hover:scale-[1.02]"
-              >
-                <ChatListItem
-                  chat={chat}
-                  isSelected={selectedChatId === chat.id}
-                  onClick={() => onSelectChat(chat.id)}
-                  isCollapsed={isCollapsed}
-                />
-              </div>
-            ))}
-          </div>
+          </>
         )}
       </div>
 

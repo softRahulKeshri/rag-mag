@@ -9,6 +9,7 @@ import {
 import { SparklesIcon as SparklesIconSolid } from "@heroicons/react/24/solid";
 import type { IMessage } from "../types/types";
 import { formatTimestamp } from "../utils/chatUtils";
+import { ChatLoader } from "./ChatLoader";
 
 interface ChatMessagesProps {
   messages: IMessage[];
@@ -108,17 +109,7 @@ export const ChatMessages = ({
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center p-6 bg-white overflow-hidden">
-        <div className="text-center">
-          <div className="relative mb-6">
-            <div className="w-16 h-16 border-4 border-[#D5D6D9] border-t-[#3077F3] rounded-full animate-spin mx-auto"></div>
-          </div>
-          <h3 className="text-lg font-bold text-[#2E3141] mb-2">
-            Loading Messages
-          </h3>
-          <p className="text-sm text-[#6D6F7A]">
-            Retrieving your conversation history...
-          </p>
-        </div>
+        <ChatLoader />
       </div>
     );
   }

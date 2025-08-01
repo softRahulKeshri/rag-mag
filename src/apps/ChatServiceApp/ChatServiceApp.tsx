@@ -4,6 +4,7 @@ import { ChatHeader } from "./components/ChatHeader";
 import { ChatSidebar } from "./components/ChatSidebar";
 import { ChatMessages } from "./components/ChatMessages";
 import { MessageInput } from "./components/MessageInput";
+import { ChatLoader } from "./components/ChatLoader";
 import {
   useCreateChatSessionApi,
   useChatSessionsEnhanced,
@@ -310,18 +311,8 @@ const ChatServiceApp = () => {
   // Show loading state while fetching sessions
   if (isLoadingSessions) {
     return (
-      <div className="h-screen w-full bg-[#F5F5F5] flex items-center justify-center">
-        <div className="text-center p-6 bg-white rounded-xl shadow-xl border border-[#EAEAEC] max-w-sm mx-auto">
-          <div className="relative mb-4">
-            <div className="w-12 h-12 border-4 border-[#D5D6D9] border-t-[#3077F3] rounded-full animate-spin mx-auto"></div>
-          </div>
-          <h3 className="text-lg font-bold text-[#2E3141] mb-2">
-            Loading ChatAI
-          </h3>
-          <p className="text-sm text-[#6D6F7A]">
-            Setting up your conversation experience...
-          </p>
-        </div>
+      <div className="h-full w-full bg-[#F5F5F5] flex items-center justify-center">
+        <ChatLoader />
       </div>
     );
   }
@@ -329,7 +320,7 @@ const ChatServiceApp = () => {
   // Show error state if sessions fail to load
   if (sessionsError) {
     return (
-      <div className="h-screen w-full bg-[#F5F5F5] flex items-center justify-center p-4">
+      <div className="h-full w-full bg-[#F5F5F5] flex items-center justify-center p-4">
         <div className="text-center max-w-md mx-auto p-6 bg-white rounded-xl shadow-xl border border-[#EAEAEC]">
           <div className="w-16 h-16 bg-[#FEF2F2] rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
             <svg
@@ -378,7 +369,7 @@ const ChatServiceApp = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[#F5F5F5] overflow-hidden">
+    <div className="flex h-full bg-[#F5F5F5] overflow-hidden">
       {/* Sidebar - Hidden by default on mobile, shown on desktop */}
       <div
         className={`${
@@ -405,7 +396,7 @@ const ChatServiceApp = () => {
       )}
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen">
+      <div className="flex-1 flex flex-col min-w-0 h-full">
         {/* Chat Header - Fixed at top */}
         <div className="flex-shrink-0 bg-white border-b border-[#EAEAEC] shadow-sm z-10">
           <ChatHeader
