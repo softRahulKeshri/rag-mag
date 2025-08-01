@@ -14,7 +14,7 @@ export const SidebarToggle: React.FC<SidebarToggleProps> = ({
   return (
     <button
       onClick={onToggle}
-      className={`p-2 text-gray-500 hover:text-blue-600 rounded-lg hover:bg-gray-50 transition-all duration-300 cursor-pointer ${className}`}
+      className={`p-2 text-[#6D6F7A] hover:text-[#3077F3] rounded-lg hover:bg-[#EFF5FF] transition-all duration-300 cursor-pointer ${className}`}
       aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
     >
       {isOpen ? (

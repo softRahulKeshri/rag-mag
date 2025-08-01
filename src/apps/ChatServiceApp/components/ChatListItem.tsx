@@ -21,9 +21,9 @@ const modelIcons = {
 };
 
 const modelColors = {
-  [ModelType.OPENAI]: "text-blue-600",
-  [ModelType.ANTHROPIC]: "text-purple-600",
-  [ModelType.OLLAMA]: "text-gray-600",
+  [ModelType.OPENAI]: "text-[#3077F3]",
+  [ModelType.ANTHROPIC]: "text-[#B96AF7]",
+  [ModelType.OLLAMA]: "text-[#6D6F7A]",
 };
 
 const ChatListItem: React.FC<IChatListItemProps> = ({
@@ -48,8 +48,8 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
         onClick={onClick}
         className={`group relative p-2 rounded-lg transition-all duration-300 ease-in-out cursor-pointer transform hover:scale-110 ${
           isSelected
-            ? "text-purple-600 bg-gradient-to-r from-purple-50 to-blue-50 shadow-lg border border-purple-200"
-            : "hover:bg-gradient-to-r hover:from-gray-50 hover:to-purple-50 border border-transparent"
+            ? "text-[#3077F3] bg-gradient-to-r from-[#EFF5FF] to-[#F8F5FF] shadow-lg border border-[#94BAFD]"
+            : "hover:bg-gradient-to-r hover:from-[#F5F5F5] hover:to-[#EFF5FF] border border-transparent"
         }`}
         title={chat.title || "New Chat"}
       >
@@ -57,27 +57,27 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
           <div
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
               isSelected
-                ? "bg-purple-100 text-purple-600"
-                : "text-gray-400 group-hover:text-gray-600"
+                ? "bg-[#3077F3] text-white"
+                : "text-[#6D6F7A] group-hover:text-[#2E3141]"
             }`}
           >
             <ChatBubbleLeftRightIconSolid className="h-4 w-4" />
           </div>
 
           {/* Tooltip for collapsed state */}
-          <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 min-w-max">
+          <div className="absolute left-full ml-2 px-2 py-1 bg-[#2E3141] text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50 min-w-max">
             <div className="font-semibold">{chat.title || "New Chat"}</div>
-            <div className="text-gray-300 mt-1">
+            <div className="text-[#C0C1C6] mt-1">
               {chat.messages.length} message
               {chat.messages.length !== 1 ? "s" : ""}
             </div>
-            <div className="absolute top-1/2 -left-1 transform -translate-y-1/2 w-0 h-0 border-r-4 border-l-0 border-t-4 border-b-4 border-transparent border-r-gray-900"></div>
+            <div className="absolute top-1/2 -left-1 transform -translate-y-1/2 w-0 h-0 border-r-4 border-l-0 border-t-4 border-b-4 border-transparent border-r-[#2E3141]"></div>
           </div>
         </div>
 
         {/* Active indicator */}
         {isSelected && (
-          <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full shadow-sm animate-pulse" />
+          <div className="absolute -right-1 top-1/2 transform -translate-y-1/2 w-1.5 h-1.5 bg-gradient-to-r from-[#3077F3] to-[#B96AF7] rounded-full shadow-sm animate-pulse" />
         )}
       </div>
     );
@@ -88,8 +88,8 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
       onClick={onClick}
       className={`group relative p-3 rounded-lg transition-all duration-300 ease-in-out cursor-pointer transform hover:scale-[1.02] ${
         isSelected
-          ? "text-purple-600 bg-gradient-to-r from-purple-50 to-blue-50 shadow-lg border border-purple-200"
-          : "hover:bg-gradient-to-r hover:from-gray-50 hover:to-purple-50 border border-transparent"
+          ? "text-[#3077F3] bg-gradient-to-r from-[#EFF5FF] to-[#F8F5FF] shadow-lg border border-[#94BAFD]"
+          : "hover:bg-gradient-to-r hover:from-[#F5F5F5] hover:to-[#EFF5FF] border border-transparent"
       }`}
     >
       {/* Chat Item Content */}
@@ -99,8 +99,8 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
           <div
             className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
               isSelected
-                ? "bg-purple-100 text-purple-600"
-                : "text-gray-400 group-hover:text-gray-600"
+                ? "bg-[#3077F3] text-white"
+                : "text-[#6D6F7A] group-hover:text-[#2E3141]"
             }`}
           >
             <ChatBubbleLeftRightIconSolid className="h-4 w-4" />
@@ -111,20 +111,20 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
         <div className="flex-1 min-w-0">
           <h3
             className={`text-sm font-medium transition-colors duration-300 truncate ${
-              isSelected ? "text-gray-900" : "text-gray-700"
+              isSelected ? "text-[#2E3141]" : "text-[#2E3141]"
             }`}
             title={chat.title || "New Chat"}
           >
             {chat.title || "New Chat"}
           </h3>
-          <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-2">
+          <p className="text-xs text-[#6D6F7A] mt-1 leading-relaxed line-clamp-2">
             {previewText}
           </p>
 
           {/* Message Count & Model */}
           {chat.messages.length > 0 && (
             <div className="flex items-center justify-between mt-2">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#6D6F7A]">
                 {chat.messages.length} message
                 {chat.messages.length !== 1 ? "s" : ""}
               </span>
@@ -152,12 +152,12 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
 
         {/* Active indicator */}
         {isSelected && (
-          <div className="absolute right-3 w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full shadow-sm animate-pulse" />
+          <div className="absolute right-3 w-1.5 h-1.5 bg-gradient-to-r from-[#3077F3] to-[#B96AF7] rounded-full shadow-sm animate-pulse" />
         )}
       </div>
 
       {/* Hover background effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-50/80 to-blue-50/80 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-[#EFF5FF]/80 to-[#F8F5FF]/80 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
     </div>
   );
 };

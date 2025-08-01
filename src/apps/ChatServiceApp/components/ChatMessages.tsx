@@ -2,15 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import {
   Square2StackIcon,
   DocumentDuplicateIcon,
-  SparklesIcon,
-  CheckCircleIcon,
   ChatBubbleLeftRightIcon,
-} from "@heroicons/react/24/outline";
-import {
-  UserCircleIcon as UserCircleIconSolid,
-  SparklesIcon as SparklesIconSolid,
+  UserIcon,
   CheckIcon,
-} from "@heroicons/react/24/solid";
+} from "@heroicons/react/24/outline";
+import { SparklesIcon as SparklesIconSolid } from "@heroicons/react/24/solid";
 import type { IMessage } from "../types/types";
 import { formatTimestamp } from "../utils/chatUtils";
 
@@ -26,6 +22,7 @@ export const ChatMessages = ({
   isAITyping = false,
 }: ChatMessagesProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
 
   const scrollToBottom = () => {
@@ -75,30 +72,33 @@ export const ChatMessages = ({
 
   // AI Typing Indicator Component
   const AITypingIndicator = () => (
-    <div className="flex justify-start group">
-      <div className="relative max-w-[80%] lg:max-w-[70%] xl:max-w-[65%] flex items-start space-x-3">
-        {/* AI Avatar */}
-        <div className="flex-shrink-0 order-first">
-          <div className="relative w-10 h-10 rounded-lg flex items-center justify-center shadow-lg border-2 bg-blue-500 border-blue-400">
-            <SparklesIconSolid className="h-6 w-6 text-white" />
-          </div>
-        </div>
-
-        {/* Typing Bubble */}
-        <div className="relative rounded-lg px-4 py-3 shadow-lg bg-gray-50 border border-gray-200 text-gray-800 rounded-bl-md">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-bold text-gray-700">
-              AI is typing
-            </span>
-            <div className="ai-typing-dots text-blue-500">
-              <div></div>
-              <div></div>
-              <div></div>
+    <div className="group bg-[#F7F7F8]">
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="flex items-start space-x-4 justify-start">
+          {/* AI Avatar */}
+          <div className="flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#3077F3] to-[#B96AF7] shadow-sm">
+              <SparklesIconSolid className="h-4 w-4 text-white" />
             </div>
           </div>
 
-          {/* Message Tail */}
-          <div className="absolute top-6 left-[-6px] w-3 h-3 transform rotate-45 bg-gray-50 border-l border-b border-gray-200"></div>
+          {/* Typing Bubble */}
+          <div className="min-w-0 max-w-[85%] lg:max-w-[75%] xl:max-w-[70%]">
+            <div className="relative">
+              <div className="prose prose-sm max-w-none">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-[#2E3141]">
+                    AI is thinking
+                  </span>
+                  <div className="ai-typing-dots text-[#3077F3]">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -107,15 +107,15 @@ export const ChatMessages = ({
   // Loading state for messages
   if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center p-6 bg-gray-50 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-6 bg-white overflow-hidden">
         <div className="text-center">
           <div className="relative mb-6">
-            <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
+            <div className="w-16 h-16 border-4 border-[#D5D6D9] border-t-[#3077F3] rounded-full animate-spin mx-auto"></div>
           </div>
-          <h3 className="text-lg font-bold text-gray-800 mb-2">
+          <h3 className="text-lg font-bold text-[#2E3141] mb-2">
             Loading Messages
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-[#6D6F7A]">
             Retrieving your conversation history...
           </p>
         </div>
@@ -125,75 +125,26 @@ export const ChatMessages = ({
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-8 bg-gray-50 overflow-y-auto">
-        <div className="text-center max-w-2xl mx-auto">
-          {/* Welcome Section */}
-          <div className="relative mb-12">
-            <div className="relative mx-auto w-20 h-20 lg:w-24 lg:h-24">
-              {/* Main Icon */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 rounded-xl flex items-center justify-center shadow-xl">
-                <ChatBubbleLeftRightIcon className="h-10 w-10 lg:h-12 lg:w-12 text-white" />
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-8 bg-white overflow-y-auto">
+        <div className="text-center max-w-md mx-auto">
+          {/* Welcome Icon */}
+          <div className="relative mb-8">
+            <div className="relative mx-auto w-20 h-20">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#3077F3] via-[#B96AF7] to-[#FDA052] rounded-2xl flex items-center justify-center shadow-xl">
+                <ChatBubbleLeftRightIcon className="h-10 w-10 text-white" />
               </div>
             </div>
           </div>
 
           {/* Welcome Content */}
-          <div className="space-y-6">
-            <div className="space-y-3">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
-                Welcome to ChatAI
-              </h1>
-              <p className="text-lg lg:text-xl text-gray-700 font-bold">
-                Your intelligent conversation partner
-              </p>
-              <p className="text-sm lg:text-base text-gray-600 leading-relaxed max-w-xl mx-auto">
-                Start a conversation below and experience the power of AI-driven
-                chat with enhanced intelligence and natural language
-                understanding
-              </p>
-            </div>
-
-            {/* Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 mt-8">
-              <div className="group p-4 lg:p-6 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                  <SparklesIcon className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-800 mb-2 text-sm lg:text-base">
-                  Smart Responses
-                </h3>
-                <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
-                  Get intelligent, contextual answers to all your questions with
-                  advanced AI reasoning
-                </p>
-              </div>
-
-              <div className="group p-4 lg:p-6 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                  <CheckCircleIcon className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-800 mb-2 text-sm lg:text-base">
-                  Real-time Chat
-                </h3>
-                <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
-                  Instant responses with seamless conversation flow and live
-                  interaction
-                </p>
-              </div>
-
-              <div className="group p-4 lg:p-6 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                  <SparklesIconSolid className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-800 mb-2 text-sm lg:text-base">
-                  AI Powered
-                </h3>
-                <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
-                  Advanced AI technology for natural conversations and
-                  intelligent assistance
-                </p>
-              </div>
-            </div>
+          <div className="space-y-4">
+            <h1 className="text-2xl font-bold text-[#2E3141]">
+              Welcome to ChatAI
+            </h1>
+            <p className="text-[#6D6F7A] leading-relaxed">
+              Start a conversation below and experience intelligent AI-powered
+              chat
+            </p>
           </div>
         </div>
       </div>
@@ -201,33 +152,33 @@ export const ChatMessages = ({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-gray-50 chat-scrollbar scroll-smooth">
+    <div
+      ref={messagesContainerRef}
+      className="h-full overflow-y-auto bg-white chat-scrollbar scroll-smooth flex flex-col"
+    >
       <style>{`
         .chat-scrollbar::-webkit-scrollbar {
-          width: 6px;
+          width: 8px;
         }
         .chat-scrollbar::-webkit-scrollbar-track {
           background: transparent;
         }
         .chat-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(59, 130, 246, 0.3);
-          border-radius: 8px;
-          border: 1px solid transparent;
-          background-clip: content-box;
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 4px;
           transition: background 0.3s ease;
         }
         .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(59, 130, 246, 0.5);
-          background-clip: content-box;
+          background: rgba(0, 0, 0, 0.2);
         }
         .ai-typing-dots {
           display: flex;
           align-items: center;
-          gap: 3px;
+          gap: 2px;
         }
         .ai-typing-dots div {
-          width: 6px;
-          height: 6px;
+          width: 4px;
+          height: 4px;
           border-radius: 50%;
           background: currentColor;
           animation: typing 1.4s infinite ease-in-out;
@@ -250,129 +201,108 @@ export const ChatMessages = ({
             opacity: 1;
           }
         }
+        /* Ensure proper scrolling behavior */
+        .chat-scrollbar {
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+        }
+        /* Ensure messages container takes full height */
+        .chat-scrollbar > div:first-child {
+          min-height: 100%;
+        }
       `}</style>
-      <div className="p-4 space-y-2 min-h-full">
-        <div className="max-w-4xl mx-auto space-y-2">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${
-                message.role === "user" ? "justify-end" : "justify-start"
-              } group`}
-            >
+
+      <div className="flex-1 max-w-4xl mx-auto w-full">
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`group ${
+              message.role === "user" ? "bg-white" : "bg-[#F7F7F8]"
+            }`}
+          >
+            <div className="max-w-4xl mx-auto px-4 py-6">
               <div
-                className={`relative max-w-[85%] lg:max-w-[75%] xl:max-w-[70%] flex items-start space-x-3 ${
-                  message.role === "user"
-                    ? "flex-row-reverse space-x-reverse"
-                    : ""
+                className={`flex items-start space-x-4 ${
+                  message.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                {/* Avatar */}
-                <div
-                  className={`flex-shrink-0 ${
-                    message.role === "user" ? "order-last" : "order-first"
-                  }`}
-                >
-                  <div
-                    className={`relative w-10 h-10 rounded-lg flex items-center justify-center shadow-lg border-2 transition-all duration-300 group-hover:scale-110 ${
-                      message.role === "user"
-                        ? "bg-blue-500 border-blue-400"
-                        : "bg-blue-500 border-blue-400"
-                    }`}
-                  >
-                    {message.role === "user" ? (
-                      <UserCircleIconSolid className="h-6 w-6 text-white" />
-                    ) : (
-                      <SparklesIconSolid className="h-6 w-6 text-white" />
-                    )}
+                {/* Avatar - Only show for AI messages on the left */}
+                {message.role === "assistant" && (
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#3077F3] to-[#B96AF7] shadow-sm">
+                      <SparklesIconSolid className="h-4 w-4 text-white" />
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Message Bubble */}
+                {/* Message Content */}
                 <div
-                  className={`relative rounded-lg px-4 py-3 shadow-lg transition-all duration-300 hover:shadow-xl group-hover:scale-[1.01] ${
-                    message.role === "user"
-                      ? "bg-blue-500 text-white rounded-br-md"
-                      : "bg-white border border-gray-200 text-gray-800 rounded-bl-md hover:border-gray-300"
+                  className={`min-w-0 max-w-[85%] lg:max-w-[75%] xl:max-w-[70%] ${
+                    message.role === "user" ? "order-first" : ""
                   }`}
                 >
-                  {/* Message Text */}
-                  <div className="break-words">
-                    {message.isStreaming ? (
-                      <div className="flex items-end space-x-2">
-                        <div className="whitespace-pre-wrap leading-relaxed text-sm lg:text-base font-semibold">
+                  <div className="relative">
+                    {/* Message Text */}
+                    <div className="prose prose-sm max-w-none">
+                      {message.isStreaming ? (
+                        <div className="flex items-end space-x-2">
+                          <div className="whitespace-pre-wrap leading-relaxed text-[15px] text-[#2E3141]">
+                            {message.content}
+                          </div>
+                          <div className="flex space-x-1 pb-1">
+                            <div className="w-1.5 h-1.5 bg-[#3077F3] rounded-full animate-bounce"></div>
+                            <div
+                              className="w-1.5 h-1.5 bg-[#3077F3] rounded-full animate-bounce"
+                              style={{ animationDelay: "0.1s" }}
+                            ></div>
+                            <div
+                              className="w-1.5 h-1.5 bg-[#3077F3] rounded-full animate-bounce"
+                              style={{ animationDelay: "0.2s" }}
+                            ></div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          className={`whitespace-pre-wrap leading-relaxed text-[15px] ${
+                            message.role === "user"
+                              ? "text-[#2E3141]"
+                              : "text-[#2E3141]"
+                          }`}
+                        >
                           {message.content}
                         </div>
-                        <div className="flex space-x-1 pb-1">
-                          <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"></div>
-                          <div
-                            className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
-                            style={{ animationDelay: "0.1s" }}
-                          ></div>
-                          <div
-                            className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
-                            style={{ animationDelay: "0.2s" }}
-                          ></div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div
-                        className={`whitespace-pre-wrap leading-relaxed text-sm lg:text-base ${
-                          message.role === "user"
-                            ? "font-semibold"
-                            : "font-normal"
-                        }`}
-                      >
-                        {message.content}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* File Attachment */}
-                  {message.file && (
-                    <div className="mt-3 pt-3 border-t border-current border-opacity-20">
-                      <div className="flex items-center space-x-2 text-xs opacity-90">
-                        <DocumentDuplicateIcon className="h-3 w-3" />
-                        <span className="font-bold">{message.file.name}</span>
-                        <span className="text-xs bg-current bg-opacity-10 px-2 py-1 rounded-lg">
-                          ({(message.file.size / 1024).toFixed(1)} KB)
-                        </span>
-                      </div>
+                      )}
                     </div>
-                  )}
 
-                  {/* Timestamp & Status - Inside bubble */}
-                  <div
-                    className={`mt-2 text-xs flex items-center justify-between ${
-                      message.role === "user"
-                        ? "text-white text-opacity-80"
-                        : "text-gray-500"
-                    }`}
-                  >
-                    <span className="font-bold">
-                      {formatTimestamp(message.timestamp)}
-                    </span>
-
-                    {message.role === "assistant" && (
-                      <div className="flex items-center space-x-2">
-                        <div className="flex items-center space-x-1">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                          <span className="text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2 py-1 rounded-lg border border-blue-200 shadow-sm">
-                            AI
+                    {/* File Attachment */}
+                    {message.file && (
+                      <div className="mt-3 pt-3 border-t border-[#EAEAEC]">
+                        <div className="flex items-center space-x-2 text-xs text-[#6D6F7A]">
+                          <DocumentDuplicateIcon className="h-3 w-3" />
+                          <span className="font-medium">
+                            {message.file.name}
+                          </span>
+                          <span className="text-xs bg-[#F5F5F5] px-2 py-1 rounded">
+                            ({(message.file.size / 1024).toFixed(1)} KB)
                           </span>
                         </div>
                       </div>
                     )}
+
+                    {/* Timestamp */}
+                    <div className="mt-2 text-xs text-[#6D6F7A]">
+                      {formatTimestamp(message.timestamp)}
+                    </div>
                   </div>
 
                   {/* Action Buttons - Only for AI responses */}
                   {message.role === "assistant" && (
-                    <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 flex space-x-1">
+                    <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
                       <button
-                        className={`p-2 backdrop-blur-md border rounded-lg transition-all duration-300 hover:scale-110 ${
+                        className={`p-2 rounded-lg transition-all duration-300 hover:scale-110 ${
                           copiedMessageId === String(message.id)
-                            ? "bg-blue-500 bg-opacity-20 border-blue-500 border-opacity-40 text-blue-600 shadow-lg"
-                            : "bg-white border-gray-200 text-gray-600 hover:text-gray-800 hover:bg-white hover:shadow-lg"
+                            ? "bg-[#3077F3] text-white shadow-lg"
+                            : "bg-white border border-[#EAEAEC] text-[#6D6F7A] hover:text-[#2E3141] hover:bg-[#F5F5F5] shadow-sm"
                         }`}
                         aria-label="Copy AI response"
                         onClick={() =>
@@ -387,25 +317,26 @@ export const ChatMessages = ({
                       </button>
                     </div>
                   )}
-
-                  {/* Message Tail */}
-                  <div
-                    className={`absolute top-6 w-3 h-3 transform rotate-45 ${
-                      message.role === "user"
-                        ? "right-[-6px] bg-blue-500"
-                        : "left-[-6px] bg-white border-l border-b border-gray-200"
-                    }`}
-                  ></div>
                 </div>
+
+                {/* Avatar - Only show for user messages on the right */}
+                {message.role === "user" && (
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#3077F3] to-[#B96AF7] shadow-sm">
+                      <UserIcon className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          ))}
+          </div>
+        ))}
 
-          {/* AI Typing Indicator */}
-          {isAITyping && <AITypingIndicator />}
-        </div>
-        <div ref={messagesEndRef} className="h-4" />
+        {/* AI Typing Indicator */}
+        {isAITyping && <AITypingIndicator />}
       </div>
+
+      <div ref={messagesEndRef} className="h-4" />
     </div>
   );
 };

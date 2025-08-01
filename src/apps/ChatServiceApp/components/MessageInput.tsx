@@ -12,22 +12,16 @@ import {
   XMarkIcon,
   DocumentIcon,
 } from "@heroicons/react/24/outline";
-import { ModelSelectorDropdown } from "./ModelSelectorDropdown";
 import type { IFileAttachment } from "../types/types";
-import { ModelType } from "../types/types";
 
 interface MessageInputProps {
   onSendMessage: (message: string, file?: File) => void;
   isSending: boolean;
-  selectedModel?: ModelType;
-  onModelChange?: (model: ModelType) => void;
 }
 
 export const MessageInput = ({
   onSendMessage,
   isSending,
-  selectedModel = ModelType.OPENAI,
-  onModelChange,
 }: MessageInputProps) => {
   const [message, setMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState<IFileAttachment | null>(
@@ -50,7 +44,7 @@ export const MessageInput = ({
         fileInputRef.current.value = "";
       }
       if (textareaRef.current) {
-        textareaRef.current.style.height = "40px";
+        textareaRef.current.style.height = "44px";
       }
     }
   };
@@ -95,25 +89,25 @@ export const MessageInput = ({
   const hasContent = message.trim() || selectedFile;
 
   return (
-    <div className="relative bg-white border-t border-gray-200 rounded-b-2xl">
+    <div className="relative bg-white border-t border-[#EAEAEC]">
       {/* File Attachment Preview */}
       {selectedFile && (
-        <div className="mx-4 mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200 shadow-lg">
+        <div className="mx-4 mt-4 p-3 bg-[#F7F7F8] rounded-lg border border-[#EAEAEC]">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center shadow-lg">
-                <DocumentIcon className="h-6 w-6 text-white" />
+              <div className="flex-shrink-0 w-8 h-8 bg-[#3077F3] rounded-lg flex items-center justify-center">
+                <DocumentIcon className="h-4 w-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-gray-800 truncate">
+                <p className="text-sm font-medium text-[#2E3141] truncate">
                   {selectedFile.name}
                 </p>
-                <div className="flex items-center space-x-2 text-xs text-gray-600 mt-1">
-                  <span className="font-bold">
+                <div className="flex items-center space-x-2 text-xs text-[#6D6F7A] mt-1">
+                  <span className="font-medium">
                     {(selectedFile.size / 1024).toFixed(1)} KB
                   </span>
-                  <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                  <span className="capitalize font-bold bg-white px-2 py-1 rounded-lg text-xs border border-gray-200 shadow-sm">
+                  <div className="w-1 h-1 bg-[#6D6F7A] rounded-full"></div>
+                  <span className="capitalize font-medium bg-white px-2 py-1 rounded text-xs border border-[#EAEAEC]">
                     {selectedFile.type.split("/")[1] || "Unknown"}
                   </span>
                 </div>
@@ -121,7 +115,7 @@ export const MessageInput = ({
             </div>
             <button
               onClick={removeFile}
-              className="flex-shrink-0 p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-300 ml-3"
+              className="flex-shrink-0 p-1.5 text-[#6D6F7A] hover:text-[#2E3141] rounded hover:bg-[#F5F5F5] transition-all duration-300 ml-2"
               aria-label="Remove file"
             >
               <XMarkIcon className="h-4 w-4" />
@@ -134,32 +128,23 @@ export const MessageInput = ({
       <div className="p-4">
         <form
           onSubmit={handleSubmit}
-          className={`relative bg-white rounded-lg transition-all duration-300 shadow-lg border ${
+          className={`relative bg-white rounded-xl transition-all duration-300 shadow-sm border ${
             isFocused
-              ? "ring-2 ring-blue-500/20 shadow-xl border-blue-300"
-              : "border-gray-200 hover:border-gray-300 hover:shadow-xl"
+              ? "ring-2 ring-[#3077F3]/20 shadow-lg border-[#3077F3]"
+              : "border-[#EAEAEC] hover:border-[#D5D6D9] hover:shadow-md"
           }`}
         >
           {/* Input Area */}
-          <div className="flex items-end space-x-3 p-4">
-            {/* Model Selector */}
-            {onModelChange && (
-              <ModelSelectorDropdown
-                selectedModel={selectedModel}
-                onModelChange={onModelChange}
-                className="flex-shrink-0"
-              />
-            )}
-
+          <div className="flex items-end space-x-2 p-3">
             {/* Attach Button */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isSending}
-              className={`flex-shrink-0 p-2.5 rounded-lg transition-all duration-300 ${
+              className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
                 isSending
-                  ? "text-gray-300 cursor-not-allowed"
-                  : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+                  ? "text-[#C0C1C6] cursor-not-allowed"
+                  : "text-[#6D6F7A] hover:text-[#3077F3] hover:bg-[#F7F7F8]"
               }`}
               aria-label="Attach file"
             >
@@ -185,18 +170,18 @@ export const MessageInput = ({
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 placeholder={
-                  isSending ? "AI is thinking..." : "Type your message..."
+                  isSending ? "AI is thinking..." : "Message ChatAI..."
                 }
                 disabled={isSending}
-                className={`w-full bg-transparent border-0 text-gray-800 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[40px] max-h-[120px] text-sm leading-relaxed font-semibold transition-colors ${
-                  isSending ? "text-gray-400 cursor-not-allowed" : ""
+                className={`w-full bg-transparent border-0 text-[#2E3141] placeholder-[#6D6F7A] focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[44px] max-h-[120px] text-[15px] leading-relaxed font-normal transition-colors ${
+                  isSending ? "text-[#6D6F7A] cursor-not-allowed" : ""
                 }`}
                 rows={1}
               />
 
               {/* Character Count */}
               {message.length > 1000 && (
-                <div className="absolute -bottom-6 right-0 text-xs text-gray-500 font-bold">
+                <div className="absolute -bottom-6 right-0 text-xs text-[#6D6F7A] font-medium">
                   {message.length}/2000
                 </div>
               )}
@@ -206,10 +191,10 @@ export const MessageInput = ({
             <button
               type="submit"
               disabled={!hasContent || isSending}
-              className={`flex-shrink-0 p-2.5 rounded-lg transition-all duration-300 ${
+              className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
                 !hasContent || isSending
-                  ? "text-gray-300 bg-gray-100 cursor-not-allowed"
-                  : "text-white bg-blue-500 hover:bg-blue-600 shadow-lg hover:shadow-xl"
+                  ? "text-[#C0C1C6] bg-[#F5F5F5] cursor-not-allowed"
+                  : "text-white bg-[#3077F3] hover:bg-[#1E50A8] shadow-sm hover:shadow-md"
               }`}
               aria-label={isSending ? "Sending..." : "Send message"}
             >
