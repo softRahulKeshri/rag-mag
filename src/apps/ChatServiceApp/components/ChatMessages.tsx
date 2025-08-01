@@ -73,13 +73,13 @@ export const ChatMessages = ({
 
   // AI Typing Indicator Component
   const AITypingIndicator = () => (
-    <div className="group bg-[#F7F7F8]">
-      <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="group bg-gradient-to-r from-gray-50/50 to-white/50 backdrop-blur-sm">
+      <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="flex items-start space-x-4 justify-start">
           {/* AI Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#3077F3] to-[#B96AF7] shadow-sm">
-              <SparklesIconSolid className="h-4 w-4 text-white" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg">
+              <SparklesIconSolid className="h-5 w-5 text-white" />
             </div>
           </div>
 
@@ -87,11 +87,11 @@ export const ChatMessages = ({
           <div className="min-w-0 max-w-[85%] lg:max-w-[75%] xl:max-w-[70%]">
             <div className="relative">
               <div className="prose prose-sm max-w-none">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-medium text-[#2E3141]">
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm font-semibold text-gray-700">
                     AI is thinking
                   </span>
-                  <div className="ai-typing-dots text-[#3077F3]">
+                  <div className="ai-typing-dots text-blue-600">
                     <div></div>
                     <div></div>
                     <div></div>
@@ -108,7 +108,7 @@ export const ChatMessages = ({
   // Loading state for messages
   if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center p-6 bg-white overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-gray-50/30 to-white overflow-hidden">
         <ChatLoader />
       </div>
     );
@@ -116,23 +116,24 @@ export const ChatMessages = ({
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-8 bg-white overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center p-8 lg:p-12 bg-gradient-to-br from-gray-50/30 to-white overflow-y-auto">
         <div className="text-center max-w-md mx-auto">
           {/* Welcome Icon */}
-          <div className="relative mb-8">
-            <div className="relative mx-auto w-20 h-20">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#3077F3] via-[#B96AF7] to-[#FDA052] rounded-2xl flex items-center justify-center shadow-xl">
-                <ChatBubbleLeftRightIcon className="h-10 w-10 text-white" />
+          <div className="relative mb-10">
+            <div className="relative mx-auto w-24 h-24">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 rounded-3xl flex items-center justify-center shadow-2xl">
+                <ChatBubbleLeftRightIcon className="h-12 w-12 text-white" />
               </div>
+              <div className="absolute -inset-2 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-3xl blur-xl"></div>
             </div>
           </div>
 
           {/* Welcome Content */}
           <div className="space-y-4">
-            <h1 className="text-2xl font-bold text-[#2E3141]">
+            <h1 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Welcome to ChatAI
             </h1>
-            <p className="text-[#6D6F7A] leading-relaxed">
+            <p className="text-gray-600 leading-relaxed text-lg">
               Start a conversation below and experience intelligent AI-powered
               chat
             </p>
@@ -145,7 +146,7 @@ export const ChatMessages = ({
   return (
     <div
       ref={messagesContainerRef}
-      className="h-full overflow-y-auto bg-white chat-scrollbar scroll-smooth flex flex-col"
+      className="h-full overflow-y-auto bg-gradient-to-br from-gray-50/30 via-white to-gray-50/20 chat-scrollbar scroll-smooth flex flex-col"
     >
       <style>{`
         .chat-scrollbar::-webkit-scrollbar {
@@ -165,11 +166,11 @@ export const ChatMessages = ({
         .ai-typing-dots {
           display: flex;
           align-items: center;
-          gap: 2px;
+          gap: 3px;
         }
         .ai-typing-dots div {
-          width: 4px;
-          height: 4px;
+          width: 6px;
+          height: 6px;
           border-radius: 50%;
           background: currentColor;
           animation: typing 1.4s infinite ease-in-out;
@@ -208,10 +209,12 @@ export const ChatMessages = ({
           <div
             key={message.id}
             className={`group ${
-              message.role === "user" ? "bg-white" : "bg-[#F7F7F8]"
+              message.role === "user"
+                ? "bg-white/50"
+                : "bg-gradient-to-r from-gray-50/50 to-white/50"
             }`}
           >
-            <div className="max-w-4xl mx-auto px-4 py-6">
+            <div className="max-w-4xl mx-auto px-6 py-8">
               <div
                 className={`flex items-start space-x-4 ${
                   message.role === "user" ? "justify-end" : "justify-start"
@@ -220,8 +223,8 @@ export const ChatMessages = ({
                 {/* Avatar - Only show for AI messages on the left */}
                 {message.role === "assistant" && (
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#3077F3] to-[#B96AF7] shadow-sm">
-                      <SparklesIconSolid className="h-4 w-4 text-white" />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg">
+                      <SparklesIconSolid className="h-5 w-5 text-white" />
                     </div>
                   </div>
                 )}
@@ -233,88 +236,94 @@ export const ChatMessages = ({
                   }`}
                 >
                   <div className="relative">
-                    {/* Message Text */}
-                    <div className="prose prose-sm max-w-none">
-                      {message.isStreaming ? (
-                        <div className="flex items-end space-x-2">
-                          <div className="whitespace-pre-wrap leading-relaxed text-[15px] text-[#2E3141]">
+                    {/* Message Bubble */}
+                    <div
+                      className={`rounded-2xl px-6 py-4 shadow-lg ${
+                        message.role === "user"
+                          ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-blue-500/25"
+                          : "bg-white text-gray-900 shadow-gray-200/50 border border-gray-100"
+                      }`}
+                    >
+                      {/* Message Text */}
+                      <div className="prose prose-sm max-w-none">
+                        {message.isStreaming ? (
+                          <div className="flex items-end space-x-2">
+                            <div className="whitespace-pre-wrap leading-relaxed text-[15px] text-inherit">
+                              {message.content}
+                            </div>
+                            <div className="flex space-x-1 pb-1">
+                              <div className="w-2 h-2 bg-current rounded-full animate-bounce opacity-70"></div>
+                              <div
+                                className="w-2 h-2 bg-current rounded-full animate-bounce opacity-70"
+                                style={{ animationDelay: "0.1s" }}
+                              ></div>
+                              <div
+                                className="w-2 h-2 bg-current rounded-full animate-bounce opacity-70"
+                                style={{ animationDelay: "0.2s" }}
+                              ></div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="whitespace-pre-wrap leading-relaxed text-[15px] text-inherit">
                             {message.content}
                           </div>
-                          <div className="flex space-x-1 pb-1">
-                            <div className="w-1.5 h-1.5 bg-[#3077F3] rounded-full animate-bounce"></div>
-                            <div
-                              className="w-1.5 h-1.5 bg-[#3077F3] rounded-full animate-bounce"
-                              style={{ animationDelay: "0.1s" }}
-                            ></div>
-                            <div
-                              className="w-1.5 h-1.5 bg-[#3077F3] rounded-full animate-bounce"
-                              style={{ animationDelay: "0.2s" }}
-                            ></div>
+                        )}
+                      </div>
+
+                      {/* File Attachment */}
+                      {message.file && (
+                        <div className="mt-4 pt-4 border-t border-gray-200/60">
+                          <div className="flex items-center space-x-2 text-xs text-gray-500">
+                            <DocumentDuplicateIcon className="h-4 w-4" />
+                            <span className="font-medium">
+                              {message.file.name}
+                            </span>
+                            <span className="text-xs bg-gray-100 px-2 py-1 rounded-md">
+                              ({(message.file.size / 1024).toFixed(1)} KB)
+                            </span>
                           </div>
                         </div>
-                      ) : (
-                        <div
-                          className={`whitespace-pre-wrap leading-relaxed text-[15px] ${
-                            message.role === "user"
-                              ? "text-[#2E3141]"
-                              : "text-[#2E3141]"
-                          }`}
-                        >
-                          {message.content}
-                        </div>
                       )}
+
+                      {/* Timestamp */}
+                      <div className="mt-3 text-xs text-gray-400">
+                        {formatTimestamp(message.timestamp)}
+                      </div>
                     </div>
 
-                    {/* File Attachment */}
-                    {message.file && (
-                      <div className="mt-3 pt-3 border-t border-[#EAEAEC]">
-                        <div className="flex items-center space-x-2 text-xs text-[#6D6F7A]">
-                          <DocumentDuplicateIcon className="h-3 w-3" />
-                          <span className="font-medium">
-                            {message.file.name}
-                          </span>
-                          <span className="text-xs bg-[#F5F5F5] px-2 py-1 rounded">
-                            ({(message.file.size / 1024).toFixed(1)} KB)
-                          </span>
-                        </div>
+                    {/* Action Buttons - Only for AI responses */}
+                    {message.role === "assistant" && (
+                      <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <button
+                          className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-110 ${
+                            copiedMessageId === String(message.id)
+                              ? "bg-green-500 text-white shadow-lg"
+                              : "bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 shadow-lg"
+                          }`}
+                          aria-label="Copy AI response"
+                          onClick={() =>
+                            handleCopyMessage(
+                              String(message.id),
+                              message.content
+                            )
+                          }
+                        >
+                          {copiedMessageId === String(message.id) ? (
+                            <CheckIcon className="h-4 w-4" />
+                          ) : (
+                            <Square2StackIcon className="h-4 w-4" />
+                          )}
+                        </button>
                       </div>
                     )}
-
-                    {/* Timestamp */}
-                    <div className="mt-2 text-xs text-[#6D6F7A]">
-                      {formatTimestamp(message.timestamp)}
-                    </div>
                   </div>
-
-                  {/* Action Buttons - Only for AI responses */}
-                  {message.role === "assistant" && (
-                    <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <button
-                        className={`p-2 rounded-lg transition-all duration-300 hover:scale-110 ${
-                          copiedMessageId === String(message.id)
-                            ? "bg-[#3077F3] text-white shadow-lg"
-                            : "bg-white border border-[#EAEAEC] text-[#6D6F7A] hover:text-[#2E3141] hover:bg-[#F5F5F5] shadow-sm"
-                        }`}
-                        aria-label="Copy AI response"
-                        onClick={() =>
-                          handleCopyMessage(String(message.id), message.content)
-                        }
-                      >
-                        {copiedMessageId === String(message.id) ? (
-                          <CheckIcon className="h-3 w-3" />
-                        ) : (
-                          <Square2StackIcon className="h-3 w-3" />
-                        )}
-                      </button>
-                    </div>
-                  )}
                 </div>
 
                 {/* Avatar - Only show for user messages on the right */}
                 {message.role === "user" && (
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-[#3077F3] to-[#B96AF7] shadow-sm">
-                      <UserIcon className="h-4 w-4 text-white" />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg">
+                      <UserIcon className="h-5 w-5 text-white" />
                     </div>
                   </div>
                 )}

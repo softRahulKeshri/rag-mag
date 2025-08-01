@@ -43,7 +43,7 @@ export const MessageInput = ({
         fileInputRef.current.value = "";
       }
       if (textareaRef.current) {
-        textareaRef.current.style.height = "44px";
+        textareaRef.current.style.height = "36px";
       }
     }
   };
@@ -75,7 +75,7 @@ export const MessageInput = ({
   const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const target = e.target as HTMLTextAreaElement;
     target.style.height = "auto";
-    target.style.height = `${Math.min(target.scrollHeight, 120)}px`;
+    target.style.height = `${Math.min(target.scrollHeight, 100)}px`;
   };
 
   const removeFile = () => {
@@ -88,25 +88,25 @@ export const MessageInput = ({
   const hasContent = message.trim() || selectedFile;
 
   return (
-    <div className="relative bg-white border-t border-[#EAEAEC]">
+    <div className="relative bg-gradient-to-b from-white to-gray-50/30 border-t border-gray-100">
       {/* File Attachment Preview */}
       {selectedFile && (
-        <div className="mx-4 mt-4 p-3 bg-[#F7F7F8] rounded-lg border border-[#EAEAEC]">
+        <div className="mx-4 mt-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/60 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <div className="flex-shrink-0 w-8 h-8 bg-[#3077F3] rounded-lg flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-sm">
                 <DocumentIcon className="h-4 w-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-[#2E3141] truncate">
+                <p className="text-sm font-medium text-gray-900 truncate">
                   {selectedFile.name}
                 </p>
-                <div className="flex items-center space-x-2 text-xs text-[#6D6F7A] mt-1">
+                <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
                   <span className="font-medium">
                     {(selectedFile.size / 1024).toFixed(1)} KB
                   </span>
-                  <div className="w-1 h-1 bg-[#6D6F7A] rounded-full"></div>
-                  <span className="capitalize font-medium bg-white px-2 py-1 rounded text-xs border border-[#EAEAEC]">
+                  <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                  <span className="capitalize font-medium bg-gray-100 px-2 py-1 rounded-md text-xs border border-gray-200">
                     {selectedFile.type.split("/")[1] || "Unknown"}
                   </span>
                 </div>
@@ -114,7 +114,7 @@ export const MessageInput = ({
             </div>
             <button
               onClick={removeFile}
-              className="flex-shrink-0 p-1.5 text-[#6D6F7A] hover:text-[#2E3141] rounded hover:bg-[#F5F5F5] transition-all duration-300 ml-2"
+              className="flex-shrink-0 p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200 ml-2"
               aria-label="Remove file"
             >
               <XMarkIcon className="h-4 w-4" />
@@ -127,23 +127,23 @@ export const MessageInput = ({
       <div className="p-4">
         <form
           onSubmit={handleSubmit}
-          className={`relative bg-white rounded-xl transition-all duration-300 shadow-sm border ${
+          className={`relative bg-white rounded-2xl transition-all duration-300 ${
             isFocused
-              ? "ring-2 ring-[#3077F3]/20 shadow-lg border-[#3077F3]"
-              : "border-[#EAEAEC] hover:border-[#D5D6D9] hover:shadow-md"
+              ? "ring-2 ring-blue-500/20 shadow-xl border border-blue-200"
+              : "shadow-lg border border-gray-200/60 hover:shadow-xl hover:border-gray-300/60"
           }`}
         >
           {/* Input Area */}
-          <div className="flex items-center space-x-2 p-3">
+          <div className="flex items-center space-x-2 p-2.5">
             {/* Attach Button */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isSending}
-              className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
+              className={`flex-shrink-0 p-2 rounded-xl transition-all duration-200 ${
                 isSending
-                  ? "text-[#C0C1C6] cursor-not-allowed"
-                  : "text-[#6D6F7A] hover:text-[#3077F3] hover:bg-[#F7F7F8]"
+                  ? "text-gray-300 cursor-not-allowed"
+                  : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
               }`}
               aria-label="Attach file"
             >
@@ -172,15 +172,15 @@ export const MessageInput = ({
                   isSending ? "AI is thinking..." : "Message ChatAI..."
                 }
                 disabled={isSending}
-                className={`w-full bg-transparent border-0 text-[#2E3141] placeholder-[#6D6F7A] focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[44px] max-h-[120px] text-[15px] leading-relaxed font-normal transition-colors ${
-                  isSending ? "text-[#6D6F7A] cursor-not-allowed" : ""
+                className={`w-full bg-transparent border-0 text-gray-900 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[36px] max-h-[100px] text-[15px] leading-relaxed font-normal transition-colors ${
+                  isSending ? "text-gray-400 cursor-not-allowed" : ""
                 }`}
                 rows={1}
               />
 
               {/* Character Count */}
               {message.length > 1000 && (
-                <div className="absolute -bottom-6 right-0 text-xs text-[#6D6F7A] font-medium">
+                <div className="absolute -bottom-6 right-0 text-xs text-gray-400 font-medium">
                   {message.length}/2000
                 </div>
               )}
@@ -190,10 +190,10 @@ export const MessageInput = ({
             <button
               type="submit"
               disabled={!hasContent || isSending}
-              className={`flex-shrink-0 p-2 rounded-lg transition-all duration-300 ${
+              className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-200 ${
                 !hasContent || isSending
-                  ? "text-[#C0C1C6] bg-[#F5F5F5] cursor-not-allowed"
-                  : "text-white bg-[#3077F3] hover:bg-[#1E50A8] shadow-sm hover:shadow-md"
+                  ? "text-gray-300 bg-gray-100 cursor-not-allowed"
+                  : "text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg transform hover:scale-105"
               }`}
               aria-label={isSending ? "Sending..." : "Send message"}
             >
