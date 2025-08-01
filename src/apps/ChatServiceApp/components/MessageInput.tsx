@@ -11,7 +11,6 @@ import {
   ArrowPathIcon,
   XMarkIcon,
   DocumentIcon,
-  QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 import { ModelSelectorDropdown } from "./ModelSelectorDropdown";
 import type { IFileAttachment } from "../types/types";
@@ -222,49 +221,6 @@ export const MessageInput = ({
             </button>
           </div>
         </form>
-
-        {/* Subtle Status Indicator with Tooltip */}
-        <div className="flex items-center justify-between mt-3 px-1">
-          <div className="flex items-center space-x-2 text-xs text-gray-500">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-            <span className="font-medium">AI Ready</span>
-          </div>
-
-          {/* Help Tooltip */}
-          <div className="flex items-center space-x-2">
-            <div className="group relative">
-              <button
-                type="button"
-                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                aria-label="Keyboard shortcuts help"
-              >
-                <QuestionMarkCircleIcon className="h-3 w-3" />
-              </button>
-
-              {/* Tooltip */}
-              <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                <div className="flex items-center space-x-2">
-                  <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-white font-mono text-xs">
-                    ⏎
-                  </kbd>
-                  <span>Send message</span>
-                </div>
-                <div className="flex items-center space-x-2 mt-1">
-                  <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-white font-mono text-xs">
-                    ⇧
-                  </kbd>
-                  <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-white font-mono text-xs">
-                    ⏎
-                  </kbd>
-                  <span>New line</span>
-                </div>
-
-                {/* Tooltip Arrow */}
-                <div className="absolute top-full right-2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

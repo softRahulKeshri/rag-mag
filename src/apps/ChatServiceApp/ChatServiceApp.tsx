@@ -418,6 +418,7 @@ const ChatServiceApp = () => {
             selectedModel={selectedChat?.selectedModel || selectedModel}
             onClearChat={handleClearChat}
             onRenameChat={handleRenameChat}
+            onModelChange={handleModelChange}
           />
         </div>
 

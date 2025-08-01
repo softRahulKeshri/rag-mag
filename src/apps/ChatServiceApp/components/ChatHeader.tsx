@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 import { ModelType } from "../types/types";
+import { ModelSelectorDropdown } from "./ModelSelectorDropdown";
 
 interface ChatHeaderProps {
   title?: string;
@@ -14,13 +15,8 @@ interface ChatHeaderProps {
   selectedModel?: ModelType;
   onClearChat?: () => void;
   onRenameChat?: (newName: string) => void;
+  onModelChange?: (model: ModelType) => void;
 }
-
-const modelNames = {
-  [ModelType.OPENAI]: "OpenAI GPT",
-  [ModelType.ANTHROPIC]: "Anthropic Claude",
-  [ModelType.OLLAMA]: "Ollama",
-};
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   title = "New Chat",
@@ -28,6 +24,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   selectedModel = ModelType.OPENAI,
   onClearChat,
   onRenameChat,
+  onModelChange,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -58,7 +55,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg border border-blue-400/30">
                 <ChatBubbleLeftRightIcon className="h-5 w-5 text-white" />
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white shadow-lg"></div>
             </div>
             <div className="flex flex-col">
               <h1 className="text-lg font-bold text-gray-900 leading-tight">
@@ -71,10 +67,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                     {subtitle}
                   </span>
                 </div>
-                <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                <span className="font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg border border-blue-200 text-xs">
-                  {modelNames[selectedModel]}
-                </span>
+                {onModelChange && (
+                  <>
+                    <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                    <ModelSelectorDropdown
+                      selectedModel={selectedModel}
+                      onModelChange={onModelChange}
+                    />
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -82,13 +83,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
         {/* Right Section */}
         <div className="flex items-center space-x-3">
-          {/* AI Status Indicator */}
-          <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-lg border border-emerald-200">
-            <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-            <span className="text-xs font-bold text-gray-700">AI Ready</span>
-            <div className="w-1 h-1 bg-emerald-400 rounded-full"></div>
-          </div>
-
           {/* Menu Button */}
           <div className="relative" ref={menuRef}>
             <button

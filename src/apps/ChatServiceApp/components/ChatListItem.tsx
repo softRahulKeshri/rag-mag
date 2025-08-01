@@ -129,9 +129,11 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
                 {chat.messages.length !== 1 ? "s" : ""}
               </span>
               <div className="flex items-center space-x-2">
-                <ModelIcon
-                  className={`h-3 w-3 ${modelColors[selectedModel]}`}
-                />
+                <div className="flex items-center justify-center">
+                  <ModelIcon
+                    className={`h-3 w-3 ${modelColors[selectedModel]}`}
+                  />
+                </div>
                 <span
                   className={`text-xs font-bold px-2 py-1 rounded-lg border ${
                     modelColors[selectedModel]

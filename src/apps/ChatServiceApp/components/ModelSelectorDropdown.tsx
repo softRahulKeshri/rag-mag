@@ -63,9 +63,9 @@ export const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
         />
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu - Opens at bottom */}
       {isOpen && (
-        <div className="absolute bottom-full left-0 mb-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+        <div className="absolute top-full left-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
           <div className="py-2">
             {Object.entries(modelConfig).map(([model, config]) => {
               const Icon = config.icon;
@@ -76,7 +76,7 @@ export const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
                     onModelChange(model as ModelType);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-all duration-300 cursor-pointer text-sm ${
+                  className={`w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 transition-all duration-300 cursor-pointer text-sm ${
                     selectedModel === model ? "bg-blue-50" : ""
                   }`}
                 >

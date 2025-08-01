@@ -107,7 +107,7 @@ export const ChatMessages = ({
   // Loading state for messages
   if (isLoading) {
     return (
-      <div className="h-full flex items-center justify-center p-6 bg-gray-50 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-6 bg-gray-50 overflow-hidden">
         <div className="text-center">
           <div className="relative mb-6">
             <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto"></div>
@@ -125,7 +125,7 @@ export const ChatMessages = ({
 
   if (messages.length === 0) {
     return (
-      <div className="h-full flex items-center justify-center p-6 lg:p-8 bg-gray-50 overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-8 bg-gray-50 overflow-y-auto">
         <div className="text-center max-w-2xl mx-auto">
           {/* Welcome Section */}
           <div className="relative mb-12">
@@ -194,24 +194,6 @@ export const ChatMessages = ({
                 </p>
               </div>
             </div>
-
-            {/* Status Indicators */}
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-6 pt-6">
-              <div className="flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 lg:py-3 bg-emerald-50 rounded-lg border border-emerald-200 shadow-lg">
-                <div className="w-2 h-2 lg:w-3 lg:h-3 bg-emerald-500 rounded-full"></div>
-                <span className="text-sm lg:text-base font-bold text-gray-700">
-                  AI Ready
-                </span>
-                <SparklesIcon className="h-3 w-3 lg:h-4 lg:w-4 text-emerald-500" />
-              </div>
-              <div className="flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 lg:py-3 bg-blue-50 rounded-lg border border-blue-200 shadow-lg">
-                <div className="w-2 h-2 lg:w-3 lg:h-3 bg-blue-500 rounded-full"></div>
-                <span className="text-sm lg:text-base font-bold text-gray-700">
-                  Online
-                </span>
-                <CheckCircleIcon className="h-3 w-3 lg:h-4 lg:w-4 text-blue-500" />
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -219,7 +201,7 @@ export const ChatMessages = ({
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50 chat-scrollbar scroll-smooth">
+    <div className="flex-1 overflow-y-auto bg-gray-50 chat-scrollbar scroll-smooth">
       <style>{`
         .chat-scrollbar::-webkit-scrollbar {
           width: 6px;
@@ -269,8 +251,8 @@ export const ChatMessages = ({
           }
         }
       `}</style>
-      <div className="p-4 space-y-4 min-h-full">
-        <div className="max-w-4xl mx-auto space-y-4">
+      <div className="p-4 space-y-2 min-h-full">
+        <div className="max-w-4xl mx-auto space-y-2">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -359,9 +341,9 @@ export const ChatMessages = ({
                     </div>
                   )}
 
-                  {/* Timestamp & Status */}
+                  {/* Timestamp & Status - Inside bubble */}
                   <div
-                    className={`mt-3 text-xs flex items-center justify-between ${
+                    className={`mt-2 text-xs flex items-center justify-between ${
                       message.role === "user"
                         ? "text-white text-opacity-80"
                         : "text-gray-500"

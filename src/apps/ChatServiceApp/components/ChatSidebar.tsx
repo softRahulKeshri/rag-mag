@@ -50,7 +50,6 @@ export const ChatSidebar = ({
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 via-purple-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg border border-blue-400/30">
                 <ChatBubbleLeftRightIcon className="h-4 w-4 text-white" />
               </div>
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full border border-white"></div>
 
               {/* Tooltip for collapsed state */}
               {isCollapsed && (
@@ -151,12 +150,6 @@ export const ChatSidebar = ({
                 <p className="text-xs text-gray-600 mb-4 leading-relaxed">
                   Start your first AI conversation to see it appear here
                 </p>
-                <div className="inline-flex items-center space-x-2 px-3 py-2 bg-emerald-50 rounded-lg border border-emerald-200 shadow-lg">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                  <span className="text-xs font-bold text-emerald-700">
-                    Ready to chat
-                  </span>
-                </div>
               </>
             ) : (
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mx-auto">
