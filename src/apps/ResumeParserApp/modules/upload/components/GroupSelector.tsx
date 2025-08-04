@@ -396,42 +396,39 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
         ref={buttonRef}
         onClick={toggleDropdown}
         disabled={isLoading}
-        className={`w-full flex items-center justify-between px-6 py-4 border-2 rounded-xl shadow-sm bg-white text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
+        className={`w-full flex items-center justify-between px-4 py-3.5 border-2 rounded-xl shadow-sm bg-white text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
           selectedGroup
             ? "border-blue-300 hover:bg-blue-50"
             : "border-gray-200 hover:border-gray-300"
         }`}
       >
-        <div className="flex items-center space-x-4 flex-1 min-w-0">
+        <div className="flex items-center space-x-3 flex-1 min-w-0">
           {/* Simple Icon */}
-          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-            <UserGroupIcon className="w-6 h-6 text-blue-600" />
+          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+            <UserGroupIcon className="w-5 h-5 text-blue-600" />
           </div>
 
           {/* Text Content */}
           <div className="flex-1 min-w-0">
             {isLoading ? (
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                <div className="h-3 bg-gray-100 rounded w-3/4 animate-pulse"></div>
+              <div className="space-y-1.5">
+                <div className="h-3.5 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-2.5 bg-gray-100 rounded w-2/3 animate-pulse"></div>
               </div>
             ) : selectedGroup ? (
               <div>
-                <span className="block text-base font-semibold text-gray-900 truncate">
+                <span className="block text-sm font-semibold text-gray-900 truncate">
                   {selectedGroup.name}
                 </span>
                 {selectedGroup.description && (
-                  <span className="block text-sm text-gray-500 truncate">
+                  <span className="block text-xs text-gray-500 truncate">
                     {selectedGroup.description}
                   </span>
                 )}
               </div>
             ) : (
               <div>
-                <span className="block text-base font-medium text-gray-700">
-                  Select Group
-                </span>
-                <span className="block text-sm text-gray-500">
+                <span className="block text-sm font-medium text-gray-700">
                   Choose a group to organize your files
                 </span>
               </div>
@@ -440,14 +437,14 @@ const GroupSelector: React.FC<GroupSelectorProps> = ({
         </div>
 
         {/* Dropdown Arrow or Loading Spinner */}
-        <div className="flex-shrink-0 ml-4">
+        <div className="flex-shrink-0 ml-3">
           {isLoading ? (
-            <div className="w-5 w-5 text-gray-400 animate-spin">
-              <ArrowPathIcon className="w-5 h-5" />
+            <div className="w-4 h-4 text-gray-400 animate-spin">
+              <ArrowPathIcon className="w-4 h-4" />
             </div>
           ) : (
             <ChevronDownIcon
-              className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+              className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
                 isOpen ? "transform rotate-180" : ""
               }`}
             />
