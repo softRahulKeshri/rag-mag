@@ -1,9 +1,7 @@
 import React, { useCallback, useRef } from "react";
-import type { UploadedFile } from "../types";
 import {
   DocumentTextIcon,
   XMarkIcon,
-  CheckCircleIcon,
   CloudArrowUpIcon,
 } from "@heroicons/react/24/outline";
 
@@ -11,12 +9,9 @@ interface FileUploadZoneProps {
   onFileSelect: (files: FileList | File[]) => void;
   onFileDrop: (files: FileList) => void;
   selectedFiles: File[];
-  uploadedFiles: UploadedFile[];
   onRemoveFile: (fileName: string) => void;
   onClearAll: () => void;
-  onClearUploaded: () => void;
   uploadStatus: "idle" | "uploading" | "success" | "error";
-  uploadProgress?: Record<string, number>;
   disabled?: boolean;
   // New props for upload functionality
   onUpload?: () => void;
@@ -28,12 +23,9 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
   onFileSelect,
   onFileDrop,
   selectedFiles,
-  uploadedFiles,
   onRemoveFile,
   onClearAll,
-  onClearUploaded,
   uploadStatus,
-  uploadProgress = {},
   disabled = false,
   onUpload,
   selectedGroup,
@@ -87,10 +79,6 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  const getFileProgress = (fileName: string): number => {
-    return uploadProgress[fileName] || 0;
-  };
-
   return (
     <div className="h-full flex flex-col">
       {/* Drag & Drop Zone - Fixed height */}
@@ -133,8 +121,49 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             Drag & Drop CVs Here
           </h3>
-          <p className="text-sm text-gray-600 mb-3">or click to browse files</p>
-         
+          <p className="text-xs text-gray-500 mb-3">or click to browse files</p>
+
+          {/* File Guidelines with Subtle Icons */}
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center justify-center space-x-4 text-xs text-gray-400">
+              <div className="flex items-center space-x-1">
+                <DocumentTextIcon className="w-3 h-3" />
+                <span>PDF, DOCX</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>Max 200MB</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>100 files</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -181,23 +210,6 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
                       <p className="text-xs text-gray-500">
                         {formatFileSize(file.size)}
                       </p>
-
-                      {/* Progress bar for uploading files */}
-                      {uploadStatus === "uploading" && (
-                        <div className="mt-1">
-                          <div className="w-full bg-gray-200 rounded-full h-1">
-                            <div
-                              className="bg-gradient-to-r from-blue-500 to-indigo-600 h-1 rounded-full transition-all duration-300"
-                              style={{
-                                width: `${getFileProgress(file.name)}%`,
-                              }}
-                            />
-                          </div>
-                          <p className="text-xs text-blue-600 mt-1">
-                            {Math.round(getFileProgress(file.name))}% uploaded
-                          </p>
-                        </div>
-                      )}
                     </div>
                   </div>
                   <button
@@ -215,13 +227,7 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
 
         {/* Upload Button - Always visible, conditionally enabled */}
         {onUpload && (
-          <div
-            className={`${
-              selectedFiles.length > 0
-                ? "mt-2 pt-4"
-                : "mt-4"
-            }`}
-          >
+          <div className={`${selectedFiles.length > 0 ? "mt-2 pt-4" : "mt-4"}`}>
             <div className="text-center">
               <button
                 onClick={onUpload}
@@ -241,130 +247,6 @@ const FileUploadZone: React.FC<FileUploadZoneProps> = ({
                   ? `Upload ${selectedFiles.length} CVs`
                   : "Upload CVs"}
               </button>
-
-             
-            </div>
-          </div>
-        )}
-
-        {/* Uploaded Files - Enhanced */}
-        {uploadedFiles.length > 0 && (
-          <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-6 h-6 bg-green-100 rounded-lg flex items-center justify-center">
-                  <CheckCircleIcon className="w-4 h-4 text-green-600" />
-                </div>
-                <div>
-                  <h4 className="text-base font-semibold text-gray-900">
-                    Uploaded Files ({uploadedFiles.length})
-                  </h4>
-                  <p className="text-xs text-gray-500">
-                    Successfully processed and analyzed
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={onClearUploaded}
-                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                Clear
-              </button>
-            </div>
-
-            {/* Scrollable container for uploaded files */}
-            <div className="space-y-2 max-h-32 overflow-y-auto pr-2">
-              {uploadedFiles.map((file) => (
-                <div
-                  key={file.id}
-                  className="flex items-center space-x-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl"
-                >
-                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <CheckCircleIcon className="w-4 h-4 text-green-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {file.name}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {formatFileSize(file.size)} • Uploaded successfully
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      Processed
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Enhanced Upload Status Messages */}
-        {uploadStatus === "uploading" && (
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="animate-spin w-5 h-5 text-blue-600"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h4 className="text-sm font-semibold text-blue-900 mb-1">
-                  Uploading Files...
-                </h4>
-                <p className="text-xs text-blue-700">
-                  Processing {selectedFiles.length} files with AI-powered
-                  analysis
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {uploadStatus === "error" && (
-          <div className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl p-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-red-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h4 className="text-sm font-semibold text-red-900 mb-1">
-                  Upload Failed
-                </h4>
-                <p className="text-xs text-red-700">
-                  There was an error uploading your files. Please try again.
-                </p>
-              </div>
             </div>
           </div>
         )}
