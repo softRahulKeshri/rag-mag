@@ -2,6 +2,12 @@ import React from "react";
 import { UserCircleIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 import CommonSidebar from "../../../components/CommonSidebar";
 import { useUser } from "../../../store/useGlobalStore";
+import {
+  formatDisplayName,
+  formatAccountText,
+  createGreeting,
+} from "../../../utils/textUtils";
+import { Tooltip } from "../../../components/ui/Tooltip";
 import type { SidebarProps, NavigationItem } from "../types/sidebar";
 import { Section } from "../types/shared";
 
@@ -10,7 +16,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onSectionChange,
 }) => {
   const user = useUser();
-  const displayName = user?.username || "User";
+  const displayName = formatDisplayName(user?.username);
 
   const navigationItems: NavigationItem[] = [
     {
@@ -100,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <button
             key={item.id}
             onClick={() => onSectionChange(item.id)}
-            className={`w-full text-left p-4 rounded-xl transition-all duration-300 ease-out group ${
+            className={`w-full text-left p-4 rounded-xl transition-all duration-300 ease-out group cursor-pointer ${
               activeSection === item.id
                 ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg border border-purple-200/50"
                 : "hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80 border border-transparent"
@@ -156,12 +162,19 @@ const Sidebar: React.FC<SidebarProps> = ({
 
             {/* Enhanced User Info */}
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-slate-800 truncate">
-                {displayName}
-              </h3>
-              <p className="text-xs text-slate-500 truncate">
-                {user?.email || "User Account"}
-              </p>
+              <Tooltip content={createGreeting(displayName)} className="block">
+                <h3 className="text-sm font-semibold text-slate-800 truncate">
+                  {createGreeting(displayName)}
+                </h3>
+              </Tooltip>
+              <Tooltip
+                content={formatAccountText(user?.email)}
+                className="block"
+              >
+                <p className="text-xs text-slate-500 truncate">
+                  {formatAccountText(user?.email)}
+                </p>
+              </Tooltip>
             </div>
           </div>
         </div>

@@ -58,7 +58,7 @@ export const ModelSelector = ({
       {/* Selected Model Display */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-300 hover:shadow-lg ${
+        className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all duration-300 hover:shadow-lg cursor-pointer ${
           isOpen
             ? "ring-2 ring-blue-500/20 shadow-lg"
             : "hover:border-gray-300 hover:shadow-lg"
@@ -96,7 +96,7 @@ export const ModelSelector = ({
                     onModelChange(model as ModelType);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center space-x-4 px-5 py-4 text-left hover:bg-gray-50 transition-all duration-300 ${
+                  className={`w-full flex items-center space-x-4 px-5 py-4 text-left hover:bg-gray-50 transition-all duration-300 cursor-pointer ${
                     selectedModel === model ? "bg-blue-50" : ""
                   }`}
                 >

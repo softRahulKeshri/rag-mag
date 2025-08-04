@@ -283,7 +283,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
                   </div>
                   <button
                     onClick={() => removeFile(index)}
-                    className="p-2 text-[#ABADB3] hover:text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg transition-colors duration-200"
+                    className="p-2 text-[#ABADB3] hover:text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg transition-colors duration-200 cursor-pointer"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
@@ -326,7 +326,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
                 <p className="text-sm text-[#B91C1C] mt-1">{error}</p>
                 <button
                   onClick={clearError}
-                  className="mt-2 text-sm text-[#DC2626] hover:text-[#B91C1C] font-medium"
+                  className="mt-2 text-sm text-[#DC2626] hover:text-[#B91C1C] font-medium cursor-pointer"
                 >
                   Dismiss
                 </button>

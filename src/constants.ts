@@ -5,7 +5,7 @@
  * app-specific settings, and shared values.
  */
 
-import { resumeApi, chatApi, pitchApi, getApiConfig } from "./lib/axios";
+import { resumeApi, chatApi, pitchApi } from "./lib/axios";
 
 // API Service Constants
 export const API_SERVICES = {
@@ -65,46 +65,12 @@ export const UI = {
   TOAST_DURATION: 5000,
 } as const;
 
-// Theme constants
-export const THEME = {
-  COLORS: {
-    PRIMARY: "#3B82F6",
-    SECONDARY: "#8B5CF6",
-    SUCCESS: "#10B981",
-    WARNING: "#F59E0B",
-    ERROR: "#EF4444",
-    INFO: "#06B6D4",
-  },
-  BREAKPOINTS: {
-    SM: "640px",
-    MD: "768px",
-    LG: "1024px",
-    XL: "1280px",
-    "2XL": "1536px",
-  },
-} as const;
-
 // Environment constants
 export const ENV = {
   IS_DEVELOPMENT: import.meta.env.MODE === "development",
   IS_PRODUCTION: import.meta.env.MODE === "production",
   IS_TEST: import.meta.env.MODE === "test",
 } as const;
-
-/**
- * Helper function to get API instance for specific app
- */
-export const getAppApiInstance = (appName: keyof typeof APP_APIS) => {
-  return APP_APIS[appName];
-};
-
-/**
- * Helper to get full API URLs for debugging
- */
-export const getApiUrls = () => {
-  const config = getApiConfig();
-  return config.FULL_URLS;
-};
 
 export default {
   API_SERVICES,
@@ -113,8 +79,5 @@ export default {
   ROUTES,
   FILE_UPLOAD,
   UI,
-  THEME,
   ENV,
-  getAppApiInstance,
-  getApiUrls,
 };

@@ -55,7 +55,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-1 inline-flex">
             <button
               onClick={(e) => onTabChange(e, 0)}
-              className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
+              className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                 activeTab === 0
                   ? "bg-white/20 text-white shadow-lg"
                   : "text-purple-100 hover:text-white hover:bg-white/10"
@@ -73,7 +73,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             </button>
             <button
               onClick={(e) => onTabChange(e, 1)}
-              className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
+              className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                 activeTab === 1
                   ? "bg-white/20 text-white shadow-lg"
                   : "text-purple-100 hover:text-white hover:bg-white/10"
