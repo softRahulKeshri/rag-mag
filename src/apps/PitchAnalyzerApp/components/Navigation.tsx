@@ -1,6 +1,5 @@
 import {
   CloudArrowUpIcon,
-  BookmarkIcon,
   ChatBubbleLeftRightIcon,
   UserCircleIcon,
   PresentationChartLineIcon,
@@ -36,12 +35,6 @@ const Navigation = ({
       title: "Upload Pitch",
       description: "Upload and analyze your pitch deck with AI",
       icon: CloudArrowUpIcon,
-    },
-    {
-      id: "bookmarked" as TabId,
-      title: "Bookmarked",
-      description: "Access your saved pitch decks for quick analysis",
-      icon: BookmarkIcon,
     },
     {
       id: "chat" as TabId,
