@@ -186,24 +186,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
 
   return (
     <div className="space-y-8">
-      {/* Enhanced Header Section */}
-      <div className="text-center mb-10">
-        <div className="flex items-center justify-center mb-6">
-          {/* <div className="relative">
-            <div className="w-20 h-20 bg-gradient-to-br from-[#3077F3] to-[#1E50A8] rounded-2xl flex items-center justify-center shadow-lg">
-              <CloudArrowUpIcon className="w-10 h-10 text-white" />
-            </div>
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#10B981] rounded-full animate-pulse border-2 border-white"></div>
-          </div> */}
-        </div>
-        <h1 className="text-4xl font-bold text-[#2E3141] mb-4">
-          Upload Pitch Deck
-        </h1>
-        <p className="text-lg text-[#6D6F7A] max-w-2xl mx-auto leading-relaxed">
-          AI-Powered Pitch Analysis - Upload your pitch deck for comprehensive
-          analysis and insights
-        </p>
-      </div>
+     
 
       {/* Upload Area */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-[#D5D6D9]/50 p-8">
