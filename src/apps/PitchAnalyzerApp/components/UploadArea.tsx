@@ -4,7 +4,6 @@ import {
   XMarkIcon,
   DocumentIcon,
   DocumentMagnifyingGlassIcon,
-  SparklesIcon,
   CheckCircleIcon,
   InformationCircleIcon,
   ExclamationTriangleIcon,
@@ -149,7 +148,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
         <div className="text-center max-w-md mx-auto px-6">
           {/* Animated Icon */}
           <div className="relative mb-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg mx-auto">
+            <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg mx-auto">
               <DocumentMagnifyingGlassIcon className="w-10 h-10 text-white" />
             </div>
             <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-400 rounded-full animate-ping border-2 border-white"></div>
@@ -164,7 +163,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
           {/* Progress Bar */}
           <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
             <div
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full animate-pulse"
+              className="bg-gradient-to-r from-purple-500 to-indigo-600 h-2 rounded-full animate-pulse"
               style={{ width: "60%" }}
             ></div>
           </div>
@@ -175,7 +174,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
               <div
                 key={index}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index <= messageIndex ? "bg-indigo-500" : "bg-gray-300"
+                  index <= messageIndex ? "bg-purple-500" : "bg-gray-300"
                 }`}
               />
             ))}
@@ -209,70 +208,69 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
 
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Left Column - Upload Instructions */}
+        {/* Left Column - Upload Guidelines */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-full">
-          <div className="text-center h-full flex flex-col justify-center">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <InformationCircleIcon className="w-8 h-8 text-indigo-600" />
+          <div className="h-full flex flex-col">
+            {/* Upload Guidelines Header */}
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircleIcon className="w-5 h-5 text-green-600" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Upload Guidelines
+              </h2>
             </div>
 
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Upload Instructions
-            </h2>
-
-            <div className="space-y-4 text-left">
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-indigo-600 text-sm font-semibold">
-                    1
+            {/* Guidelines List */}
+            <div className="space-y-4 flex-1">
+              {/* Supported Formats */}
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <DocumentIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    Supported formats
                   </span>
                 </div>
-                <div>
-                  <p className="text-gray-900 font-medium">
-                    Drag & Drop or Browse
-                  </p>
-                  <p className="text-gray-600 text-sm">
-                    Select your PDF pitch deck file
-                  </p>
+                <div className="flex space-x-1">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-md">
+                    PDF
+                  </span>
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-md">
+                    DOCX
+                  </span>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-indigo-600 text-sm font-semibold">
-                    2
+              {/* Total Size Limit */}
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <DocumentIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    Total size limit
                   </span>
                 </div>
-                <div>
-                  <p className="text-gray-900 font-medium">AI Analysis</p>
-                  <p className="text-gray-600 text-sm">
-                    Our AI will analyze your pitch deck
-                  </p>
-                </div>
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-md">
+                  200MB total
+                </span>
               </div>
 
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-indigo-600 text-sm font-semibold">
-                    3
+              {/* File Limit */}
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                    <InformationCircleIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    File limit
                   </span>
                 </div>
-                <div>
-                  <p className="text-gray-900 font-medium">Get Insights</p>
-                  <p className="text-gray-600 text-sm">
-                    Receive detailed analysis and recommendations
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">
-                Supported Formats
-              </h3>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <DocumentIcon className="w-4 h-4" />
-                <span>PDF files only (max 50MB)</span>
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-md">
+                  100 files max
+                </span>
               </div>
             </div>
           </div>
@@ -286,8 +284,8 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
               <div
                 className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 cursor-pointer h-full flex flex-col justify-center ${
                   isDragOver
-                    ? "border-indigo-500 bg-indigo-50"
-                    : "border-gray-300 hover:border-indigo-400 hover:bg-gray-50"
+                    ? "border-purple-500 bg-purple-50"
+                    : "border-gray-300 hover:border-purple-400 hover:bg-gray-50"
                 }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -302,8 +300,8 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
                 />
 
                 <div className="space-y-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto">
-                    <CloudArrowUpIcon className="w-8 h-8 text-indigo-600" />
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto">
+                    <CloudArrowUpIcon className="w-8 h-8 text-purple-600" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -312,7 +310,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
                     <p className="text-gray-600 mb-4">
                       Drop your PDF file here or click to browse
                     </p>
-                    <button className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 cursor-pointer">
+                    <button className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 cursor-pointer">
                       Browse Files
                     </button>
                   </div>
@@ -320,29 +318,18 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
               </div>
             </div>
 
-            {/* Ready to Upload Section */}
+            {/* Selected Files Section */}
             {selectedFiles.length > 0 && (
               <div className="mt-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-gray-900">
-                    Ready to Upload ({selectedFiles.length})
+                    Selected Files ({selectedFiles.length})
                   </h3>
                   <button
-                    onClick={handleUpload}
-                    disabled={isUploading}
-                    className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    onClick={() => setSelectedFiles([])}
+                    className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200"
                   >
-                    {isUploading ? (
-                      <>
-                        <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-1.5"></div>
-                        Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <SparklesIcon className="w-3 h-3 mr-1.5" />
-                        Upload All
-                      </>
-                    )}
+                    Clear All
                   </button>
                 </div>
 
@@ -376,6 +363,30 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
                 </div>
               </div>
             )}
+
+            {/* Upload Button - Always visible, conditionally enabled */}
+            <div className={`${selectedFiles.length > 0 ? "mt-4" : "mt-6"}`}>
+              <div className="text-center">
+                <button
+                  onClick={handleUpload}
+                  disabled={selectedFiles.length === 0 || isUploading}
+                  className={`inline-flex items-center px-6 py-3 border-2 border-transparent text-sm font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-offset-2 transition-all duration-300 ${
+                    selectedFiles.length > 0 && !isUploading
+                      ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 focus:ring-purple-500/30 transform hover:-translate-y-1 hover:shadow-2xl border-purple-500/20"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
+                  }`}
+                >
+                  <CloudArrowUpIcon className="w-5 h-5 mr-2" />
+                  {isUploading
+                    ? `Uploading ${selectedFiles.length} Files...`
+                    : selectedFiles.length > 0
+                    ? `Upload ${selectedFiles.length} Pitch${
+                        selectedFiles.length > 1 ? "es" : ""
+                      }`
+                    : "Upload Pitch Deck"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -402,8 +413,8 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
                 className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer"
               >
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <DocumentMagnifyingGlassIcon className="w-5 h-5 text-indigo-600" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <DocumentMagnifyingGlassIcon className="w-5 h-5 text-purple-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <Tooltip content={pitch.title || pitch.filename}>

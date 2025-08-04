@@ -67,9 +67,23 @@ export interface BookmarkPitchResponse {
   status?: number;
 }
 
-// Pitch Details Types
-export interface PitchDetailsRequest {
-  userEmail: string;
+// Pitch Details Types - Updated to match actual API response
+export interface PitchDetailsApiResponse {
+  pitch_id: string;
+  file_name: string;
+  file_path: string;
+  created_at: string;
+  company: string;
+  industry: string;
+  file_id: string;
+  insights: string;
+  strengths: string;
+  weaknesses: string;
+  revenue: string;
+  arr: string;
+  total_turnover: string;
+  extras: string;
+  investment_decision: string;
 }
 
 export interface AnalysisSection {
@@ -122,15 +136,33 @@ export interface PitchAnalysis {
   valuation: AnalysisSection;
 }
 
+// Updated PitchDetails to match the new API response structure
 export interface PitchDetails {
-  analysis: PitchAnalysis;
+  // API response fields
+  pitch_id: string;
+  file_name: string;
+  file_path: string;
   created_at: string;
-  description: string | null;
-  file_url: string;
-  filename: string;
-  id: string;
-  tagsinfo: PitchTagsInfo;
-  title: string;
+  company: string;
+  industry: string;
+  file_id: string;
+  insights: string;
+  strengths: string;
+  weaknesses: string;
+  revenue: string;
+  arr: string;
+  total_turnover: string;
+  extras: string;
+  investment_decision: string;
+
+  // Legacy fields for backward compatibility (optional)
+  analysis?: PitchAnalysis;
+  description?: string | null;
+  file_url?: string;
+  filename?: string;
+  id?: string;
+  tagsinfo?: PitchTagsInfo;
+  title?: string;
 }
 
 export interface PitchDetailsResponse {

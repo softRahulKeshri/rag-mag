@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePitchDetails } from "./hooks/usePitchDetails";
 import {
   Navigation,
   ChatInterface,
   PitchChat,
-  PitchDetailsView,
+  PitchDetailsWithChat,
   UploadArea,
 } from "./components";
 import type { TabId } from "./types/navigation";
@@ -16,7 +16,19 @@ const PitchAnalyzerApp = () => {
     useState<Pitch | null>(null);
   const [selectedPitchForDetails, setSelectedPitchForDetails] =
     useState<Pitch | null>(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    // Initialize from localStorage if available
+    const saved = localStorage.getItem("pitch-sidebar-collapsed");
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Save collapse state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(
+      "pitch-sidebar-collapsed",
+      JSON.stringify(isSidebarCollapsed)
+    );
+  }, [isSidebarCollapsed]);
 
   const {
     fetchPitchDetails,
@@ -50,8 +62,40 @@ const PitchAnalyzerApp = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case "upload":
+        return <UploadArea userEmail="member1@company1.com" />;
+      case "chat":
+        return (
+          <div className="space-y-8">
+            {selectedPitchForChat ? (
+              <PitchChat
+                pitch={selectedPitchForChat}
+                onBack={() => setSelectedPitchForChat(null)}
+              />
+            ) : selectedPitchForDetails && pitchDetails ? (
+              <PitchDetailsWithChat
+                pitch={selectedPitchForDetails}
+                pitchDetails={pitchDetails}
+                onBack={handleBackFromDetails}
+              />
+            ) : (
+              <ChatInterface
+                onPitchSelect={setSelectedPitchForChat}
+                onViewDetails={handleViewPitchDetails}
+              />
+            )}
+          </div>
+        );
+      default:
+        return <UploadArea userEmail="member1@company1.com" />;
+    }
+  };
+
   return (
-    <div className="flex h-full bg-neutral-100 overflow-hidden">
+    <div className="flex h-full bg-gray-50 overflow-hidden">
+      {/* Sidebar */}
       <Navigation
         activeTab={activeTab}
         onTabChange={handleTabChange}
@@ -64,53 +108,7 @@ const PitchAnalyzerApp = () => {
       <div className="flex-1 overflow-auto min-h-0 relative">
         <div className="min-h-screen">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-            {/* Tab Content */}
-            {activeTab === "upload" && (
-              <UploadArea userEmail="member1@company1.com" />
-            )}
-
-            {activeTab === "chat" && (
-              <div className="space-y-8">
-                {selectedPitchForChat ? (
-                  <PitchChat
-                    pitch={selectedPitchForChat}
-                    onBack={() => setSelectedPitchForChat(null)}
-                  />
-                ) : selectedPitchForDetails ? (
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <button
-                        onClick={handleBackFromDetails}
-                        className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                      >
-                        <svg
-                          className="w-4 h-4 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                          />
-                        </svg>
-                        Back to Chat
-                      </button>
-                    </div>
-                    {pitchDetails && (
-                      <PitchDetailsView pitchDetails={pitchDetails} />
-                    )}
-                  </div>
-                ) : (
-                  <ChatInterface
-                    onPitchSelect={setSelectedPitchForChat}
-                    onViewDetails={handleViewPitchDetails}
-                  />
-                )}
-              </div>
-            )}
+            {renderContent()}
           </div>
         </div>
       </div>

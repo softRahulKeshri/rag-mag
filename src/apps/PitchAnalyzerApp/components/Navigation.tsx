@@ -115,8 +115,8 @@ const Navigation = ({
                   isCollapsed ? "p-2 rounded-lg" : "p-4 rounded-xl"
                 } ${
                   activeTab === item.id
-                    ? "text-indigo-600 bg-gradient-to-r from-indigo-50 to-purple-50 shadow-lg border border-indigo-200/50"
-                    : "hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-indigo-50/80 border border-transparent"
+                    ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg border border-purple-200/50"
+                    : "hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80 border border-transparent"
                 }`}
                 title={isCollapsed ? item.title : undefined}
               >
@@ -128,7 +128,7 @@ const Navigation = ({
                   <div
                     className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
                       activeTab === item.id
-                        ? "bg-indigo-100 text-indigo-600"
+                        ? "bg-purple-100 text-purple-600"
                         : "text-gray-400 group-hover:text-gray-600"
                     }`}
                   >
@@ -154,13 +154,13 @@ const Navigation = ({
 
                   {/* Active indicator */}
                   {activeTab === item.id && !isCollapsed && (
-                    <div className="absolute right-4 w-1.5 h-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full animate-pulse shadow-sm" />
+                    <div className="absolute right-4 w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full animate-pulse shadow-sm" />
                   )}
                 </div>
 
                 {/* Hover background effect */}
                 {!isCollapsed && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/80 to-purple-50/80 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50/80 to-blue-50/80 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
                 )}
               </button>
 
