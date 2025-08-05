@@ -30,85 +30,57 @@ export const ChatSidebar = ({
   return (
     <CommonSidebar isCollapsed={isCollapsed}>
       {/* Header Section */}
-      <div className="flex-shrink-0 p-4 border-b border-gray-200">
+      <div
+        className={`flex-shrink-0 border-b border-gray-200 ${
+          isCollapsed ? "p-3" : "p-6"
+        }`}
+      >
         <div
           className={`flex items-center ${
             isCollapsed ? "justify-center" : "justify-between"
-          } mb-4`}
+          } ${isCollapsed ? "" : "mb-4"}`}
         >
           {/* Brand Icon */}
-          <div
-            className={`flex items-center ${
-              isCollapsed ? "justify-center" : "space-x-3"
-            }`}
-          >
-            <div className="relative group">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg">
-                <ChatBubbleLeftRightIcon className="h-4 w-4 text-white" />
+          <div className="flex items-center justify-center">
+            <div className="relative">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
+                <ChatBubbleLeftRightIcon className="h-5 w-5 text-white" />
               </div>
-
-              {/* Tooltip for collapsed state */}
-              {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  ChatAI
-                  <div className="absolute top-1/2 -left-1 transform -translate-y-1/2 w-0 h-0 border-r-4 border-l-0 border-t-4 border-b-4 border-transparent border-r-gray-900"></div>
-                </div>
-              )}
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white"></div>
             </div>
             {!isCollapsed && (
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">ChatAI</h1>
-                <p className="text-xs text-gray-500">AI Conversations</p>
+              <div className="ml-3">
+                <h1 className="text-xl font-bold text-gray-900">ChatAI</h1>
+                <p className="text-sm text-gray-500">AI Conversations</p>
               </div>
             )}
           </div>
 
           {/* Toggle Button - Only show when not collapsed */}
           {!isCollapsed && onToggleCollapse && (
-            <div className="group relative">
+            <div className="ml-auto">
               <SidebarToggle
                 isOpen={true}
                 onToggle={onToggleCollapse}
                 className="flex-shrink-0"
               />
-
-              {/* Tooltip */}
-              <div className="absolute right-full mr-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                Collapse sidebar
-                <div className="absolute top-1/2 -right-1 transform -translate-y-1/2 w-0 h-0 border-l-4 border-r-0 border-t-4 border-b-4 border-transparent border-l-gray-900"></div>
-              </div>
             </div>
           )}
         </div>
 
         {/* New Chat Button */}
-        <div className="group relative">
-          <button
-            onClick={onNewChat}
-            disabled={isCreatingSession}
-            className={`w-full flex items-center justify-center ${
-              isCollapsed ? "px-2" : "space-x-2 px-3"
-            } py-2.5 rounded-lg transition-all duration-300 text-sm font-bold ${
-              isCreatingSession
-                ? "bg-gray-100 text-gray-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl"
-            }`}
-            title={isCollapsed ? "New Chat" : undefined}
-          >
-            <PlusIcon className="h-4 w-4" />
-            {!isCollapsed && (
+        {!isCollapsed && (
+          <div>
+            <button
+              onClick={onNewChat}
+              disabled={isCreatingSession}
+              className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg transition-all duration-300 text-sm font-bold bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+            >
+              <PlusIcon className="h-4 w-4" />
               <span>{isCreatingSession ? "Creating..." : "New Chat"}</span>
-            )}
-          </button>
-
-          {/* Tooltip for collapsed state */}
-          {isCollapsed && (
-            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-              {isCreatingSession ? "Creating..." : "New Chat"}
-              <div className="absolute top-1/2 -left-1 transform -translate-y-1/2 w-0 h-0 border-r-4 border-l-0 border-t-4 border-b-4 border-transparent border-r-gray-900"></div>
-            </div>
-          )}
-        </div>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Search Section */}
@@ -179,18 +151,12 @@ export const ChatSidebar = ({
 
       {/* Collapse Toggle Button - Show when collapsed */}
       {isCollapsed && onToggleCollapse && (
-        <div className="absolute top-2 right-2 group">
+        <div className="absolute top-2 right-2">
           <SidebarToggle
             isOpen={false}
             onToggle={onToggleCollapse}
             className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg"
           />
-
-          {/* Tooltip */}
-          <div className="absolute right-full mr-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-            Expand sidebar
-            <div className="absolute top-1/2 -right-1 transform -translate-y-1/2 w-0 h-0 border-l-4 border-r-0 border-t-4 border-b-4 border-transparent border-l-gray-900"></div>
-          </div>
         </div>
       )}
     </CommonSidebar>

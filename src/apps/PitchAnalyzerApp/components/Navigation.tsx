@@ -36,53 +36,44 @@ const Navigation = ({
   return (
     <CommonSidebar isCollapsed={isCollapsed}>
       {/* Logo Section */}
-      <div className="flex-shrink-0 p-6 border-b border-gray-200">
+      <div
+        className={`flex-shrink-0 border-b border-gray-200 ${
+          isCollapsed ? "p-3" : "p-6"
+        }`}
+      >
         <div
           className={`flex items-center ${
-            isCollapsed ? "justify-center" : "space-x-3"
+            isCollapsed ? "justify-center" : "justify-between"
           }`}
         >
           {/* Enhanced Brand Icon */}
-          <div className="relative group">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
-              <PresentationChartLineIcon className="h-5 w-5 text-white" />
+          <div className="flex items-center justify-center">
+            <div className="relative">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
+                <PresentationChartLineIcon className="h-5 w-5 text-white" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white"></div>
             </div>
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white"></div>
-
-            {/* Tooltip for collapsed state */}
-            {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                Pitch Analyzer
-                <div className="absolute top-1/2 -left-1 transform -translate-y-1/2 w-0 h-0 border-r-4 border-l-0 border-t-4 border-b-4 border-transparent border-r-gray-900"></div>
+            {!isCollapsed && (
+              <div className="ml-3">
+                <h1 className="text-xl font-bold text-gray-900">
+                  Pitch Analyzer
+                </h1>
+                <p className="text-sm text-gray-500">
+                  AI-powered pitch deck analysis
+                </p>
               </div>
             )}
           </div>
 
-          {!isCollapsed && (
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">
-                Pitch Analyzer
-              </h1>
-              <p className="text-sm text-gray-500">
-                AI-powered pitch deck analysis
-              </p>
-            </div>
-          )}
-
           {/* Toggle Button - Only show when not collapsed */}
           {!isCollapsed && onToggleCollapse && (
-            <div className="group relative ml-auto">
+            <div className="ml-auto">
               <SidebarToggle
                 isOpen={true}
                 onToggle={onToggleCollapse}
                 className="flex-shrink-0"
               />
-
-              {/* Tooltip */}
-              <div className="absolute right-full mr-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                Collapse sidebar
-                <div className="absolute top-1/2 -right-1 transform -translate-y-1/2 w-0 h-0 border-l-4 border-r-0 border-t-4 border-b-4 border-transparent border-l-gray-900"></div>
-              </div>
             </div>
           )}
         </div>
