@@ -41,6 +41,10 @@ export interface Pitch {
   sector_category: string;
   tagsinfo: PitchTagsInfo;
   title: string | null;
+  // New fields from API response
+  company?: string;
+  industry?: string;
+  insights?: string;
 }
 
 export interface CompanyPitchesRequest {

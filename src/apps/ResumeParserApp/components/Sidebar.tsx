@@ -1,13 +1,6 @@
 import React from "react";
-import { UserCircleIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import CommonSidebar from "../../../components/CommonSidebar";
-import { useUser } from "../../../store/useGlobalStore";
-import {
-  formatDisplayName,
-  formatAccountText,
-  createGreeting,
-} from "../../../utils/textUtils";
-import { Tooltip } from "../../../components/ui/Tooltip";
 import SidebarToggle from "./SidebarToggle";
 import type { SidebarProps, NavigationItem } from "../types/sidebar";
 import { Section } from "../types/shared";
@@ -23,9 +16,6 @@ const Sidebar: React.FC<ExtendedSidebarProps> = ({
   isCollapsed = false,
   onToggleCollapse,
 }) => {
-  const user = useUser();
-  const displayName = formatDisplayName(user?.username);
-
   const navigationItems: NavigationItem[] = [
     {
       id: Section.UPLOAD,
@@ -216,56 +206,13 @@ const Sidebar: React.FC<ExtendedSidebarProps> = ({
         ))}
       </nav>
 
-      {/* User Profile Section - Consistent with other apps */}
+      {/* User Profile Section - Removed - available in navbar */}
       <div
         className={`flex-shrink-0 border-t border-gray-200/60 ${
           isCollapsed ? "p-2" : "p-4"
         }`}
       >
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200/60 shadow-md p-3">
-          <div
-            className={`flex items-center ${
-              isCollapsed ? "justify-center" : "space-x-3"
-            }`}
-          >
-            {/* Enhanced Avatar */}
-            <div className="flex-shrink-0 group relative">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md border border-indigo-400/30">
-                <UserCircleIcon className="h-5 w-5 text-white" />
-              </div>
-
-              {/* Tooltip for collapsed state */}
-              {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
-                  {createGreeting(displayName)}
-                  <div className="absolute top-1/2 -left-1 transform -translate-y-1/2 w-0 h-0 border-r-4 border-l-0 border-t-4 border-b-4 border-transparent border-r-gray-900"></div>
-                </div>
-              )}
-            </div>
-
-            {/* Enhanced User Info */}
-            {!isCollapsed && (
-              <div className="flex-1 min-w-0">
-                <Tooltip
-                  content={createGreeting(displayName)}
-                  className="block"
-                >
-                  <h3 className="text-sm font-semibold text-slate-800 truncate">
-                    {createGreeting(displayName)}
-                  </h3>
-                </Tooltip>
-                <Tooltip
-                  content={formatAccountText(user?.email)}
-                  className="block"
-                >
-                  <p className="text-xs text-slate-500 truncate">
-                    {formatAccountText(user?.email)}
-                  </p>
-                </Tooltip>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* User profile section removed - available in navbar */}
       </div>
 
       {/* Collapse Toggle Button - Show when collapsed */}

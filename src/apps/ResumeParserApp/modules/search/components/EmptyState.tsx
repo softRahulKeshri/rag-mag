@@ -25,9 +25,9 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       <div className="mb-8 flex justify-center">
         <div className="relative">
           {/* Main Search Icon */}
-          <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center animate-pulse">
+          <div className="w-24 h-24 bg-gradient-to-br from-primary-ui-blue-p100 to-primary-ui-blue-p200 rounded-full flex items-center justify-center animate-pulse">
             <svg
-              className="w-12 h-12 text-purple-600 flex-shrink-0"
+              className="w-12 h-12 text-brand-gradient-blue flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -44,15 +44,15 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 
           {/* Floating Elements */}
           <div
-            className="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full animate-bounce"
+            className="absolute -top-2 -right-2 w-6 h-6 bg-brand-gradient-cyan rounded-full animate-bounce"
             style={{ animationDelay: "0.5s" }}
           ></div>
           <div
-            className="absolute -bottom-2 -left-2 w-4 h-4 bg-green-400 rounded-full animate-bounce"
+            className="absolute -bottom-2 -left-2 w-4 h-4 bg-brand-gradient-orange rounded-full animate-bounce"
             style={{ animationDelay: "1s" }}
           ></div>
           <div
-            className="absolute top-1/2 -right-8 w-3 h-3 bg-yellow-400 rounded-full animate-ping"
+            className="absolute top-1/2 -right-8 w-3 h-3 bg-brand-gradient-purple rounded-full animate-ping"
             style={{ animationDelay: "1.5s" }}
           ></div>
         </div>
@@ -60,10 +60,10 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 
       {/* Welcome Text */}
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <h2 className="text-3xl font-bold text-neutral-n900 mb-4">
           Ready to Find Your Perfect Candidates?
         </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg text-neutral-n600 max-w-2xl mx-auto leading-relaxed">
           Use our AI-powered search to discover the best talent from your resume
           database. Start by describing your ideal candidate or upload a job
           description above.
@@ -72,10 +72,10 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 
       {/* Feature Cards */}
       {/* <div className="grid md:grid-cols-3 gap-6 mb-12">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200">
-          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+        <div className="bg-white rounded-xl border border-neutral-n200 p-6 hover:shadow-lg transition-all duration-200">
+          <div className="w-12 h-12 bg-primary-ui-blue-p100 rounded-lg flex items-center justify-center mb-4 mx-auto">
             <svg
-              className="w-6 h-6 text-purple-600 flex-shrink-0"
+              className="w-6 h-6 text-brand-gradient-purple flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
@@ -83,18 +83,18 @@ const EmptyState: React.FC<EmptyStateProps> = ({
               <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
             </svg>
           </div>
-          <h3 className="font-semibold text-gray-900 mb-2">
+          <h3 className="font-semibold text-neutral-n900 mb-2">
             Natural Language Search
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-neutral-n600">
             Simply describe what you're looking for in plain English
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200">
-          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+        <div className="bg-white rounded-xl border border-neutral-n200 p-6 hover:shadow-lg transition-all duration-200">
+          <div className="w-12 h-12 bg-primary-ui-blue-p100 rounded-lg flex items-center justify-center mb-4 mx-auto">
             <svg
-              className="w-6 h-6 text-blue-600 flex-shrink-0"
+              className="w-6 h-6 text-brand-gradient-blue flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
@@ -102,18 +102,18 @@ const EmptyState: React.FC<EmptyStateProps> = ({
               <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
             </svg>
           </div>
-          <h3 className="font-semibold text-gray-900 mb-2">
+          <h3 className="font-semibold text-neutral-n900 mb-2">
             Job Description Upload
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-neutral-n600">
             Upload a JD and let AI find the best matching candidates
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200">
-          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+        <div className="bg-white rounded-xl border border-neutral-n200 p-6 hover:shadow-lg transition-all duration-200">
+          <div className="w-12 h-12 bg-primary-ui-blue-p100 rounded-lg flex items-center justify-center mb-4 mx-auto">
             <svg
-              className="w-6 h-6 text-green-600 flex-shrink-0"
+              className="w-6 h-6 text-brand-gradient-cyan flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
@@ -121,17 +121,17 @@ const EmptyState: React.FC<EmptyStateProps> = ({
               <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" />
             </svg>
           </div>
-          <h3 className="font-semibold text-gray-900 mb-2">Smart Scoring</h3>
-          <p className="text-sm text-gray-600">
+          <h3 className="font-semibold text-neutral-n900 mb-2">Smart Scoring</h3>
+          <p className="text-sm text-neutral-n600">
             AI-powered scoring across multiple criteria for better decisions
           </p>
         </div>
       </div> */}
 
       {/* Search Tips */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6">
-        <h4 className="font-semibold text-gray-900 mb-3">💡 Search Tips</h4>
-        <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-600">
+      <div className="bg-gradient-to-r from-primary-ui-blue-p100 to-primary-ui-blue-p200 rounded-xl p-6 border border-primary-ui-blue-p200">
+        <h4 className="font-semibold text-neutral-n900 mb-3">💡 Search Tips</h4>
+        <div className="grid md:grid-cols-2 gap-4 text-sm text-neutral-n600">
           <div className="text-left">
             <p className="mb-2">
               <strong>Be specific:</strong> "Senior React developer with 5+

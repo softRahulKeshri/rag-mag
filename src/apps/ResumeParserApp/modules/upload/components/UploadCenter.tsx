@@ -13,6 +13,7 @@ import {
   XMarkIcon,
   CloudArrowUpIcon,
   DocumentPlusIcon,
+  ClockIcon,
 } from "@heroicons/react/24/outline";
 
 const UploadCenter: React.FC = () => {
@@ -280,8 +281,8 @@ const UploadCenter: React.FC = () => {
                   <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/60 p-5 flex-1 flex flex-col min-h-0">
                     <div className="flex items-center justify-between mb-4 flex-shrink-0">
                       <div className="flex items-center space-x-3">
-                        <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-                          <CheckCircleIcon className="w-4 h-4 text-white" />
+                        <div className="w-7 h-7 bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                          <ClockIcon className="w-4 h-4 text-white" />
                         </div>
                         <div className="flex-1">
                           <h3 className="text-lg font-semibold text-gray-900">
@@ -336,7 +337,7 @@ const UploadCenter: React.FC = () => {
                       ) : (
                         <div className="flex flex-col items-center justify-center flex-1">
                           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                            <DocumentTextIcon className="w-8 h-8 text-gray-400" />
+                            <ClockIcon className="w-8 h-8 text-gray-400" />
                           </div>
                           <h4 className="text-sm font-medium text-gray-900 mb-2">
                             No Recent Uploads

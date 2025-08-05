@@ -113,7 +113,19 @@ export const filterResumes = (
         resume.original_filename || resume.filename
       ).toLowerCase();
 
-      return filename.includes(query);
+      // Search by filename, candidate name, and job profile using real data
+      const candidateName = (resume.name || "").toLowerCase();
+      const jobProfile = (resume.job_profile || "").toLowerCase();
+      const totalExperience = (resume.total_experience || "").toLowerCase();
+      const availability = (resume.days_available || "").toLowerCase();
+
+      return (
+        filename.includes(query) ||
+        candidateName.includes(query) ||
+        jobProfile.includes(query) ||
+        totalExperience.includes(query) ||
+        availability.includes(query)
+      );
     }
 
     return true;

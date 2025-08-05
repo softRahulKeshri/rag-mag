@@ -5,7 +5,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { SidebarToggle } from "./SidebarToggle";
 import ChatListItem from "./ChatListItem";
-import { UserProfile } from "./UserProfile";
 import type { IChat } from "../types/types";
 
 interface ChatSidebarProps {
@@ -178,7 +177,7 @@ export const ChatSidebar = ({
           isCollapsed ? "p-2" : "p-3"
         } border-t border-[#EAEAEC]`}
       >
-        <UserProfile isCollapsed={isCollapsed} />
+        {/* User profile section removed - available in navbar */}
       </div>
 
       {/* Collapse Toggle Button - Show when collapsed */}

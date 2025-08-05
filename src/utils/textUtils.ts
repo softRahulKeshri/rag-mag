@@ -82,7 +82,7 @@ export const formatDisplayName = (
  */
 export const formatAccountText = (
   email?: string,
-  fallback: string = "User Account"
+  fallback: string = ""
 ): string => {
   if (!email || email.trim() === "") {
     return fallback;

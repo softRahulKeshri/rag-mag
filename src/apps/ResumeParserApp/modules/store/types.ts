@@ -15,6 +15,11 @@ export interface StoreResume {
   cloud_url?: string;
   commented_at?: string;
   upload_time?: string;
+  // New fields from API response
+  name?: string;
+  job_profile?: string;
+  days_available?: string;
+  total_experience?: string;
 }
 
 // Backend API response interface for /cvs endpoint
@@ -28,6 +33,11 @@ export interface BackendResumeResponse {
   original_filename: string;
   stored_filename: string;
   upload_time: string;
+  // New fields from API response
+  name: string;
+  job_profile: string;
+  days_available: string;
+  total_experience: string;
 }
 
 export interface ResumeComment {

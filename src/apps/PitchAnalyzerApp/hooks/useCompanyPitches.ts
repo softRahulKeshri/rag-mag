@@ -8,6 +8,9 @@ interface ApiPitchResponse {
   pitch_id: string;
   file_name: string;
   file_path: string;
+  company?: string;
+  industry?: string;
+  insights?: string;
 }
 
 export const useCompanyPitches = () => {
@@ -32,12 +35,16 @@ export const useCompanyPitches = () => {
             id: pitch.pitch_id,
             filename: pitch.file_name,
             file_url: pitch.file_path,
-            title: pitch.file_name, // Use filename as title if no title available
+            title: pitch.company || pitch.file_name, // Use company name as title, fallback to filename
             created_at: new Date().toISOString(), // Use current date as fallback
             description: null,
-            sector_category: "Unknown", // Default sector
+            sector_category: pitch.industry || "Unknown", // Use industry as sector category
             is_bookmarked: false, // Default bookmark state
             tagsinfo: {}, // Empty tags info
+            // New fields from API response
+            company: pitch.company,
+            industry: pitch.industry,
+            insights: pitch.insights,
           }))
         : [];
 

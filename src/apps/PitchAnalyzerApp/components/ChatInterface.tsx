@@ -46,6 +46,9 @@ const ChatInterface = ({
         const title = pitch.title?.toLowerCase() || "";
         const filename = pitch.filename.toLowerCase();
         const sector = pitch.sector_category.toLowerCase();
+        const company = pitch.company?.toLowerCase() || "";
+        const industry = pitch.industry?.toLowerCase() || "";
+        const insights = pitch.insights?.toLowerCase() || "";
         const tags = Object.values(pitch.tagsinfo || {})
           .join(" ")
           .toLowerCase();
@@ -54,6 +57,9 @@ const ChatInterface = ({
           title.includes(query) ||
           filename.includes(query) ||
           sector.includes(query) ||
+          company.includes(query) ||
+          industry.includes(query) ||
+          insights.includes(query) ||
           tags.includes(query)
         );
       });
@@ -95,15 +101,6 @@ const ChatInterface = ({
 
   return (
     <div className="space-y-6">
-      {/* Header Section */}
-      <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Pitch Store</h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Select a pitch deck to start an AI-powered conversation and get
-          detailed insights
-        </p>
-      </div>
-
       {/* Compact Stats Card */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
         <div className="flex items-center justify-between">
@@ -113,7 +110,7 @@ const ChatInterface = ({
             </div>
             <div>
               <p className="text-sm font-medium text-gray-700">
-                Available Pitches
+                Available Companies
               </p>
               <p className="text-lg font-bold text-gray-900">
                 {filteredPitches.length}
@@ -133,7 +130,7 @@ const ChatInterface = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search pitches..."
+            placeholder="Search companies, industries, or insights..."
             className="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
             disabled={isLoading}
           />
@@ -184,21 +181,30 @@ const ChatInterface = ({
                 className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:shadow-md transition-all duration-200"
               >
                 {/* Header with icon and title */}
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3 flex-1">
-                    <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                      <DocumentMagnifyingGlassIcon className="w-4 h-4 text-white" />
+                    <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <DocumentMagnifyingGlassIcon className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 truncate">
-                        {pitch.title || pitch.filename}
+                      <h3 className="font-semibold text-gray-900 text-lg truncate">
+                        {pitch.company || pitch.title || pitch.filename}
                       </h3>
-                      <p className="text-sm text-gray-600">
-                        {pitch.sector_category}
+                      <p className="text-sm text-gray-600 font-medium">
+                        {pitch.industry || pitch.sector_category}
                       </p>
                     </div>
                   </div>
                 </div>
+
+                {/* Company Insights */}
+                {pitch.insights && (
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">
+                      {pitch.insights}
+                    </p>
+                  </div>
+                )}
 
                 {/* Key Information Tags */}
                 {pitch.tagsinfo && Object.keys(pitch.tagsinfo).length > 0 && (
@@ -330,7 +336,9 @@ const ChatInterface = ({
             <ChatBubbleLeftRightIcon className="w-10 h-10 text-gray-400" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            {searchQuery.trim() ? "No pitches found" : "No pitches available"}
+            {searchQuery.trim()
+              ? "No companies found"
+              : "No companies available"}
           </h3>
           <p className="text-gray-600 mb-4">
             {searchQuery.trim()

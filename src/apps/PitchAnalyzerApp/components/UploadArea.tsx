@@ -395,12 +395,12 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900">
-            Recent Pitches
+            Recent Companies
           </h2>
           <div className="flex items-center space-x-2">
             <DocumentMagnifyingGlassIcon className="w-5 h-5 text-gray-500" />
             <span className="text-sm text-gray-600">
-              {pitches.length} total pitches
+              {pitches.length} total companies
             </span>
           </div>
         </div>
@@ -417,13 +417,15 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
                     <DocumentMagnifyingGlassIcon className="w-5 h-5 text-purple-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <Tooltip content={pitch.title || pitch.filename}>
+                    <Tooltip
+                      content={pitch.company || pitch.title || pitch.filename}
+                    >
                       <h3 className="font-medium text-gray-900 truncate">
-                        {pitch.title || pitch.filename}
+                        {pitch.company || pitch.title || pitch.filename}
                       </h3>
                     </Tooltip>
                     <p className="text-sm text-gray-600 mb-2">
-                      {pitch.sector_category}
+                      {pitch.industry || pitch.sector_category}
                     </p>
                     <p className="text-xs text-gray-500">
                       Uploaded {formatDate(pitch.created_at)}
@@ -444,7 +446,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
               <DocumentMagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
             </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No pitches uploaded yet
+              No companies uploaded yet
             </h3>
             <p className="text-gray-600">
               Upload your first pitch deck to get started

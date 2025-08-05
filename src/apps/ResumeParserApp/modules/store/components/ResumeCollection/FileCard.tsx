@@ -1,21 +1,22 @@
 import React from "react";
 import type { StoreResume as Resume } from "../../types";
-import { formatFileSize, formatDate } from "./utils";
+import { formatDate } from "./utils";
 import {
-  DocumentIcon,
   EyeIcon,
-  ArrowDownTrayIcon,
   ChatBubbleLeftIcon,
   TrashIcon,
   ArrowPathIcon,
   PencilIcon,
   ClockIcon,
+  UserIcon,
+  BriefcaseIcon,
+  CalendarIcon,
+  ClockIcon as TimeIcon,
 } from "@heroicons/react/24/outline";
 
 interface FileCardProps {
   resume: Resume;
   onView: () => void;
-  onDownload: () => void;
   onDelete: () => void;
   onComment: () => void;
   onEditComment: () => void;
@@ -26,14 +27,17 @@ interface FileCardProps {
 const FileCard: React.FC<FileCardProps> = ({
   resume,
   onView,
-  onDownload,
   onDelete,
   onComment,
   onEditComment,
   onDeleteComment,
   isDeleting = false,
 }) => {
-  const filename = resume.original_filename || resume.filename;
+  // Use real data from API response, with proper debugging
+  const candidateName = resume.name || "Unknown Candidate";
+  const jobProfile = resume.job_profile || "Software Engineer";
+  const totalExperience = resume.total_experience || "3-5 years";
+  const availability = resume.days_available || "Available";
 
   // Format upload date for display
   const formatUploadDate = (dateString: string): string => {
@@ -46,77 +50,66 @@ const FileCard: React.FC<FileCardProps> = ({
   };
 
   return (
-    <div className="group relative">
+    <div className="group relative h-full">
       {/* Background gradient effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl transform transition-transform group-hover:scale-105 opacity-0 group-hover:opacity-100"></div>
 
       {/* Main card */}
-      <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:border-blue-300/50">
-        {/* File Header */}
+      <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 p-6 hover:shadow-xl transition-all duration-300 hover:border-blue-300/50 h-full flex flex-col">
+        {/* Candidate Header */}
         <div className="flex items-start space-x-4 mb-6">
-          {/* Enhanced PDF Icon */}
+          {/* Candidate Avatar */}
           <div className="flex-shrink-0">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-sm font-bold">PDF</span>
+              <UserIcon className="w-6 h-6 text-white" />
             </div>
           </div>
 
-          {/* File Info */}
+          {/* Candidate Info */}
           <div className="flex-1 min-w-0">
             <h3
-              className="text-lg font-semibold text-gray-900 truncate mb-2"
-              title={filename}
+              className="text-lg font-semibold text-gray-900 truncate mb-4"
+              title={candidateName}
             >
-              {filename}
+              {candidateName}
             </h3>
-            <div className="flex items-center space-x-2 flex-wrap">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                <DocumentIcon className="w-3 h-3 mr-1" />
-                {formatFileSize(resume.fileSize)}
-              </span>
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
-                PDF Format
-              </span>
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-bold shadow-sm">
-                ✓
-              </span>
+            <div className="space-y-3">
+              {/* Job Profile */}
+              <div className="flex items-center">
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                  <BriefcaseIcon className="w-4 h-4 mr-2" />
+                  {jobProfile}
+                </span>
+              </div>
+
+              {/* Experience and Availability */}
+              <div className="flex flex-col space-y-2">
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200 w-fit">
+                  <TimeIcon className="w-4 h-4 mr-2" />
+                  {totalExperience}
+                </span>
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200 w-fit">
+                  <CalendarIcon className="w-4 h-4 mr-2" />
+                  {availability}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Upload Date with enhanced styling */}
-        <div className="flex items-center text-sm text-gray-600 mb-6 bg-gray-50 rounded-lg px-3 py-2">
-          <ClockIcon className="w-4 h-4 mr-2 text-gray-500" />
-          <span className="font-medium">Uploaded:</span>
-          <span className="ml-1">{formatUploadDate(resume.uploadedAt)}</span>
-        </div>
-
-        {/* Enhanced Action Buttons */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        {/* Action Buttons */}
+        <div className="flex space-x-3 mb-6 mt-auto">
           <button
             onClick={onView}
             disabled={isDeleting}
-            className={`flex items-center justify-center px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-200 ${
-              isDeleting
-                ? "text-gray-400 bg-gray-100 border-gray-200 cursor-not-allowed"
-                : "text-blue-700 bg-blue-50 border-blue-200 hover:bg-blue-100 hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            }`}
-          >
-            <EyeIcon className="w-4 h-4 mr-1" />
-            View
-          </button>
-
-          <button
-            onClick={onDownload}
-            disabled={isDeleting}
-            className={`flex items-center justify-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+            className={`flex-1 flex items-center justify-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
               isDeleting
                 ? "bg-gray-400 text-white cursor-not-allowed"
                 : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             }`}
           >
-            <ArrowDownTrayIcon className="w-4 h-4 mr-1" />
-            Download
+            <EyeIcon className="w-4 h-4 mr-2" />
+            View Resume
           </button>
 
           <button
@@ -225,6 +218,13 @@ const FileCard: React.FC<FileCardProps> = ({
             Update Comment
           </button>
         )}
+
+        {/* Upload Date at Bottom */}
+        <div className="flex items-center justify-center text-sm text-gray-500 mt-4 pt-4 border-t border-gray-200/50">
+          <ClockIcon className="w-4 h-4 mr-2 text-gray-400" />
+          <span className="font-medium">Uploaded:</span>
+          <span className="ml-1">{formatUploadDate(resume.uploadedAt)}</span>
+        </div>
 
         {/* Hover effect overlay */}
         <div className="absolute inset-0 rounded-2xl border-2 border-blue-300 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
