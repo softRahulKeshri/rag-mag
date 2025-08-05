@@ -10,6 +10,7 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import { useCompanyPitches } from "../hooks/useCompanyPitches";
+import { PitchListSkeleton } from "./PitchSkeleton";
 
 import type { Pitch } from "../types/types";
 
@@ -161,15 +162,7 @@ const ChatInterface = ({
       )}
 
       {/* Loading State */}
-      {isLoading && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading pitches...</p>
-          <p className="text-sm text-gray-500 mt-2">
-            Please wait while we fetch your pitch collection
-          </p>
-        </div>
-      )}
+      {isLoading && <PitchListSkeleton pitchCount={12} />}
 
       {/* Pitches Grid */}
       {!isLoading && currentPitches.length > 0 && (

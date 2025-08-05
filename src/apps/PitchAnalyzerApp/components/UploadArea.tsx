@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   CloudArrowUpIcon,
   XMarkIcon,
@@ -11,6 +11,7 @@ import {
 import { usePitchUpload } from "../hooks/usePitchUpload";
 import { useCompanyPitches } from "../hooks/useCompanyPitches";
 import { Tooltip } from "../../../components/ui/Tooltip";
+import { PitchUploadSkeleton } from "./PitchSkeleton";
 
 interface UploadAreaProps {
   userEmail: string;
@@ -20,8 +21,6 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState("");
-  const [messageIndex, setMessageIndex] = useState(0);
 
   const { uploadMultiplePitches, isUploading, error, clearError } =
     usePitchUpload();
@@ -31,18 +30,6 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
   useEffect(() => {
     fetchCompanyPitches();
   }, [fetchCompanyPitches]);
-
-  const loadingMessages = useMemo(
-    () => [
-      "Analyzing your pitch deck structure...",
-      "Extracting key financial metrics...",
-      "Identifying market opportunities...",
-      "Evaluating competitive landscape...",
-      "Generating comprehensive insights...",
-      "Preparing AI-powered recommendations...",
-    ],
-    []
-  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -94,7 +81,6 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
     if (selectedFiles.length === 0 || !userEmail) return;
 
     setShowLoadingScreen(true);
-    setLoadingMessage(loadingMessages[0]);
 
     try {
       await uploadMultiplePitches(selectedFiles);
@@ -105,28 +91,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
     } finally {
       setShowLoadingScreen(false);
     }
-  }, [
-    selectedFiles,
-    userEmail,
-    uploadMultiplePitches,
-    fetchCompanyPitches,
-    loadingMessages,
-  ]);
-
-  // Loading screen animation
-  useEffect(() => {
-    if (showLoadingScreen) {
-      const interval = setInterval(() => {
-        setMessageIndex((prev) => {
-          const next = (prev + 1) % loadingMessages.length;
-          setLoadingMessage(loadingMessages[next]);
-          return next;
-        });
-      }, 2000);
-
-      return () => clearInterval(interval);
-    }
-  }, [showLoadingScreen, loadingMessages]);
+  }, [selectedFiles, userEmail, uploadMultiplePitches, fetchCompanyPitches]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -145,41 +110,7 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
   if (showLoadingScreen) {
     return (
       <div className="fixed inset-0 bg-white/95 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-6">
-          {/* Animated Icon */}
-          <div className="relative mb-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg mx-auto">
-              <DocumentMagnifyingGlassIcon className="w-10 h-10 text-white" />
-            </div>
-            <div className="absolute -top-2 -right-2 w-6 h-6 bg-emerald-400 rounded-full animate-ping border-2 border-white"></div>
-          </div>
-
-          {/* Loading Text */}
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Analyzing Pitch Deck
-          </h2>
-          <p className="text-gray-600 mb-8 leading-relaxed">{loadingMessage}</p>
-
-          {/* Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
-            <div
-              className="bg-gradient-to-r from-purple-500 to-indigo-600 h-2 rounded-full animate-pulse"
-              style={{ width: "60%" }}
-            ></div>
-          </div>
-
-          {/* Status Indicators */}
-          <div className="flex justify-center space-x-2">
-            {loadingMessages.map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index <= messageIndex ? "bg-purple-500" : "bg-gray-300"
-                }`}
-              />
-            ))}
-          </div>
-        </div>
+        <PitchUploadSkeleton />
       </div>
     );
   }

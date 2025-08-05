@@ -4,7 +4,7 @@ import { ChatHeader } from "./components/ChatHeader";
 import { ChatSidebar } from "./components/ChatSidebar";
 import { ChatMessages } from "./components/ChatMessages";
 import { MessageInput, type MessageInputRef } from "./components/MessageInput";
-import { ChatLoader } from "./components/ChatLoader";
+import { ChatLoadingState } from "./components/ChatSkeleton";
 import {
   useCreateChatSessionApi,
   useChatSessionsEnhanced,
@@ -330,7 +330,7 @@ const ChatServiceApp = () => {
   if (isLoadingSessions) {
     return (
       <div className="h-full w-full bg-[#F5F5F5] flex items-center justify-center">
-        <ChatLoader />
+        <ChatLoadingState message="Loading chat sessions..." />
       </div>
     );
   }

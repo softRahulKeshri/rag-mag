@@ -3,6 +3,7 @@ import FileUploadZone from "./FileUploadZone";
 import GroupSelector from "./GroupSelector";
 import UploadProgressModal from "./UploadProgressModal";
 import { useResumeUpload } from "../hooks/useResumeUpload";
+import { ResumeUploadSkeleton } from "../../../components/ResumeSkeleton";
 import type { Group } from "../../../types/api";
 import {
   DocumentTextIcon,
@@ -88,31 +89,8 @@ const UploadCenter: React.FC = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  // Skeleton loader component for uploaded files
-  const UploadedFilesSkeleton = () => (
-    <div className="space-y-2">
-      {[1, 2, 3].map((index) => (
-        <div
-          key={index}
-          className="flex items-center space-x-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl"
-        >
-          {/* Icon skeleton */}
-          <div className="w-8 h-8 bg-gray-200 rounded-lg flex-shrink-0 animate-pulse"></div>
-
-          {/* Content skeleton */}
-          <div className="flex-1 min-w-0 space-y-2">
-            <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
-            <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse"></div>
-          </div>
-
-          {/* Status badge skeleton */}
-          <div className="flex-shrink-0">
-            <div className="w-16 h-6 bg-gray-200 rounded-full animate-pulse"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  // Use the new skeleton component
+  const UploadedFilesSkeleton = () => <ResumeUploadSkeleton />;
 
   return (
     <div className="h-full bg-gradient-to-br from-gray-50 to-white overflow-y-auto">

@@ -157,7 +157,11 @@ const Navigation = ({
           isCollapsed ? "p-2" : "p-4"
         }`}
       >
-        {/* User profile section removed - available in navbar */}
+        {!isCollapsed && (
+          <div className="text-center">
+            <p className="text-xs text-gray-400 font-medium">Magure.AI</p>
+          </div>
+        )}
       </div>
 
       {/* Collapse Toggle Button - Show when collapsed */}

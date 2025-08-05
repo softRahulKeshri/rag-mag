@@ -7,14 +7,35 @@ import {
   CheckIcon,
 } from "@heroicons/react/24/outline";
 import { SparklesIcon as SparklesIconSolid } from "@heroicons/react/24/solid";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { IMessage } from "../types/types";
 import { formatTimestamp } from "../utils/chatUtils";
-import { ChatLoader } from "./ChatLoader";
+import { ChatMessagesSkeleton } from "./ChatSkeleton";
 
 interface ChatMessagesProps {
   messages: IMessage[];
   isLoading?: boolean;
   isAITyping?: boolean;
+}
+
+// TypeScript interfaces for ReactMarkdown components
+interface CodeComponentProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+interface LinkComponentProps {
+  href?: string;
+  children?: React.ReactNode;
+}
+
+interface TableComponentProps {
+  children?: React.ReactNode;
+}
+
+interface TableCellProps {
+  children?: React.ReactNode;
 }
 
 export const ChatMessages = ({
@@ -109,7 +130,7 @@ export const ChatMessages = ({
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-gray-50/30 to-white overflow-hidden">
-        <ChatLoader />
+        <ChatMessagesSkeleton messageCount={5} />
       </div>
     );
   }
@@ -216,6 +237,96 @@ export const ChatMessages = ({
         .user-avatar-glow {
           box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
         }
+        /* Markdown styling for AI responses */
+        .ai-message-markdown {
+          color: inherit;
+          line-height: 1.6;
+        }
+        .ai-message-markdown h1,
+        .ai-message-markdown h2,
+        .ai-message-markdown h3,
+        .ai-message-markdown h4,
+        .ai-message-markdown h5,
+        .ai-message-markdown h6 {
+          margin-top: 1.5em;
+          margin-bottom: 0.5em;
+          font-weight: 600;
+          line-height: 1.25;
+        }
+        .ai-message-markdown h1 {
+          font-size: 1.5em;
+        }
+        .ai-message-markdown h2 {
+          font-size: 1.3em;
+        }
+        .ai-message-markdown h3 {
+          font-size: 1.1em;
+        }
+        .ai-message-markdown p {
+          margin-bottom: 1em;
+        }
+        .ai-message-markdown ul,
+        .ai-message-markdown ol {
+          margin-bottom: 1em;
+          padding-left: 1.5em;
+        }
+        .ai-message-markdown li {
+          margin-bottom: 0.25em;
+        }
+        .ai-message-markdown blockquote {
+          border-left: 4px solid #e5e7eb;
+          padding-left: 1em;
+          margin: 1em 0;
+          font-style: italic;
+          color: #6b7280;
+        }
+        .ai-message-markdown code {
+          background-color: #f3f4f6;
+          padding: 0.125em 0.25em;
+          border-radius: 0.25em;
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+          font-size: 0.875em;
+        }
+        .ai-message-markdown pre {
+          background-color: #1f2937;
+          color: #f9fafb;
+          padding: 1em;
+          border-radius: 0.5em;
+          overflow-x: auto;
+          margin: 1em 0;
+        }
+        .ai-message-markdown pre code {
+          background-color: transparent;
+          padding: 0;
+          color: inherit;
+        }
+        .ai-message-markdown table {
+          border-collapse: collapse;
+          width: 100%;
+          margin: 1em 0;
+        }
+        .ai-message-markdown th,
+        .ai-message-markdown td {
+          border: 1px solid #e5e7eb;
+          padding: 0.5em;
+          text-align: left;
+        }
+        .ai-message-markdown th {
+          background-color: #f9fafb;
+          font-weight: 600;
+        }
+        .ai-message-markdown a {
+          color: #3b82f6;
+          text-decoration: underline;
+        }
+        .ai-message-markdown a:hover {
+          color: #2563eb;
+        }
+        .ai-message-markdown hr {
+          border: none;
+          border-top: 1px solid #e5e7eb;
+          margin: 2em 0;
+        }
       `}</style>
 
       <div className="flex-1 max-w-4xl mx-auto w-full">
@@ -277,7 +388,67 @@ export const ChatMessages = ({
                               ></div>
                             </div>
                           </div>
+                        ) : message.role === "assistant" ? (
+                          // Render AI messages as markdown
+                          <div className="ai-message-markdown">
+                            <ReactMarkdown
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                // Customize code blocks for better styling
+                                code: ({
+                                  className,
+                                  children,
+                                }: CodeComponentProps) => {
+                                  const isInline =
+                                    !className?.includes("language-");
+                                  return !isInline ? (
+                                    <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                                      <code className={className}>
+                                        {children}
+                                      </code>
+                                    </pre>
+                                  ) : (
+                                    <code className="bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm">
+                                      {children}
+                                    </code>
+                                  );
+                                },
+                                // Customize links
+                                a: ({ children, href }: LinkComponentProps) => (
+                                  <a
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 underline"
+                                  >
+                                    {children}
+                                  </a>
+                                ),
+                                // Customize tables
+                                table: ({ children }: TableComponentProps) => (
+                                  <div className="overflow-x-auto">
+                                    <table className="min-w-full border border-gray-300">
+                                      {children}
+                                    </table>
+                                  </div>
+                                ),
+                                th: ({ children }: TableCellProps) => (
+                                  <th className="border border-gray-300 bg-gray-50 px-3 py-2 text-left font-semibold">
+                                    {children}
+                                  </th>
+                                ),
+                                td: ({ children }: TableCellProps) => (
+                                  <td className="border border-gray-300 px-3 py-2">
+                                    {children}
+                                  </td>
+                                ),
+                              }}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
+                          </div>
                         ) : (
+                          // User messages remain as plain text
                           <div className="whitespace-pre-wrap leading-relaxed text-[15px] text-inherit">
                             {message.content}
                           </div>
@@ -329,31 +500,28 @@ export const ChatMessages = ({
                       </div>
                     </div>
 
-                    {/* Action Buttons - Only for AI responses */}
-                    {message.role === "assistant" && (
-                      <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <button
-                          className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-110 ${
-                            copiedMessageId === String(message.id)
-                              ? "bg-green-500 text-white shadow-lg"
-                              : "bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 shadow-lg"
-                          }`}
-                          aria-label="Copy AI response"
-                          onClick={() =>
-                            handleCopyMessage(
-                              String(message.id),
-                              message.content
-                            )
-                          }
-                        >
-                          {copiedMessageId === String(message.id) ? (
-                            <CheckIcon className="h-4 w-4" />
-                          ) : (
-                            <Square2StackIcon className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    )}
+                    {/* Action Buttons - For both user and AI messages */}
+                    <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <button
+                        className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-110 ${
+                          copiedMessageId === String(message.id)
+                            ? "bg-green-500 text-white shadow-lg"
+                            : "bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 shadow-lg"
+                        }`}
+                        aria-label={`Copy ${
+                          message.role === "user" ? "user" : "AI"
+                        } message`}
+                        onClick={() =>
+                          handleCopyMessage(String(message.id), message.content)
+                        }
+                      >
+                        {copiedMessageId === String(message.id) ? (
+                          <CheckIcon className="h-4 w-4" />
+                        ) : (
+                          <Square2StackIcon className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
 

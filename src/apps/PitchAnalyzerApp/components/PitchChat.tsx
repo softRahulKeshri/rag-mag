@@ -10,6 +10,7 @@ import { usePitchDetails } from "../hooks/usePitchDetails";
 import PitchDetailsView from "./PitchDetailsView";
 import FloatingChatBot from "./FloatingChatBot";
 import FloatingChatToggle from "./FloatingChatToggle";
+import { PitchDetailsSkeleton } from "./PitchSkeleton";
 import type { Pitch } from "../types/types";
 
 interface PitchChatProps {
@@ -73,10 +74,7 @@ const PitchChat = ({ pitch, onBack }: PitchChatProps) => {
       {/* Content Area - Always show details */}
       <div className="flex-1 overflow-y-auto">
         {isLoadingDetails ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading pitch analysis...</p>
-          </div>
+          <PitchDetailsSkeleton />
         ) : pitchDetails ? (
           <div className="p-6">
             <PitchDetailsView pitchDetails={pitchDetails} />
