@@ -19,6 +19,7 @@ import {
 const UploadCenter: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showSkeletonLoader, setShowSkeletonLoader] = useState(false);
   const {
     isUploading,
     selectedFiles,
@@ -40,6 +41,11 @@ const UploadCenter: React.FC = () => {
       // Add a small delay to show the success message before closing
       const timer = setTimeout(() => {
         setShowUploadModal(false);
+        // Show skeleton loader for 2 seconds after successful upload
+        setShowSkeletonLoader(true);
+        setTimeout(() => {
+          setShowSkeletonLoader(false);
+        }, 2000);
       }, 2000); // 2 seconds delay
 
       return () => clearTimeout(timer);
@@ -81,6 +87,32 @@ const UploadCenter: React.FC = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
+
+  // Skeleton loader component for uploaded files
+  const UploadedFilesSkeleton = () => (
+    <div className="space-y-2">
+      {[1, 2, 3].map((index) => (
+        <div
+          key={index}
+          className="flex items-center space-x-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl"
+        >
+          {/* Icon skeleton */}
+          <div className="w-8 h-8 bg-gray-200 rounded-lg flex-shrink-0 animate-pulse"></div>
+
+          {/* Content skeleton */}
+          <div className="flex-1 min-w-0 space-y-2">
+            <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+            <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+          </div>
+
+          {/* Status badge skeleton */}
+          <div className="flex-shrink-0">
+            <div className="w-16 h-6 bg-gray-200 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div className="h-full bg-gradient-to-br from-gray-50 to-white overflow-y-auto">
@@ -276,9 +308,9 @@ const UploadCenter: React.FC = () => {
                   </div>
                 )}
 
-                {/* Uploaded Files Section - Takes remaining space */}
+                {/* Uploaded Files Section - Fixed height with proper constraints */}
                 {!showUploadModal && (
-                  <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/60 p-5 flex-1 flex flex-col min-h-0">
+                  <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/60 p-5 flex-1 flex flex-col min-h-0 max-h-96">
                     <div className="flex items-center justify-between mb-4 flex-shrink-0">
                       <div className="flex items-center space-x-3">
                         <div className="w-7 h-7 bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
@@ -289,13 +321,15 @@ const UploadCenter: React.FC = () => {
                             Recently Uploaded
                           </h3>
                           <p className="text-xs text-gray-500 mt-0.5">
-                            {uploadedFiles.length > 0
+                            {showSkeletonLoader
+                              ? "Processing uploaded files..."
+                              : uploadedFiles.length > 0
                               ? `${uploadedFiles.length} files processed successfully`
                               : "No recent uploads"}
                           </p>
                         </div>
                       </div>
-                      {uploadedFiles.length > 0 && (
+                      {uploadedFiles.length > 0 && !showSkeletonLoader && (
                         <button
                           onClick={clearUploadedFiles}
                           className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
@@ -305,10 +339,14 @@ const UploadCenter: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Uploaded Files List or No Uploads State */}
-                    <div className="flex-1 flex flex-col min-h-0">
-                      {uploadedFiles.length > 0 ? (
-                        <div className="space-y-2 overflow-y-auto flex-1">
+                    {/* Uploaded Files List with Fixed Height Container */}
+                    <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                      {showSkeletonLoader ? (
+                        <div className="flex-1 overflow-y-auto">
+                          <UploadedFilesSkeleton />
+                        </div>
+                      ) : uploadedFiles.length > 0 ? (
+                        <div className="flex-1 overflow-y-auto space-y-2 pr-2">
                           {uploadedFiles.map((file) => (
                             <div
                               key={file.id}
@@ -342,11 +380,11 @@ const UploadCenter: React.FC = () => {
                           <h4 className="text-sm font-medium text-gray-900 mb-2">
                             No Recent Uploads
                           </h4>
-                          {/* <p className="text-xs text-gray-500 text-center max-w-xs">
+                          <p className="text-xs text-gray-500 text-center max-w-xs">
                             Upload your first CV to see it appear here. All
                             successfully uploaded files will be listed in this
                             section.
-                          </p> */}
+                          </p>
                         </div>
                       )}
                     </div>

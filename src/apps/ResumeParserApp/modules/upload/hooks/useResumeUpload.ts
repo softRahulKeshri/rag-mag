@@ -23,7 +23,7 @@ interface UseResumeUploadReturn {
 export const useResumeUpload = (): UseResumeUploadReturn => {
   const { showToast } = useToast();
   const abortControllerRef = useRef<AbortController | null>(null);
-  
+
   const [uploadState, setUploadState] = useState<UploadState>({
     isUploading: false,
     selectedFiles: [],
@@ -140,12 +140,12 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
 
       try {
         const targetProgress = 90; // Target 90% before API completion
-        
+
         // Use the corrected API that handles multiple files in a single request
         const progressCallback = (progress: number) => {
           // Smooth progress animation - gradually increase to 90%
           const smoothProgress = Math.min(progress * 0.9, targetProgress);
-          
+
           // Update overall progress for all files
           setUploadState((prev) => ({
             ...prev,
@@ -161,8 +161,6 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
           progressCallback,
           abortControllerRef.current?.signal
         );
-
-
 
         // Animate progress to 100%
         const progressInterval = setInterval(() => {
@@ -210,12 +208,10 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
 
         // Show error toast for failed uploads
         if (uploadResult.failed > 0) {
-          showToast(
-            `${uploadResult.failed} file(s) failed to upload`,
-            "error"
-          );
+          showToast(`${uploadResult.failed} file(s) failed to upload`, "error");
         }
 
+        // Update state with successful uploads
         setUploadState((prev) => ({
           ...prev,
           isUploading: false,
@@ -228,16 +224,21 @@ export const useResumeUpload = (): UseResumeUploadReturn => {
             {}
           ),
         }));
+
+        // Clear the progress interval after a short delay to ensure smooth transition
+        setTimeout(() => {
+          clearInterval(progressInterval);
+        }, 100);
       } catch (error) {
         console.error("Upload failed:", error);
-        
+
         // Check if it's an abort error
-        if (error instanceof Error && error.name === 'AbortError') {
+        if (error instanceof Error && error.name === "AbortError") {
           showToast("Upload cancelled", "warning");
         } else {
           showToast("Upload failed. Please try again.", "error");
         }
-        
+
         setUploadState((prev) => ({
           ...prev,
           isUploading: false,

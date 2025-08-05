@@ -182,11 +182,6 @@ const Sidebar: React.FC<ExtendedSidebarProps> = ({
                     </p>
                   </div>
                 )}
-
-                {/* Active indicator */}
-                {activeSection === item.id && !isCollapsed && (
-                  <div className="absolute right-4 w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full animate-pulse shadow-sm" />
-                )}
               </div>
 
               {/* Hover background effect */}

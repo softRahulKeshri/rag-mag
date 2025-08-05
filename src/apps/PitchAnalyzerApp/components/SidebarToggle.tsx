@@ -1,4 +1,7 @@
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  ArrowLeftEndOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 
 interface SidebarToggleProps {
   isOpen: boolean;
@@ -28,7 +31,7 @@ export const SidebarToggle: React.FC<SidebarToggleProps> = ({
       aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
     >
       {isOpen ? (
-        <XMarkIcon className="h-5 w-5" />
+        <ArrowLeftEndOnRectangleIcon className="h-5 w-5" />
       ) : (
         <Bars3Icon className="h-5 w-5" />
       )}
