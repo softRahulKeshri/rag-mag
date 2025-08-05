@@ -1,35 +1,30 @@
 import { useState, useCallback } from "react";
 import { pitchApi } from "../../../lib/axios";
 
-import type { PitchDetails, PitchDetailsRequest } from "../types/types";
+import type { PitchDetailsApiResponse } from "../types/types";
 
 export const usePitchDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [pitchDetails, setPitchDetails] = useState<PitchDetails | null>(null);
+  const [pitchDetails, setPitchDetails] =
+    useState<PitchDetailsApiResponse | null>(null);
 
   const fetchPitchDetails = useCallback(async (pitchId: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const payload: PitchDetailsRequest = {
-        userEmail: "member1@company1.com", // Default user email
-      };
+      // Use GET method with the new API endpoint format: /api3/pitch/{pitch_id}
+      const response = await pitchApi.get(`/pitch/${pitchId}`);
+      const result: PitchDetailsApiResponse = response.data;
 
-      const response = await pitchApi.post(
-        `/pitch-details/${pitchId}`,
-        payload
-      );
-      const result = response.data;
-
-      if (result.data) {
-        setPitchDetails(result.data);
+      if (result) {
+        setPitchDetails(result);
       } else {
         throw new Error("No pitch details found");
       }
 
-      return result.data;
+      return result;
     } catch (error) {
       // Show user-friendly error messages instead of technical details
       let userFriendlyMessage =

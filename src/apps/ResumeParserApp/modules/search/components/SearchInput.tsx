@@ -49,7 +49,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
             disabled={isSearching}
-            className="bg-white border-2 border-purple-300 rounded-lg px-3 py-2 text-gray-800 font-medium min-w-[140px] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-4 focus:ring-purple-200 focus:border-purple-500 shadow-lg"
+            className="bg-white border-2 border-brand-gradient-purple rounded-lg px-3 py-2 text-neutral-n800 font-medium min-w-[140px] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus:ring-4 focus:ring-brand-gradient-purple/20 focus:border-brand-gradient-purple shadow-lg"
           >
             <option value="">All Groups</option>
             {groups.map((group) => (
@@ -61,7 +61,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         </div>
 
         {/* Divider */}
-        <div className="w-px h-8 bg-purple-300/50 flex-shrink-0"></div>
+        <div className="w-px h-8 bg-brand-gradient-purple/50 flex-shrink-0"></div>
 
         {/* Search Input */}
         <input
@@ -72,12 +72,12 @@ const SearchInput: React.FC<SearchInputProps> = ({
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
           disabled={isSearching}
-          className="flex-1 px-4 py-3 text-gray-900 placeholder-gray-800 bg-white border-2 border-purple-300 rounded-lg outline-none text-base disabled:cursor-not-allowed focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-200 min-w-0 shadow-lg"
+          className="flex-1 px-4 py-3 text-neutral-n900 placeholder-neutral-n800 bg-white border-2 border-brand-gradient-purple rounded-lg outline-none text-base disabled:cursor-not-allowed focus:bg-white focus:border-brand-gradient-purple focus:ring-4 focus:ring-brand-gradient-purple/20 min-w-0 shadow-lg"
         />
 
         {/* Character Count Indicator */}
         {searchQuery.trim().length > 0 && searchQuery.trim().length < 5 && (
-          <div className="flex-shrink-0 text-xs text-purple-600 px-2 font-medium">
+          <div className="flex-shrink-0 text-xs text-brand-gradient-purple px-2 font-medium">
             {5 - searchQuery.trim().length} more chars
           </div>
         )}
@@ -88,8 +88,8 @@ const SearchInput: React.FC<SearchInputProps> = ({
           disabled={isSearchDisabled}
           className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 flex-shrink-0 ${
             isSearchDisabled
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-              : "bg-purple-600 text-white hover:bg-purple-700 hover:-translate-y-0.5 shadow-lg hover:shadow-purple-500/25 active:scale-95"
+              ? "bg-neutral-n300 text-neutral-n500 cursor-not-allowed"
+              : "bg-gradient-to-r from-brand-gradient-purple to-brand-gradient-blue text-white hover:shadow-lg hover:shadow-brand-gradient-purple/25 active:scale-95"
           }`}
         >
           {isSearching ? (

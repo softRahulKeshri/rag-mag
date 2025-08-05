@@ -1,36 +1,29 @@
 import {
   CloudArrowUpIcon,
-  BookmarkIcon,
   ChatBubbleLeftRightIcon,
-  UserCircleIcon,
   PresentationChartLineIcon,
 } from "@heroicons/react/24/outline";
-import { useUser } from "../../../store/useGlobalStore";
 import CommonSidebar from "../../../components/CommonSidebar";
-import {
-  formatDisplayName,
-  formatAccountText,
-  createGreeting,
-} from "../../../utils/textUtils";
-import { Tooltip } from "../../../components/ui/Tooltip";
+import SidebarToggle from "./SidebarToggle";
 import type { NavigationProps, TabId } from "../types/navigation";
 
-const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
-  const user = useUser();
-  const displayName = formatDisplayName(user?.username);
+interface ExtendedNavigationProps extends NavigationProps {
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
+}
 
+const Navigation = ({
+  activeTab,
+  onTabChange,
+  isCollapsed = false,
+  onToggleCollapse,
+}: ExtendedNavigationProps) => {
   const navigationItems = [
     {
       id: "upload" as TabId,
       title: "Upload Pitch",
       description: "Upload and analyze your pitch deck with AI",
       icon: CloudArrowUpIcon,
-    },
-    {
-      id: "bookmarked" as TabId,
-      title: "Bookmarked",
-      description: "Access your saved pitch decks for quick analysis",
-      icon: BookmarkIcon,
     },
     {
       id: "chat" as TabId,
@@ -41,98 +34,152 @@ const Navigation = ({ activeTab, onTabChange }: NavigationProps) => {
   ];
 
   return (
-    <CommonSidebar>
+    <CommonSidebar isCollapsed={isCollapsed}>
       {/* Logo Section */}
-      <div className="flex-shrink-0 p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-3">
+      <div
+        className={`flex-shrink-0 border-b border-gray-200 ${
+          isCollapsed ? "p-3" : "p-6"
+        }`}
+      >
+        <div
+          className={`flex items-center ${
+            isCollapsed ? "justify-center" : "justify-between"
+          }`}
+        >
           {/* Enhanced Brand Icon */}
-          <div className="relative">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
-              <PresentationChartLineIcon className="h-5 w-5 text-white" />
+          <div className="flex items-center justify-center">
+            <div className="relative">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
+                <PresentationChartLineIcon className="h-5 w-5 text-white" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white"></div>
             </div>
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse border border-white"></div>
+            {!isCollapsed && (
+              <div className="ml-3">
+                <h1 className="text-xl font-bold text-gray-900">
+                  Pitch Analyzer
+                </h1>
+                <p className="text-sm text-gray-500">
+                  AI-powered pitch deck analysis
+                </p>
+              </div>
+            )}
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Pitch Analyzer</h1>
-            <p className="text-sm text-gray-500">
-              AI-powered pitch deck analysis
-            </p>
-          </div>
+
+          {/* Toggle Button - Only show when not collapsed */}
+          {!isCollapsed && onToggleCollapse && (
+            <div className="ml-auto">
+              <SidebarToggle
+                isOpen={true}
+                onToggle={onToggleCollapse}
+                className="flex-shrink-0"
+              />
+            </div>
+          )}
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto min-h-0">
+      <nav
+        className={`flex-1 overflow-y-auto min-h-0 ${
+          isCollapsed ? "p-2" : "p-4"
+        } space-y-2`}
+      >
         {navigationItems.map((item) => {
           const IconComponent = item.icon;
           return (
-            <button
-              key={item.id}
-              onClick={() => onTabChange(item.id)}
-              className={`w-full text-left p-4 rounded-lg transition-all duration-200 group cursor-pointer ${
-                activeTab === item.id
-                  ? "bg-blue-50 border border-blue-200 shadow-sm"
-                  : "hover:bg-gray-50 border border-transparent"
-              }`}
-            >
-              <div className="flex items-start space-x-3">
+            <div key={item.id} className="group relative">
+              <button
+                onClick={() => onTabChange(item.id)}
+                className={`w-full text-left transition-all duration-300 ease-out cursor-pointer ${
+                  isCollapsed ? "p-2 rounded-lg" : "p-4 rounded-xl"
+                } ${
+                  activeTab === item.id
+                    ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg border border-purple-200/50"
+                    : "hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80 border border-transparent"
+                }`}
+                title={isCollapsed ? item.title : undefined}
+              >
                 <div
-                  className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-200 ${
-                    activeTab === item.id
-                      ? "bg-blue-100 text-blue-600"
-                      : "text-gray-400 group-hover:text-gray-600"
+                  className={`flex items-start ${
+                    isCollapsed ? "justify-center" : "space-x-3"
                   }`}
                 >
-                  <IconComponent className="w-5 h-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3
-                    className={`text-sm font-medium transition-colors duration-200 ${
-                      activeTab === item.id ? "text-gray-900" : "text-gray-700"
+                  <div
+                    className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                      activeTab === item.id
+                        ? "bg-purple-100 text-purple-600"
+                        : "text-gray-400 group-hover:text-gray-600"
                     }`}
                   >
-                    {item.title}
-                  </h3>
-                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                    {item.description}
-                  </p>
+                    <IconComponent className="w-5 h-5" />
+                  </div>
+
+                  {!isCollapsed && (
+                    <div className="flex-1 min-w-0">
+                      <h3
+                        className={`text-sm font-medium transition-colors duration-300 ${
+                          activeTab === item.id
+                            ? "text-gray-900"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        {item.title}
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </button>
+
+                {/* Hover background effect */}
+                {!isCollapsed && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50/80 to-blue-50/80 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                )}
+              </button>
+
+              {/* Tooltip for collapsed state */}
+              {isCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                  {item.title}
+                  <div className="absolute top-1/2 -left-1 transform -translate-y-1/2 w-0 h-0 border-r-4 border-l-0 border-t-4 border-b-4 border-transparent border-r-gray-900"></div>
+                </div>
+              )}
+            </div>
           );
         })}
       </nav>
 
-      {/* User Profile Section */}
-      <div className="flex-shrink-0 p-4 border-t border-gray-200">
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200/60 shadow-md p-3">
-          <div className="flex items-center space-x-3">
-            {/* Enhanced Avatar */}
-            <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 via-purple-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md border border-indigo-400/30">
-                <UserCircleIcon className="h-5 w-5 text-white" />
-              </div>
-            </div>
+      {/* User Profile Section - Removed - available in navbar */}
+      <div
+        className={`flex-shrink-0 border-t border-gray-200/60 ${
+          isCollapsed ? "p-2" : "p-4"
+        }`}
+      >
+        {!isCollapsed && (
+          <div className="text-center">
+            <p className="text-xs text-gray-400 font-medium">Magure.AI</p>
+          </div>
+        )}
+      </div>
 
-            {/* Enhanced User Info */}
-            <div className="flex-1 min-w-0">
-              <Tooltip content={createGreeting(displayName)} className="block">
-                <h3 className="text-sm font-semibold text-slate-800 truncate">
-                  {createGreeting(displayName)}
-                </h3>
-              </Tooltip>
-              <Tooltip
-                content={formatAccountText(user?.email)}
-                className="block"
-              >
-                <p className="text-xs text-slate-500 truncate">
-                  {formatAccountText(user?.email)}
-                </p>
-              </Tooltip>
-            </div>
+      {/* Collapse Toggle Button - Show when collapsed */}
+      {isCollapsed && onToggleCollapse && (
+        <div className="absolute top-2 right-2 group">
+          <SidebarToggle
+            isOpen={false}
+            onToggle={onToggleCollapse}
+            className="bg-white/90 backdrop-blur-sm border border-gray-200 shadow-lg"
+          />
+
+          {/* Tooltip */}
+          <div className="absolute right-full mr-2 px-2 py-1 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+            Expand sidebar
+            <div className="absolute top-1/2 -right-1 transform -translate-y-1/2 w-0 h-0 border-l-4 border-r-0 border-t-4 border-b-4 border-transparent border-l-gray-900"></div>
           </div>
         </div>
-      </div>
+      )}
     </CommonSidebar>
   );
 };

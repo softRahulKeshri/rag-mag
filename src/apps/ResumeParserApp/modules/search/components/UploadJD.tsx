@@ -114,7 +114,7 @@ const UploadJD: React.FC<UploadJDProps> = ({
     if (fileType.includes("word") || fileType.includes("document")) {
       return (
         <svg
-          className="w-8 h-8 text-blue-500 flex-shrink-0"
+          className="w-8 h-8 text-brand-gradient-blue flex-shrink-0"
           fill="currentColor"
           viewBox="0 0 24 24"
           aria-hidden="true"
@@ -125,7 +125,7 @@ const UploadJD: React.FC<UploadJDProps> = ({
     }
     return (
       <svg
-        className="w-8 h-8 text-gray-500 flex-shrink-0"
+        className="w-8 h-8 text-neutral-n500 flex-shrink-0"
         fill="currentColor"
         viewBox="0 0 24 24"
         aria-hidden="true"
@@ -148,14 +148,14 @@ const UploadJD: React.FC<UploadJDProps> = ({
             disabled={isUploading}
             className="bg-transparent border-none outline-none px-4 py-2 text-white font-medium min-w-[160px] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <option value="" className="text-gray-900">
+            <option value="" className="text-neutral-n900">
               All Groups
             </option>
             {groups.map((group) => (
               <option
                 key={group.id}
                 value={group.name}
-                className="text-gray-900"
+                className="text-neutral-n900"
               >
                 {group.name}
               </option>
@@ -251,12 +251,12 @@ const UploadJD: React.FC<UploadJDProps> = ({
           className={`px-8 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 ${
             isUploadDisabled
               ? "bg-white/20 text-white/50 cursor-not-allowed"
-              : "bg-white text-purple-600 hover:bg-white/90 hover:-translate-y-0.5 shadow-lg"
+              : "bg-white text-brand-gradient-purple hover:bg-white/90 hover:-translate-y-0.5 shadow-lg"
           }`}
         >
           {isUploading ? (
             <>
-              <div className="w-5 h-5 border-2 border-purple-600/30 border-t-purple-600 rounded-full animate-spin flex-shrink-0"></div>
+              <div className="w-5 h-5 border-2 border-brand-gradient-purple/30 border-t-brand-gradient-purple rounded-full animate-spin flex-shrink-0"></div>
               Analyzing...
             </>
           ) : (

@@ -1,38 +1,25 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import {
   ArrowLeftIcon,
   DocumentMagnifyingGlassIcon,
-  SparklesIcon,
-  ChartBarIcon,
-  XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { usePitchDetails } from "../hooks/usePitchDetails";
 import PitchDetailsView from "./PitchDetailsView";
 import FloatingChatBot from "./FloatingChatBot";
 import FloatingChatToggle from "./FloatingChatToggle";
-import { PitchDetailsSkeleton } from "./PitchSkeleton";
-import type { Pitch } from "../types/types";
+import type { Pitch, PitchDetailsApiResponse } from "../types/types";
 
-interface PitchChatProps {
+interface PitchDetailsWithChatProps {
   pitch: Pitch;
+  pitchDetails: PitchDetailsApiResponse;
   onBack: () => void;
 }
 
-const PitchChat = ({ pitch, onBack }: PitchChatProps) => {
+const PitchDetailsWithChat = ({
+  pitch,
+  pitchDetails,
+  onBack,
+}: PitchDetailsWithChatProps) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-
-  const {
-    fetchPitchDetails,
-    pitchDetails,
-    isLoading: isLoadingDetails,
-    error: detailsError,
-    clearError: clearDetailsError,
-  } = usePitchDetails();
-
-  // Fetch pitch details when component mounts
-  useEffect(() => {
-    fetchPitchDetails(pitch.id);
-  }, [pitch.id, fetchPitchDetails]);
 
   const handleToggleChat = useCallback(() => {
     setIsChatOpen((prev) => !prev);
@@ -73,46 +60,10 @@ const PitchChat = ({ pitch, onBack }: PitchChatProps) => {
 
       {/* Content Area - Always show details */}
       <div className="flex-1 overflow-y-auto">
-        {isLoadingDetails ? (
-          <PitchDetailsSkeleton />
-        ) : pitchDetails ? (
-          <div className="p-6">
-            <PitchDetailsView pitchDetails={pitchDetails} />
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <ChartBarIcon className="w-8 h-8 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Analysis not available
-            </h3>
-            <p className="text-gray-500">
-              Detailed analysis for this pitch deck is not available.
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Error Display */}
-      {detailsError && (
-        <div className="mx-6 mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-              <SparklesIcon className="w-5 h-5 text-red-600" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-red-800">{detailsError}</p>
-            </div>
-            <button
-              onClick={clearDetailsError}
-              className="flex-shrink-0 p-2 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200"
-            >
-              <XMarkIcon className="w-4 h-4" />
-            </button>
-          </div>
+        <div className="p-6">
+          <PitchDetailsView pitchDetails={pitchDetails} />
         </div>
-      )}
+      </div>
 
       {/* Floating Chat Toggle */}
       <FloatingChatToggle onClick={handleToggleChat} isVisible={!isChatOpen} />
@@ -127,4 +78,4 @@ const PitchChat = ({ pitch, onBack }: PitchChatProps) => {
   );
 };
 
-export default PitchChat;
+export default PitchDetailsWithChat;

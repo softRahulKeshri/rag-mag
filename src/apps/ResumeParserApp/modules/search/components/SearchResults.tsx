@@ -54,12 +54,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       <div className="mb-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-neutral-n1000 mb-2">
               Search Results
             </h2>
-            <div className="flex items-center gap-4 text-sm text-gray-600">
+            <div className="flex items-center gap-4 text-sm text-neutral-n700">
               <span>
-                <strong className="text-gray-900">
+                <strong className="text-neutral-n1000">
                   {searchResults.length}
                 </strong>{" "}
                 candidates found
@@ -69,7 +69,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                   <span>•</span>
                   <span>
                     in{" "}
-                    <strong className="text-gray-900">{selectedGroup}</strong>{" "}
+                    <strong className="text-neutral-n1000">
+                      {selectedGroup}
+                    </strong>{" "}
                     group
                   </span>
                 </>
@@ -81,7 +83,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             {/* Clear Search Button */}
             <button
               onClick={onClearSearch}
-              className="px-4 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2"
+              className="px-4 py-2 text-neutral-n700 hover:text-neutral-n1000 border border-neutral-n300 rounded-xl hover:bg-neutral-n50 transition-colors duration-200 flex items-center gap-2"
             >
               <svg
                 className="w-4 h-4 flex-shrink-0"
@@ -98,11 +100,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
         {/* AI Summary */}
         {searchSummary && (
-          <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-100">
+          <div className="bg-primary-ui-blue-p100 rounded-xl p-6 border border-primary-ui-blue-p200">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-gradient-to-r from-brand-gradient-purple to-brand-gradient-blue rounded-full flex items-center justify-center flex-shrink-0">
                 <svg
-                  className="w-4 h-4 text-purple-600 flex-shrink-0"
+                  className="w-4 h-4 text-white flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
@@ -111,10 +113,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 mb-2">
+                <h3 className="font-semibold text-neutral-n1000 mb-2">
                   AI Search Summary
                 </h3>
-                <p className="text-gray-700 leading-relaxed">{searchSummary}</p>
+                <p className="text-neutral-n700 leading-relaxed">
+                  {searchSummary}
+                </p>
               </div>
             </div>
           </div>
@@ -134,9 +138,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         </div>
       ) : (
         <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-24 h-24 bg-neutral-n100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
-              className="w-12 h-12 text-gray-400 flex-shrink-0"
+              className="w-12 h-12 text-neutral-n400 flex-shrink-0"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -150,15 +154,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-neutral-n1000 mb-2">
             No Results Found
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-neutral-n700 mb-4">
             We couldn't find any candidates matching your search criteria.
           </p>
           <button
             onClick={onClearSearch}
-            className="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200"
+            className="px-6 py-2 bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200"
           >
             Try New Search
           </button>
@@ -167,9 +171,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({
 
       {/* Results Footer */}
       {searchResults.length > 0 && (
-        <div className="mt-12 pt-8 border-t border-gray-200">
+        <div className="mt-12 pt-8 border-t border-neutral-n200">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-neutral-n700">
               Showing <strong>{searchResults.length}</strong> candidates
               {selectedGroup && (
                 <span>
@@ -180,17 +184,17 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Powered by</span>
+              <span className="text-sm text-neutral-n700">Powered by</span>
               <div className="flex items-center gap-1">
                 <svg
-                  className="w-4 h-4 text-purple-600 flex-shrink-0"
+                  className="w-4 h-4 text-brand-gradient-purple flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
                   <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" />
                 </svg>
-                <span className="text-sm font-medium text-purple-600">
+                <span className="text-sm font-medium text-brand-gradient-purple">
                   Magure.AI
                 </span>
               </div>

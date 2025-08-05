@@ -1,6 +1,5 @@
 import {
   EllipsisVerticalIcon,
-  ChatBubbleLeftRightIcon,
   ClockIcon,
   PencilIcon,
   TrashIcon,
@@ -66,9 +65,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           {/* Title Section */}
           <div className="flex items-center space-x-3">
             <div className="relative">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#3077F3] to-[#B96AF7] rounded-lg flex items-center justify-center shadow-sm">
-                <ChatBubbleLeftRightIcon className="h-4 w-4 text-white" />
-              </div>
+             
             </div>
             <div className="flex items-center space-x-3">
               <h1 className="text-base font-semibold text-[#2E3141] leading-tight">

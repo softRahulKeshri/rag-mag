@@ -48,7 +48,7 @@ const transformBackendResume = (
     return Math.floor(Math.random() * 1000000) + 500000; // 0.5-1.5 MB
   };
 
-  return {
+  const transformed = {
     id: backendResume.id,
     filename: backendResume.stored_filename,
     original_filename: backendResume.original_filename,
@@ -57,11 +57,16 @@ const transformBackendResume = (
     fileSize: getFileSize(),
     fileType: getFileType(backendResume.original_filename),
     uploadedAt: backendResume.upload_time,
-    status: "completed", // Assuming completed since they're in the store
+    status: "completed" as const, // Assuming completed since they're in the store
     group: backendResume.group,
     cloud_url: backendResume.cloud_url,
     commented_at: backendResume.commented_at || undefined,
     upload_time: backendResume.upload_time,
+    // New fields from API response
+    name: backendResume.name,
+    job_profile: backendResume.job_profile,
+    days_available: backendResume.days_available,
+    total_experience: backendResume.total_experience,
     // Transform comment if it exists
     comment:
       backendResume.comment && backendResume.comment.trim() !== ""
@@ -75,6 +80,8 @@ const transformBackendResume = (
           }
         : undefined,
   };
+
+  return transformed;
 };
 
 /**
@@ -117,12 +124,8 @@ export const useResumeStore = (): UseResumeStoreReturn => {
     setIsLoading(true);
     setError(null);
     try {
-      console.log("🔄 Fetching resumes from backend...");
       // Call the real API endpoint
       const backendResumes = await getResumesFromCVSEndpoint();
-      console.log(
-        `✅ Successfully fetched ${backendResumes.length} resumes from backend`
-      );
 
       // Transform backend response to frontend format
       const transformedResumes = backendResumes.map(transformBackendResume);
@@ -142,11 +145,15 @@ export const useResumeStore = (): UseResumeStoreReturn => {
         cloudUrl: resume.cloud_url,
         commentedAt: resume.commented_at,
         uploadTime: resume.upload_time,
+        // Include the new fields from API response
+        name: resume.name,
+        job_profile: resume.job_profile,
+        days_available: resume.days_available,
+        total_experience: resume.total_experience,
       }));
 
       setGlobalResumes(globalResumeData);
     } catch (err) {
-      console.error("❌ Failed to fetch resumes:", err);
       const errorMessage =
         err instanceof Error ? err.message : "Failed to load resumes";
       setError(errorMessage);
@@ -158,15 +165,10 @@ export const useResumeStore = (): UseResumeStoreReturn => {
 
   const refreshGroups = useCallback(async () => {
     try {
-      console.log("🔄 Fetching groups from backend using useGroupApi...");
       // Use the Group API hook to fetch groups
       const backendGroups = await getGroups();
-      console.log(
-        `✅ Successfully fetched ${backendGroups.length} groups from backend`
-      );
       setGroups(backendGroups);
     } catch (err) {
-      console.error("❌ Failed to load groups:", err);
       // Don't set groups to empty array, keep existing data if any
       const errorMessage =
         err instanceof Error ? err.message : "Failed to load groups";
@@ -180,15 +182,12 @@ export const useResumeStore = (): UseResumeStoreReturn => {
     setError(null);
 
     try {
-      console.log(`🗑️ Deleting resume with ID: ${resume.id}`);
       // Call the real API endpoint
       await deleteResume(resume.id);
-      console.log(`✅ Successfully deleted resume with ID: ${resume.id}`);
 
       // Remove the resume from global state
       setGlobalResumes(globalResumes.filter((r) => r.id !== resume.id));
     } catch (err) {
-      console.error("❌ Failed to delete resume:", err);
       const errorMessage =
         err instanceof Error ? err.message : "Failed to delete resume";
       setError(errorMessage);
@@ -202,16 +201,13 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   const handleUpdateResume = useCallback(
     async (resumeId: number, updates: Partial<StoreResume>) => {
       try {
-        console.log(`🔄 Updating resume with ID: ${resumeId}`, updates);
         // Update global state immediately for optimistic UI
         setGlobalResumes(
           globalResumes.map((r) =>
             r.id === resumeId ? { ...r, ...updates } : r
           )
         );
-        console.log(`✅ Successfully updated resume with ID: ${resumeId}`);
       } catch (err) {
-        console.error("❌ Failed to update resume:", err);
         setError(
           err instanceof Error ? err.message : "Failed to update resume"
         );
@@ -223,19 +219,11 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   const handleAddComment = useCallback(
     async (resumeId: number, comment: ResumeComment) => {
       try {
-        console.log(
-          `💬 Adding comment to resume with ID: ${resumeId}`,
-          comment
-        );
         // Update global state immediately for optimistic UI
         setGlobalResumes(
           globalResumes.map((r) => (r.id === resumeId ? { ...r, comment } : r))
         );
-        console.log(
-          `✅ Successfully added comment to resume with ID: ${resumeId}`
-        );
       } catch (err) {
-        console.error("❌ Failed to add comment:", err);
         setError(err instanceof Error ? err.message : "Failed to add comment");
       }
     },
@@ -245,19 +233,11 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   const handleUpdateComment = useCallback(
     async (resumeId: number, comment: ResumeComment) => {
       try {
-        console.log(
-          `✏️ Updating comment for resume with ID: ${resumeId}`,
-          comment
-        );
         // Update global state immediately for optimistic UI
         setGlobalResumes(
           globalResumes.map((r) => (r.id === resumeId ? { ...r, comment } : r))
         );
-        console.log(
-          `✅ Successfully updated comment for resume with ID: ${resumeId}`
-        );
       } catch (err) {
-        console.error("❌ Failed to update comment:", err);
         setError(
           err instanceof Error ? err.message : "Failed to update comment"
         );
@@ -268,18 +248,13 @@ export const useResumeStore = (): UseResumeStoreReturn => {
 
   const handleDeleteComment = useCallback(async (resumeId: number) => {
     try {
-      console.log(`🗑️ Deleting comment for resume with ID: ${resumeId}`);
       // Update global state immediately for optimistic UI
       setGlobalResumes(
         globalResumes.map((r) =>
           r.id === resumeId ? { ...r, comment: undefined } : r
         )
       );
-      console.log(
-        `✅ Successfully deleted comment for resume with ID: ${resumeId}`
-      );
     } catch (err) {
-      console.error("❌ Failed to delete comment:", err);
       setError(err instanceof Error ? err.message : "Failed to delete comment");
     }
   }, []);

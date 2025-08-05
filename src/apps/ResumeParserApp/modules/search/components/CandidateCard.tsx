@@ -52,21 +52,21 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
   }, []);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+    <div className="bg-white rounded-xl border border-neutral-n200 p-6 hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {/* Avatar */}
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+          <div className="w-12 h-12 bg-gradient-to-br from-brand-gradient-purple to-brand-gradient-blue rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
             {getInitials(candidate.name)}
           </div>
 
           {/* Name and File */}
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-semibold text-gray-900 truncate">
+            <h3 className="text-lg font-semibold text-neutral-n900 truncate">
               {candidate.name}
             </h3>
-            <p className="text-sm text-gray-500 truncate">
+            <p className="text-sm text-neutral-n600 truncate">
               {candidate.filename}
             </p>
           </div>
@@ -84,15 +84,15 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
 
       {/* Score Breakdown */}
       <div className="grid grid-cols-2 gap-2 mb-4">
-        <div className="bg-gray-50 rounded-lg p-2">
-          <div className="text-xs text-gray-600 mb-1">Clarity</div>
+        <div className="bg-neutral-n100 rounded-lg p-2">
+          <div className="text-xs text-neutral-n600 mb-1">Clarity</div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-sm font-medium text-neutral-n900">
               {formatScore(candidate.clarityScore || 0)}
             </span>
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+            <div className="w-12 h-1.5 bg-neutral-n200 rounded-full overflow-hidden flex-shrink-0">
               <div
-                className="h-full bg-blue-500 transition-all duration-300"
+                className="h-full bg-brand-gradient-blue transition-all duration-300"
                 style={{
                   width: `${Math.min(
                     (candidate.clarityScore || 0) * 10,
@@ -104,15 +104,15 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-2">
-          <div className="text-xs text-gray-600 mb-1">Experience</div>
+        <div className="bg-neutral-n100 rounded-lg p-2">
+          <div className="text-xs text-neutral-n600 mb-1">Experience</div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-sm font-medium text-neutral-n900">
               {formatScore(candidate.experienceScore || 0)}
             </span>
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+            <div className="w-12 h-1.5 bg-neutral-n200 rounded-full overflow-hidden flex-shrink-0">
               <div
-                className="h-full bg-green-500 transition-all duration-300"
+                className="h-full bg-brand-gradient-cyan transition-all duration-300"
                 style={{
                   width: `${Math.min(
                     (candidate.experienceScore || 0) * 10,
@@ -124,15 +124,15 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-2">
-          <div className="text-xs text-gray-600 mb-1">Loyalty</div>
+        <div className="bg-neutral-n100 rounded-lg p-2">
+          <div className="text-xs text-neutral-n600 mb-1">Loyalty</div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-sm font-medium text-neutral-n900">
               {formatScore(candidate.loyaltyScore || 0)}
             </span>
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+            <div className="w-12 h-1.5 bg-neutral-n200 rounded-full overflow-hidden flex-shrink-0">
               <div
-                className="h-full bg-purple-500 transition-all duration-300"
+                className="h-full bg-brand-gradient-purple transition-all duration-300"
                 style={{
                   width: `${Math.min(
                     (candidate.loyaltyScore || 0) * 10,
@@ -144,15 +144,15 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-2">
-          <div className="text-xs text-gray-600 mb-1">Reputation</div>
+        <div className="bg-neutral-n100 rounded-lg p-2">
+          <div className="text-xs text-neutral-n600 mb-1">Reputation</div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-sm font-medium text-neutral-n900">
               {formatScore(candidate.reputationScore || 0)}
             </span>
-            <div className="w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
+            <div className="w-12 h-1.5 bg-neutral-n200 rounded-full overflow-hidden flex-shrink-0">
               <div
-                className="h-full bg-orange-500 transition-all duration-300"
+                className="h-full bg-brand-gradient-orange transition-all duration-300"
                 style={{
                   width: `${Math.min(
                     (candidate.reputationScore || 0) * 10,
@@ -168,14 +168,14 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
       {/* Highlights */}
       {candidate.highlights && candidate.highlights.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-sm font-medium text-gray-900 mb-2">
+          <h4 className="text-sm font-medium text-neutral-n900 mb-2">
             Key Highlights
           </h4>
           <div className="space-y-1">
             {candidate.highlights.slice(0, 3).map((highlight, index) => (
               <div key={index} className="flex items-start gap-2">
-                <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-                <p className="text-sm text-gray-600 leading-relaxed">
+                <div className="w-1.5 h-1.5 bg-brand-gradient-purple rounded-full mt-2 flex-shrink-0"></div>
+                <p className="text-sm text-neutral-n600 leading-relaxed">
                   {highlight}
                 </p>
               </div>
@@ -187,7 +187,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
       {/* Group Badge */}
       {candidate.group && (
         <div className="mb-4">
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral-n100 text-neutral-n800">
             <svg
               className="w-3 h-3 mr-1 flex-shrink-0"
               fill="currentColor"
@@ -203,10 +203,10 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
 
       {/* Comment Indicator */}
       {candidate.comment && (
-        <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="mb-4 p-3 bg-primary-ui-blue-p100 rounded-lg border border-primary-ui-blue-p200">
           <div className="flex items-start gap-2">
             <svg
-              className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0"
+              className="w-4 h-4 text-primary-ui-blue-p600 mt-0.5 flex-shrink-0"
               fill="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
@@ -214,10 +214,12 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
               <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v3c0 .6.4 1 1 1 .2 0 .5-.1.7-.3L14.6 18H20c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
             </svg>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-blue-800 font-medium mb-1">
+              <p className="text-sm text-primary-ui-blue-p700 font-medium mb-1">
                 HR Comment
               </p>
-              <p className="text-sm text-blue-700">{candidate.comment}</p>
+              <p className="text-sm text-primary-ui-blue-p600">
+                {candidate.comment}
+              </p>
             </div>
           </div>
         </div>
@@ -227,7 +229,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
       <div className="flex gap-2">
         <button
           onClick={() => onViewDetails?.(candidate)}
-          className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-purple-700 transition-colors duration-200 flex items-center justify-center gap-2"
+          className="flex-1 bg-gradient-to-r from-brand-gradient-purple to-brand-gradient-blue text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
         >
           <svg
             className="w-4 h-4 flex-shrink-0"
@@ -296,7 +298,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
 
             viewFile();
           }}
-          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center flex-shrink-0"
+          className="px-4 py-2 border border-neutral-n300 text-neutral-n700 rounded-lg font-medium hover:bg-neutral-n50 transition-colors duration-200 flex items-center justify-center flex-shrink-0"
           title="View Resume"
         >
           <svg
@@ -381,7 +383,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
 
             downloadFile();
           }}
-          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center flex-shrink-0"
+          className="px-4 py-2 border border-neutral-n300 text-neutral-n700 rounded-lg font-medium hover:bg-neutral-n50 transition-colors duration-200 flex items-center justify-center flex-shrink-0"
           title="Download Resume"
         >
           <svg
@@ -397,8 +399,8 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
 
       {/* Match Score Indicator */}
       {candidate.matchScore && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="mt-3 pt-3 border-t border-neutral-n150">
+          <div className="flex items-center justify-between text-xs text-neutral-n500">
             <span>Match Score</span>
             <span className="font-medium">
               {getScoreLabel(candidate.averageScore || 0)} •{" "}

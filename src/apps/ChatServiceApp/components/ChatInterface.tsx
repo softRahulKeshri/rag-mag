@@ -10,8 +10,12 @@ import {
   PaperAirplaneIcon,
   ExclamationTriangleIcon,
   ArrowPathIcon,
+  Square2StackIcon,
+  CheckIcon,
 } from "@heroicons/react/24/outline";
-import { ChatLoader } from "./ChatLoader";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { ChatMessagesSkeleton } from "./ChatSkeleton";
 
 interface ChatInterfaceProps {
   chatId: string;
@@ -20,6 +24,25 @@ interface ChatInterfaceProps {
   onMessageSent?: (message: ConversationResponse | SendMessageResponse) => void;
   onError?: (error: string) => void;
   useConversationApi?: boolean; // New prop to switch to conversation API
+}
+
+// TypeScript interfaces for ReactMarkdown components
+interface CodeComponentProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+interface LinkComponentProps {
+  href?: string;
+  children?: React.ReactNode;
+}
+
+interface TableComponentProps {
+  children?: React.ReactNode;
+}
+
+interface TableCellProps {
+  children?: React.ReactNode;
 }
 
 /**
@@ -31,6 +54,8 @@ interface ChatInterfaceProps {
  * - Real-time message updates
  * - Loading states and error handling
  * - Auto-scroll to latest messages
+ * - Copy to clipboard functionality
+ * - Markdown rendering for AI responses
  *
  * @example
  * ```typescript
@@ -51,6 +76,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 }) => {
   const [messageInput, setMessageInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -108,6 +134,33 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       onError(getError);
     }
   }, [getError, onError]);
+
+  // Handle copy to clipboard functionality
+  const handleCopyMessage = async (messageId: string, content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedMessageId(messageId);
+
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setCopiedMessageId(null);
+      }, 2000);
+    } catch (error) {
+      console.error("Failed to copy message:", error);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = content;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+
+      setCopiedMessageId(messageId);
+      setTimeout(() => {
+        setCopiedMessageId(null);
+      }, 2000);
+    }
+  };
 
   // Handle message sending
   const handleSendMessage = async () => {
@@ -181,6 +234,99 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     <div
       className={`flex flex-col h-full bg-gradient-to-br from-white via-gray-50/30 to-white rounded-2xl shadow-2xl border border-gray-200/60 backdrop-blur-sm ${className}`}
     >
+      <style>{`
+        /* Markdown styling for AI responses */
+        .ai-message-markdown {
+          color: inherit;
+          line-height: 1.6;
+        }
+        .ai-message-markdown h1,
+        .ai-message-markdown h2,
+        .ai-message-markdown h3,
+        .ai-message-markdown h4,
+        .ai-message-markdown h5,
+        .ai-message-markdown h6 {
+          margin-top: 1.5em;
+          margin-bottom: 0.5em;
+          font-weight: 600;
+          line-height: 1.25;
+        }
+        .ai-message-markdown h1 {
+          font-size: 1.5em;
+        }
+        .ai-message-markdown h2 {
+          font-size: 1.3em;
+        }
+        .ai-message-markdown h3 {
+          font-size: 1.1em;
+        }
+        .ai-message-markdown p {
+          margin-bottom: 1em;
+        }
+        .ai-message-markdown ul,
+        .ai-message-markdown ol {
+          margin-bottom: 1em;
+          padding-left: 1.5em;
+        }
+        .ai-message-markdown li {
+          margin-bottom: 0.25em;
+        }
+        .ai-message-markdown blockquote {
+          border-left: 4px solid #e5e7eb;
+          padding-left: 1em;
+          margin: 1em 0;
+          font-style: italic;
+          color: #6b7280;
+        }
+        .ai-message-markdown code {
+          background-color: #f3f4f6;
+          padding: 0.125em 0.25em;
+          border-radius: 0.25em;
+          font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+          font-size: 0.875em;
+        }
+        .ai-message-markdown pre {
+          background-color: #1f2937;
+          color: #f9fafb;
+          padding: 1em;
+          border-radius: 0.5em;
+          overflow-x: auto;
+          margin: 1em 0;
+        }
+        .ai-message-markdown pre code {
+          background-color: transparent;
+          padding: 0;
+          color: inherit;
+        }
+        .ai-message-markdown table {
+          border-collapse: collapse;
+          width: 100%;
+          margin: 1em 0;
+        }
+        .ai-message-markdown th,
+        .ai-message-markdown td {
+          border: 1px solid #e5e7eb;
+          padding: 0.5em;
+          text-align: left;
+        }
+        .ai-message-markdown th {
+          background-color: #f9fafb;
+          font-weight: 600;
+        }
+        .ai-message-markdown a {
+          color: #3b82f6;
+          text-decoration: underline;
+        }
+        .ai-message-markdown a:hover {
+          color: #2563eb;
+        }
+        .ai-message-markdown hr {
+          border: none;
+          border-top: 1px solid #e5e7eb;
+          margin: 2em 0;
+        }
+      `}</style>
+
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b border-gray-200/60 bg-white/80 backdrop-blur-sm rounded-t-2xl">
         <div>
@@ -208,7 +354,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gradient-to-b from-gray-50/20 to-white">
         {isLoadingMessages ? (
           <div className="flex items-center justify-center py-12">
-            <ChatLoader />
+            <ChatMessagesSkeleton messageCount={5} />
           </div>
         ) : sortedMessages.length === 0 ? (
           <div className="text-center py-16">
@@ -240,26 +386,115 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           sortedMessages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${
+              className={`group flex ${
                 message.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
-              <div
-                className={`max-w-xs lg:max-w-md px-6 py-4 rounded-2xl shadow-lg ${
-                  message.role === "user"
-                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-blue-500/25"
-                    : "bg-white text-gray-900 shadow-gray-200/50 border border-gray-100"
-                }`}
-              >
-                <div className="text-sm whitespace-pre-wrap break-words leading-relaxed">
-                  {message.content}
-                </div>
+              <div className="relative">
                 <div
-                  className={`text-xs mt-3 ${
-                    message.role === "user" ? "text-blue-100" : "text-gray-400"
+                  className={`max-w-xs lg:max-w-md px-6 py-4 rounded-2xl shadow-lg ${
+                    message.role === "user"
+                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-blue-500/25"
+                      : "bg-white text-gray-900 shadow-gray-200/50 border border-gray-100"
                   }`}
                 >
-                  {formatTimestamp(message.created_at)}
+                  <div className="text-sm leading-relaxed">
+                    {message.role === "assistant" ? (
+                      // Render AI messages as markdown
+                      <div className="ai-message-markdown">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            // Customize code blocks for better styling
+                            code: ({
+                              className,
+                              children,
+                            }: CodeComponentProps) => {
+                              const isInline =
+                                !className?.includes("language-");
+                              return !isInline ? (
+                                <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                                  <code className={className}>{children}</code>
+                                </pre>
+                              ) : (
+                                <code className="bg-gray-100 text-gray-800 px-1 py-0.5 rounded text-sm">
+                                  {children}
+                                </code>
+                              );
+                            },
+                            // Customize links
+                            a: ({ children, href }: LinkComponentProps) => (
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 underline"
+                              >
+                                {children}
+                              </a>
+                            ),
+                            // Customize tables
+                            table: ({ children }: TableComponentProps) => (
+                              <div className="overflow-x-auto">
+                                <table className="min-w-full border border-gray-300">
+                                  {children}
+                                </table>
+                              </div>
+                            ),
+                            th: ({ children }: TableCellProps) => (
+                              <th className="border border-gray-300 bg-gray-50 px-3 py-2 text-left font-semibold">
+                                {children}
+                              </th>
+                            ),
+                            td: ({ children }: TableCellProps) => (
+                              <td className="border border-gray-300 px-3 py-2">
+                                {children}
+                              </td>
+                            ),
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      // User messages remain as plain text
+                      <div className="whitespace-pre-wrap break-words">
+                        {message.content}
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className={`text-xs mt-3 ${
+                      message.role === "user"
+                        ? "text-blue-100"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    {formatTimestamp(message.created_at)}
+                  </div>
+                </div>
+
+                {/* Copy Button - For both user and AI messages */}
+                <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <button
+                    className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-110 ${
+                      copiedMessageId === String(message.id)
+                        ? "bg-green-500 text-white shadow-lg"
+                        : "bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 shadow-lg"
+                    }`}
+                    aria-label={`Copy ${
+                      message.role === "user" ? "user" : "AI"
+                    } message`}
+                    onClick={() =>
+                      handleCopyMessage(String(message.id), message.content)
+                    }
+                  >
+                    {copiedMessageId === String(message.id) ? (
+                      <CheckIcon className="h-4 w-4" />
+                    ) : (
+                      <Square2StackIcon className="h-4 w-4" />
+                    )}
+                  </button>
                 </div>
               </div>
             </div>

@@ -11,4 +11,4 @@ export interface NavigationProps {
   userEmail?: string;
 }
 
-export type TabId = "upload" | "bookmarked" | "chat";
+export type TabId = "upload" | "chat";

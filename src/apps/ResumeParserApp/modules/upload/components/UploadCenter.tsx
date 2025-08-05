@@ -3,6 +3,7 @@ import FileUploadZone from "./FileUploadZone";
 import GroupSelector from "./GroupSelector";
 import UploadProgressModal from "./UploadProgressModal";
 import { useResumeUpload } from "../hooks/useResumeUpload";
+import { ResumeUploadSkeleton } from "../../../components/ResumeSkeleton";
 import type { Group } from "../../../types/api";
 import {
   DocumentTextIcon,
@@ -13,11 +14,13 @@ import {
   XMarkIcon,
   CloudArrowUpIcon,
   DocumentPlusIcon,
+  ClockIcon,
 } from "@heroicons/react/24/outline";
 
 const UploadCenter: React.FC = () => {
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showSkeletonLoader, setShowSkeletonLoader] = useState(false);
   const {
     isUploading,
     selectedFiles,
@@ -39,6 +42,11 @@ const UploadCenter: React.FC = () => {
       // Add a small delay to show the success message before closing
       const timer = setTimeout(() => {
         setShowUploadModal(false);
+        // Show skeleton loader for 2 seconds after successful upload
+        setShowSkeletonLoader(true);
+        setTimeout(() => {
+          setShowSkeletonLoader(false);
+        }, 2000);
       }, 2000); // 2 seconds delay
 
       return () => clearTimeout(timer);
@@ -80,6 +88,9 @@ const UploadCenter: React.FC = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
+
+  // Use the new skeleton component
+  const UploadedFilesSkeleton = () => <ResumeUploadSkeleton />;
 
   return (
     <div className="h-full bg-gradient-to-br from-gray-50 to-white overflow-y-auto">
@@ -275,26 +286,28 @@ const UploadCenter: React.FC = () => {
                   </div>
                 )}
 
-                {/* Uploaded Files Section - Takes remaining space */}
+                {/* Uploaded Files Section - Fixed height with proper constraints */}
                 {!showUploadModal && (
-                  <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/60 p-5 flex-1 flex flex-col min-h-0">
+                  <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/60 p-5 flex-1 flex flex-col min-h-0 max-h-96">
                     <div className="flex items-center justify-between mb-4 flex-shrink-0">
                       <div className="flex items-center space-x-3">
-                        <div className="w-7 h-7 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-                          <CheckCircleIcon className="w-4 h-4 text-white" />
+                        <div className="w-7 h-7 bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                          <ClockIcon className="w-4 h-4 text-white" />
                         </div>
                         <div className="flex-1">
                           <h3 className="text-lg font-semibold text-gray-900">
                             Recently Uploaded
                           </h3>
                           <p className="text-xs text-gray-500 mt-0.5">
-                            {uploadedFiles.length > 0
+                            {showSkeletonLoader
+                              ? "Processing uploaded files..."
+                              : uploadedFiles.length > 0
                               ? `${uploadedFiles.length} files processed successfully`
                               : "No recent uploads"}
                           </p>
                         </div>
                       </div>
-                      {uploadedFiles.length > 0 && (
+                      {uploadedFiles.length > 0 && !showSkeletonLoader && (
                         <button
                           onClick={clearUploadedFiles}
                           className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
@@ -304,10 +317,14 @@ const UploadCenter: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Uploaded Files List or No Uploads State */}
-                    <div className="flex-1 flex flex-col min-h-0">
-                      {uploadedFiles.length > 0 ? (
-                        <div className="space-y-2 overflow-y-auto flex-1">
+                    {/* Uploaded Files List with Fixed Height Container */}
+                    <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                      {showSkeletonLoader ? (
+                        <div className="flex-1 overflow-y-auto">
+                          <UploadedFilesSkeleton />
+                        </div>
+                      ) : uploadedFiles.length > 0 ? (
+                        <div className="flex-1 overflow-y-auto space-y-2 pr-2">
                           {uploadedFiles.map((file) => (
                             <div
                               key={file.id}
@@ -336,16 +353,16 @@ const UploadCenter: React.FC = () => {
                       ) : (
                         <div className="flex flex-col items-center justify-center flex-1">
                           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                            <DocumentTextIcon className="w-8 h-8 text-gray-400" />
+                            <ClockIcon className="w-8 h-8 text-gray-400" />
                           </div>
                           <h4 className="text-sm font-medium text-gray-900 mb-2">
                             No Recent Uploads
                           </h4>
-                          {/* <p className="text-xs text-gray-500 text-center max-w-xs">
+                          <p className="text-xs text-gray-500 text-center max-w-xs">
                             Upload your first CV to see it appear here. All
                             successfully uploaded files will be listed in this
                             section.
-                          </p> */}
+                          </p>
                         </div>
                       )}
                     </div>

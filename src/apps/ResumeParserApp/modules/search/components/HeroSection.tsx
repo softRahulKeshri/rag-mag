@@ -19,9 +19,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   children,
 }) => {
   return (
-    <div className="bg-gradient-to-br from-purple-600 to-purple-700 text-white p-12 rounded-3xl mb-8 relative overflow-hidden">
+    <div className="bg-gradient-to-br from-brand-gradient-purple to-brand-gradient-blue text-white p-12 rounded-3xl mb-8 relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-brand-gradient-purple/20 to-transparent"></div>
 
       <div className="relative z-10 text-center">
         {/* Animated Icon */}
@@ -44,7 +44,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </h1>
 
         {/* Subtitle */}
-        <p className="text-lg text-purple-100 max-w-2xl mx-auto mb-8 leading-relaxed">
+        <p className="text-lg text-white/90 max-w-2xl mx-auto mb-8 leading-relaxed">
           Let our advanced AI find your perfect candidates. We analyze skills,
           experience, and potential matches using state-of-the-art language
           models to deliver precise results.
@@ -58,7 +58,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                 activeTab === 0
                   ? "bg-white/20 text-white shadow-lg"
-                  : "text-purple-100 hover:text-white hover:bg-white/10"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               }`}
             >
               <svg
@@ -76,7 +76,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                 activeTab === 1
                   ? "bg-white/20 text-white shadow-lg"
-                  : "text-purple-100 hover:text-white hover:bg-white/10"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
               }`}
             >
               <svg

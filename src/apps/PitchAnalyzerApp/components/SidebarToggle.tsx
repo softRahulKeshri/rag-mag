@@ -10,10 +10,10 @@ interface SidebarToggleProps {
 }
 
 /**
- * SidebarToggle Component
+ * SidebarToggle Component for PitchAnalyzerApp
  *
  * A reusable toggle button for sidebar collapse/expand functionality.
- * Uses consistent styling with the ResumeParserApp theme.
+ * Uses consistent styling with the PitchAnalyzerApp theme.
  *
  * @param isOpen - Whether the sidebar is currently open/expanded
  * @param onToggle - Callback function to toggle sidebar state
@@ -27,7 +27,7 @@ export const SidebarToggle: React.FC<SidebarToggleProps> = ({
   return (
     <button
       onClick={onToggle}
-      className={`p-2 text-gray-500 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-300 cursor-pointer ${className}`}
+      className={`p-2 text-gray-500 hover:text-purple-600 rounded-lg hover:bg-purple-50 transition-all duration-300 cursor-pointer ${className}`}
       aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
     >
       {isOpen ? (

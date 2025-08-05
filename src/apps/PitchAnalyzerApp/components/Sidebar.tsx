@@ -158,8 +158,8 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Footer */}
       <div className="flex-shrink-0 p-4 border-t border-gray-200">
-        <p className="text-xs text-gray-400 text-center">
-          Powered by Magure.AI
+        <p className="text-xs text-gray-400 text-center font-medium">
+          Magure.AI
         </p>
       </div>
     </CommonSidebar>

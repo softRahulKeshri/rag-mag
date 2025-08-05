@@ -1,14 +1,17 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   CloudArrowUpIcon,
   XMarkIcon,
   DocumentIcon,
   DocumentMagnifyingGlassIcon,
-  SparklesIcon,
   CheckCircleIcon,
+  InformationCircleIcon,
+  ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import { usePitchUpload } from "../hooks/usePitchUpload";
 import { useCompanyPitches } from "../hooks/useCompanyPitches";
+import { Tooltip } from "../../../components/ui/Tooltip";
+import { PitchUploadSkeleton } from "./PitchSkeleton";
 
 interface UploadAreaProps {
   userEmail: string;
@@ -18,8 +21,6 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState("");
-  const [messageIndex, setMessageIndex] = useState(0);
 
   const { uploadMultiplePitches, isUploading, error, clearError } =
     usePitchUpload();
@@ -29,18 +30,6 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
   useEffect(() => {
     fetchCompanyPitches();
   }, [fetchCompanyPitches]);
-
-  const loadingMessages = useMemo(
-    () => [
-      "Analyzing your pitch deck structure...",
-      "Extracting key financial metrics...",
-      "Identifying market opportunities...",
-      "Evaluating competitive landscape...",
-      "Generating comprehensive insights...",
-      "Preparing AI-powered recommendations...",
-    ],
-    []
-  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -92,7 +81,6 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
     if (selectedFiles.length === 0 || !userEmail) return;
 
     setShowLoadingScreen(true);
-    setLoadingMessage(loadingMessages[0]);
 
     try {
       await uploadMultiplePitches(selectedFiles);
@@ -102,28 +90,8 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
       console.error("Upload failed:", error);
     } finally {
       setShowLoadingScreen(false);
-      setLoadingMessage("");
-      setMessageIndex(0);
     }
-  }, [
-    selectedFiles,
-    userEmail,
-    uploadMultiplePitches,
-    loadingMessages,
-    fetchCompanyPitches,
-  ]);
-
-  // Rotate loading messages
-  useEffect(() => {
-    if (showLoadingScreen) {
-      const interval = setInterval(() => {
-        setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
-        setLoadingMessage(loadingMessages[messageIndex]);
-      }, 2000);
-
-      return () => clearInterval(interval);
-    }
-  }, [showLoadingScreen, loadingMessages, messageIndex]);
+  }, [selectedFiles, userEmail, uploadMultiplePitches, fetchCompanyPitches]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -135,254 +103,288 @@ const UploadArea = ({ userEmail }: UploadAreaProps) => {
   };
 
   const getRecentPitches = () => {
-    return pitches.slice(0, 3);
+    return pitches.slice(0, 6); // Show only the 6 most recent pitches
   };
 
+  // Loading screen overlay
   if (showLoadingScreen) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#F5F5F5] to-[#EAEAEC] flex items-center justify-center">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-[#BFD6FF]/50 p-12 max-w-md w-full mx-4">
-          <div className="text-center">
-            {/* Animated Icon */}
-            <div className="relative mb-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-[#3077F3] to-[#1E50A8] rounded-2xl flex items-center justify-center shadow-lg mx-auto">
-                <SparklesIcon className="w-10 h-10 text-white animate-pulse" />
-              </div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#10B981] rounded-full animate-ping border-2 border-white"></div>
-            </div>
-
-            {/* Loading Text */}
-            <h2 className="text-2xl font-bold text-[#2E3141] mb-4">
-              Analyzing Pitch Deck
-            </h2>
-            <p className="text-[#6D6F7A] mb-8 leading-relaxed">
-              {loadingMessage}
-            </p>
-
-            {/* Progress Bar */}
-            <div className="w-full bg-[#D5D6D9] rounded-full h-2 mb-6">
-              <div
-                className="bg-gradient-to-r from-[#3077F3] to-[#1E50A8] h-2 rounded-full animate-pulse"
-                style={{ width: "60%" }}
-              ></div>
-            </div>
-
-            {/* Status Indicators */}
-            <div className="flex justify-center space-x-2">
-              {loadingMessages.map((_, index) => (
-                <div
-                  key={index}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index <= messageIndex ? "bg-[#3077F3]" : "bg-[#C0C1C6]"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+      <div className="fixed inset-0 bg-white/95 backdrop-blur-sm z-50 flex items-center justify-center">
+        <PitchUploadSkeleton />
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Enhanced Header Section */}
-      <div className="text-center mb-10">
-        <div className="flex items-center justify-center mb-6">
-          {/* <div className="relative">
-            <div className="w-20 h-20 bg-gradient-to-br from-[#3077F3] to-[#1E50A8] rounded-2xl flex items-center justify-center shadow-lg">
-              <CloudArrowUpIcon className="w-10 h-10 text-white" />
+    <div className="space-y-6">
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="flex-shrink-0">
+              <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
             </div>
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#10B981] rounded-full animate-pulse border-2 border-white"></div>
-          </div> */}
-        </div>
-        <h1 className="text-4xl font-bold text-[#2E3141] mb-4">
-          Upload Pitch Deck
-        </h1>
-        <p className="text-lg text-[#6D6F7A] max-w-2xl mx-auto leading-relaxed">
-          AI-Powered Pitch Analysis - Upload your pitch deck for comprehensive
-          analysis and insights
-        </p>
-      </div>
-
-      {/* Upload Area */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-[#D5D6D9]/50 p-8">
-        <div className="flex items-start space-x-4 mb-6">
-          <div className="w-8 h-8 bg-[#EFF5FF] rounded-lg flex items-center justify-center flex-shrink-0">
-            <CloudArrowUpIcon className="w-5 h-5 text-[#3077F3]" />
-          </div>
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold text-[#2E3141] mb-1">
-              Upload Pitch Deck
-            </h2>
-            <p className="text-[#6D6F7A]">
-              Drag and drop your PDF pitch deck or click to browse files
-            </p>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-800">{error}</p>
+            </div>
+            <button
+              onClick={clearError}
+              className="flex-shrink-0 p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded transition-colors duration-200"
+            >
+              <XMarkIcon className="w-4 h-4" />
+            </button>
           </div>
         </div>
+      )}
 
-        {/* Drag & Drop Zone */}
-        <div
-          className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-300 ${
-            isDragOver
-              ? "border-[#3077F3] bg-[#EFF5FF]/50"
-              : "border-[#C0C1C6] hover:border-[#94BAFD] hover:bg-[#F5F5F5]/50"
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <input
-            type="file"
-            multiple
-            accept=".pdf"
-            onChange={handleFileSelect}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          />
-
-          <div className="space-y-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#EFF5FF] to-[#E3EDFF] rounded-2xl flex items-center justify-center mx-auto">
-              <CloudArrowUpIcon className="w-8 h-8 text-[#3077F3]" />
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Left Column - Upload Guidelines */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-full">
+          <div className="h-full flex flex-col">
+            {/* Upload Guidelines Header */}
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircleIcon className="w-5 h-5 text-green-600" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Upload Guidelines
+              </h2>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-[#2E3141] mb-2">
-                Drop your pitch deck here
-              </h3>
-              <p className="text-[#6D6F7A] mb-4">
-                Supports PDF files up to 50MB
-              </p>
-              <button className="inline-flex items-center px-4 py-2 bg-[#3077F3] text-white rounded-lg hover:bg-[#1E50A8] transition-colors duration-200">
-                Browse Files
-              </button>
-            </div>
-          </div>
-        </div>
 
-        {/* Selected Files */}
-        {selectedFiles.length > 0 && (
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold text-[#2E3141] mb-4">
-              Selected Files ({selectedFiles.length})
-            </h3>
-            <div className="space-y-3">
-              {selectedFiles.map((file, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-4 bg-[#F5F5F5] rounded-xl border border-[#D5D6D9]"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-[#FEF2F2] rounded-lg flex items-center justify-center">
-                      <DocumentIcon className="w-5 h-5 text-[#EF4444]" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-[#2E3141]">{file.name}</p>
-                      <p className="text-sm text-[#6D6F7A]">
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    </div>
+            {/* Guidelines List */}
+            <div className="space-y-4 flex-1">
+              {/* Supported Formats */}
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <DocumentIcon className="w-4 h-4 text-blue-600" />
                   </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    Supported formats
+                  </span>
+                </div>
+                <div className="flex space-x-1">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-md">
+                    PDF
+                  </span>
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-md">
+                    DOCX
+                  </span>
+                </div>
+              </div>
+
+              {/* Total Size Limit */}
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <DocumentIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    Total size limit
+                  </span>
+                </div>
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-md">
+                  200MB total
+                </span>
+              </div>
+
+              {/* File Limit */}
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                    <InformationCircleIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    File limit
+                  </span>
+                </div>
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-md">
+                  100 files max
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Upload Area */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-full">
+          <div className="h-full flex flex-col">
+            {/* Drag and Drop Area */}
+            <div className="flex-1">
+              <div
+                className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 cursor-pointer h-full flex flex-col justify-center ${
+                  isDragOver
+                    ? "border-purple-500 bg-purple-50"
+                    : "border-gray-300 hover:border-purple-400 hover:bg-gray-50"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <input
+                  type="file"
+                  multiple
+                  accept=".pdf"
+                  onChange={handleFileSelect}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto">
+                    <CloudArrowUpIcon className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      Drag and Drop Pitch Deck
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      Drop your PDF file here or click to browse
+                    </p>
+                    <button className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 cursor-pointer">
+                      Browse Files
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Selected Files Section */}
+            {selectedFiles.length > 0 && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    Selected Files ({selectedFiles.length})
+                  </h3>
                   <button
-                    onClick={() => removeFile(index)}
-                    className="p-2 text-[#ABADB3] hover:text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg transition-colors duration-200 cursor-pointer"
+                    onClick={() => setSelectedFiles([])}
+                    className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200"
                   >
-                    <XMarkIcon className="w-5 h-5" />
+                    Clear All
                   </button>
                 </div>
-              ))}
-            </div>
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handleUpload}
-                disabled={isUploading}
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#3077F3] to-[#1E50A8] text-white rounded-xl hover:from-[#1E50A8] hover:to-[#11397E] transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isUploading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <SparklesIcon className="w-5 h-5 mr-2" />
-                    Analyze Pitch Deck
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
 
-        {/* Error Display */}
-        {error && (
-          <div className="mt-6 bg-[#FEF2F2] border border-[#FECACA] rounded-xl p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <XMarkIcon className="h-5 w-5 text-[#F87171]" />
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {selectedFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                    >
+                      <div className="flex items-center space-x-2 flex-1 min-w-0">
+                        <DocumentIcon className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                        <Tooltip content={file.name}>
+                          <p className="text-xs font-medium text-gray-900 truncate">
+                            {file.name}
+                          </p>
+                        </Tooltip>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs text-gray-500">
+                          {(file.size / 1024 / 1024).toFixed(1)} MB
+                        </span>
+                        <button
+                          onClick={() => removeFile(index)}
+                          className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors duration-200 cursor-pointer"
+                        >
+                          <XMarkIcon className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-[#991B1B]">
-                  Upload Error
-                </h3>
-                <p className="text-sm text-[#B91C1C] mt-1">{error}</p>
+            )}
+
+            {/* Upload Button - Always visible, conditionally enabled */}
+            <div className={`${selectedFiles.length > 0 ? "mt-4" : "mt-6"}`}>
+              <div className="text-center">
                 <button
-                  onClick={clearError}
-                  className="mt-2 text-sm text-[#DC2626] hover:text-[#B91C1C] font-medium cursor-pointer"
+                  onClick={handleUpload}
+                  disabled={selectedFiles.length === 0 || isUploading}
+                  className={`inline-flex items-center px-6 py-3 border-2 border-transparent text-sm font-semibold rounded-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-offset-2 transition-all duration-300 ${
+                    selectedFiles.length > 0 && !isUploading
+                      ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 focus:ring-purple-500/30 transform hover:-translate-y-1 hover:shadow-2xl border-purple-500/20"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
+                  }`}
                 >
-                  Dismiss
+                  <CloudArrowUpIcon className="w-5 h-5 mr-2" />
+                  {isUploading
+                    ? `Uploading ${selectedFiles.length} Files...`
+                    : selectedFiles.length > 0
+                    ? `Upload ${selectedFiles.length} Pitch${
+                        selectedFiles.length > 1 ? "es" : ""
+                      }`
+                    : "Upload Pitch Deck"}
                 </button>
               </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Recent Pitches Section */}
-      {getRecentPitches().length > 0 && (
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-[#D5D6D9]/50 p-8">
-          <div className="flex items-start space-x-4 mb-6">
-            <div className="w-8 h-8 bg-[#ECFDF5] rounded-lg flex items-center justify-center flex-shrink-0">
-              <DocumentMagnifyingGlassIcon className="w-5 h-5 text-[#10B981]" />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold text-[#2E3141] mb-1">
-                Recent Pitches
-              </h2>
-              <p className="text-[#6D6F7A]">
-                Your recently uploaded pitch decks
-              </p>
-            </div>
+      {/* Recent Pitches Section - Full Width */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Recent Companies
+          </h2>
+          <div className="flex items-center space-x-2">
+            <DocumentMagnifyingGlassIcon className="w-5 h-5 text-gray-500" />
+            <span className="text-sm text-gray-600">
+              {pitches.length} total companies
+            </span>
           </div>
+        </div>
 
-          <div className="grid gap-4">
+        {getRecentPitches().length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {getRecentPitches().map((pitch) => (
               <div
                 key={pitch.id}
-                className="group relative p-4 border border-[#D5D6D9] rounded-xl hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
+                className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer"
               >
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-[#3077F3] to-[#1E50A8] rounded-lg flex items-center justify-center shadow-lg">
-                    <DocumentIcon className="w-5 h-5 text-white" />
+                <div className="flex items-start space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <DocumentMagnifyingGlassIcon className="w-5 h-5 text-purple-600" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-[#2E3141]">
-                      {pitch.title || pitch.filename}
-                    </h3>
-                    <p className="text-sm text-[#6D6F7A]">
+                  <div className="flex-1 min-w-0">
+                    <Tooltip
+                      content={pitch.company || pitch.title || pitch.filename}
+                    >
+                      <h3 className="font-medium text-gray-900 truncate">
+                        {pitch.company || pitch.title || pitch.filename}
+                      </h3>
+                    </Tooltip>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {pitch.industry || pitch.sector_category}
+                    </p>
+                    <p className="text-xs text-gray-500">
                       Uploaded {formatDate(pitch.created_at)}
                     </p>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-[#ECFDF5] text-[#065F46]">
-                      <CheckCircleIcon className="w-3 h-3 mr-1" />
-                      Analyzed
-                    </span>
-                  </div>
+                  {pitch.is_bookmarked && (
+                    <div className="flex-shrink-0">
+                      <CheckCircleIcon className="w-5 h-5 text-green-500" />
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="text-center py-8">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <DocumentMagnifyingGlassIcon className="w-8 h-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No companies uploaded yet
+            </h3>
+            <p className="text-gray-600">
+              Upload your first pitch deck to get started
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

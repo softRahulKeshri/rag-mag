@@ -5,7 +5,7 @@ import {
   ClockIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
-import { ChatLoader } from "./ChatLoader";
+import { ChatSessionsListSkeleton } from "./ChatSkeleton";
 
 interface ChatSessionsListProps {
   userId: string;
@@ -98,7 +98,7 @@ const ChatSessionsList: React.FC<ChatSessionsListProps> = ({
           </h3>
         </div>
         <div className="p-6">
-          <ChatLoader />
+          <ChatSessionsListSkeleton items={6} />
         </div>
       </div>
     );
