@@ -12,19 +12,10 @@ import CompactSearchInput from "./CompactSearchInput";
 import CompactUploadJD from "./CompactUploadJD";
 
 /**
- * ResumeSearch Component - Elegant Search Interface
+ * ResumeSearch Component - Premium Search Interface
  *
  * AI-powered resume search with sophisticated design and brand colors.
  * Features elegant gradients, smooth animations, and modern UI/UX.
- *
- * Features:
- * - Elegant dual search modes with brand gradients
- * - Sophisticated visual design with brand colors
- * - Smooth animations and transitions
- * - Modern glassmorphism effects
- * - AI-powered candidate scoring and ranking
- * - Responsive design with premium feel
- * - Integration with existing API architecture
  */
 const ResumeSearch: React.FC = () => {
   // API hooks
@@ -52,7 +43,6 @@ const ResumeSearch: React.FC = () => {
       setGroupsLoading(true);
       try {
         const groupsData = await getGroups();
-        // Transform to match our Group interface
         const transformedGroups: Group[] = groupsData.map((group) => ({
           id: group.id,
           name: group.name,
@@ -64,7 +54,6 @@ const ResumeSearch: React.FC = () => {
         setGroups(transformedGroups);
       } catch (error) {
         console.error("Failed to fetch groups:", error);
-        // Continue with empty groups - don't block the search functionality
         setGroups([]);
       } finally {
         setGroupsLoading(false);
@@ -78,15 +67,12 @@ const ResumeSearch: React.FC = () => {
   const handleSearchModeChange = useCallback(
     (mode: "text" | "jd") => {
       setSearchMode(mode);
-      // Clear relevant states when switching modes
       if (mode === "text") {
         setSelectedFile(null);
         setUploadError(null);
       } else {
         setSearchQuery("");
       }
-
-      // Clear previous results and errors
       setSearchResults([]);
       setSearchSummary(null);
       setHasSearched(false);
@@ -105,7 +91,6 @@ const ResumeSearch: React.FC = () => {
     clearError();
 
     try {
-      // Only pass group if it's not empty
       const groupParam =
         selectedGroup && selectedGroup.trim() ? selectedGroup : undefined;
 
@@ -131,14 +116,13 @@ const ResumeSearch: React.FC = () => {
     clearError();
 
     try {
-      // Only pass group if it's not empty
       const groupParam =
         selectedGroup && selectedGroup.trim() ? selectedGroup : undefined;
 
       const result = await searchByJobDescription(selectedFile, groupParam);
       setSearchResults(result.results);
       setSearchSummary(result.summary);
-      setSelectedFile(null); // Clear file after successful upload
+      setSelectedFile(null);
     } catch (error) {
       console.error("JD upload error:", error);
       setSearchResults([]);
@@ -158,9 +142,8 @@ const ResumeSearch: React.FC = () => {
     clearError();
   }, [clearError]);
 
-  // Handle search results callback (for potential parent component integration)
+  // Handle search results callback
   const handleSearchResults = useCallback((results: CandidateResult[]) => {
-    // This could be used to notify parent components about search results
     console.log("Search results updated:", results.length, "candidates found");
   }, []);
 
@@ -173,14 +156,14 @@ const ResumeSearch: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-n100 via-neutral-n150 to-neutral-n200">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Elegant Search Interface */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Premium Search Interface */}
         <div className="max-w-5xl mx-auto mb-8">
-          {/* AI Search Header with Brand Gradient */}
+          {/* AI Search Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-brand-gradient-orange via-brand-gradient-purple to-brand-gradient-blue bg-clip-text text-transparent px-6 py-3 rounded-2xl backdrop-blur-sm border border-white/20 shadow-xl">
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-brand-gradient-orange via-brand-gradient-purple to-brand-gradient-blue bg-clip-text text-transparent px-6 py-3 rounded-2xl">
               <div className="relative">
-                <div className="w-6 h-6 bg-gradient-to-r from-brand-gradient-cyan to-brand-gradient-blue rounded-full flex items-center justify-center animate-pulse">
+                <div className="w-6 h-6 bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple rounded-full flex items-center justify-center animate-pulse">
                   <svg
                     className="w-3 h-3 text-white"
                     fill="currentColor"
@@ -192,19 +175,19 @@ const ResumeSearch: React.FC = () => {
                 </div>
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-brand-gradient-orange rounded-full animate-ping"></div>
               </div>
-              <span className="text-lg font-bold bg-gradient-to-r from-brand-gradient-orange via-brand-gradient-purple to-brand-gradient-blue bg-clip-text text-transparent">
+              <span className="text-xl font-bold bg-gradient-to-r from-brand-gradient-orange via-brand-gradient-purple to-brand-gradient-blue bg-clip-text text-transparent">
                 AI-Powered Resume Matching
               </span>
             </div>
           </div>
 
-          {/* Sophisticated Search Container */}
+          {/* Premium Search Container */}
           <div className="relative">
             {/* Background Gradient Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-brand-gradient-orange/10 via-brand-gradient-purple/10 to-brand-gradient-blue/10 rounded-3xl blur-xl"></div>
 
             {/* Main Search Container */}
-            <div className="relative bg-white/80 backdrop-blur-xl border border-white/30 rounded-3xl shadow-2xl p-8 overflow-hidden">
+            <div className="relative bg-white/90 backdrop-blur-xl border border-white/30 rounded-3xl shadow-2xl p-8 overflow-hidden">
               {/* Animated Background Pattern */}
               <div className="absolute inset-0 opacity-5">
                 <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-brand-gradient-orange to-brand-gradient-purple rounded-full blur-3xl animate-pulse"></div>

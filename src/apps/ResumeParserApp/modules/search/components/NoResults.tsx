@@ -53,18 +53,18 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
 
       {/* No Results Message */}
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-neutral-n900 mb-4">
+        <h2 className="text-3xl font-bold text-neutral-n1000 mb-4">
           No Matching Candidates Found
         </h2>
-        <p className="text-lg text-neutral-n600 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg text-neutral-n700 max-w-2xl mx-auto leading-relaxed">
           We couldn't find any candidates matching your current search criteria.
           Try adjusting your search terms or consider the suggestions below.
         </p>
       </div>
 
       {/* Search Suggestions */}
-      <div className="bg-gradient-to-r from-primary-ui-blue-p100 to-primary-ui-blue-p200 rounded-xl p-8 mb-8 border border-primary-ui-blue-p200">
-        <h3 className="text-xl font-semibold text-neutral-n900 mb-6">
+      <div className="bg-primary-ui-blue-p100 rounded-xl p-8 mb-8 border border-primary-ui-blue-p200">
+        <h3 className="text-xl font-semibold text-neutral-n1000 mb-6">
           💡 Try These Search Strategies
         </h3>
 
@@ -75,10 +75,10 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
                 <span className="text-white text-sm font-bold">1</span>
               </div>
               <div>
-                <h4 className="font-medium text-neutral-n900 mb-1">
+                <h4 className="font-medium text-neutral-n1000 mb-1">
                   Broaden Your Search
                 </h4>
-                <p className="text-sm text-neutral-n600">
+                <p className="text-sm text-neutral-n700">
                   Use fewer specific requirements or synonyms for skills
                 </p>
               </div>
@@ -89,10 +89,10 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
                 <span className="text-white text-sm font-bold">2</span>
               </div>
               <div>
-                <h4 className="font-medium text-neutral-n900 mb-1">
+                <h4 className="font-medium text-neutral-n1000 mb-1">
                   Check Group Filters
                 </h4>
-                <p className="text-sm text-neutral-n600">
+                <p className="text-sm text-neutral-n700">
                   Try searching across "All Groups" instead of specific ones
                 </p>
               </div>
@@ -105,10 +105,10 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
                 <span className="text-white text-sm font-bold">3</span>
               </div>
               <div>
-                <h4 className="font-medium text-neutral-n900 mb-1">
+                <h4 className="font-medium text-neutral-n1000 mb-1">
                   Use Different Keywords
                 </h4>
-                <p className="text-sm text-neutral-n600">
+                <p className="text-sm text-neutral-n700">
                   Try "JavaScript" instead of "JS", or "UI/UX" instead of
                   "Design"
                 </p>
@@ -120,10 +120,10 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
                 <span className="text-white text-sm font-bold">4</span>
               </div>
               <div>
-                <h4 className="font-medium text-neutral-n900 mb-1">
+                <h4 className="font-medium text-neutral-n1000 mb-1">
                   Reduce Experience Requirements
                 </h4>
-                <p className="text-sm text-neutral-n600">
+                <p className="text-sm text-neutral-n700">
                   Search for "2+ years" instead of "5+ years experience"
                 </p>
               </div>
@@ -134,7 +134,7 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
 
       {/* Example Searches */}
       <div className="bg-white rounded-xl border border-neutral-n200 p-6 mb-8">
-        <h3 className="font-semibold text-neutral-n900 mb-4">
+        <h3 className="font-semibold text-neutral-n1000 mb-4">
           🎯 Example Searches That Work Well
         </h3>
         <div className="grid md:grid-cols-2 gap-4 text-sm">
@@ -169,7 +169,7 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <button
           onClick={onClearSearch}
-          className="px-6 py-3 bg-gradient-to-r from-brand-gradient-purple to-brand-gradient-blue text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
+          className="px-6 py-3 bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple text-white rounded-xl font-semibold hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2"
         >
           <svg
             className="w-5 h-5 flex-shrink-0"
@@ -184,7 +184,7 @@ const NoResults: React.FC<NoResultsProps> = ({ onClearSearch }) => {
 
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="px-6 py-3 bg-white border border-neutral-n300 text-neutral-n700 rounded-lg font-semibold hover:bg-neutral-n50 transition-all duration-200 flex items-center justify-center gap-2"
+          className="px-6 py-3 bg-white border border-neutral-n300 text-neutral-n700 rounded-xl font-semibold hover:bg-neutral-n50 transition-all duration-200 flex items-center justify-center gap-2"
         >
           <svg
             className="w-5 h-5 flex-shrink-0"

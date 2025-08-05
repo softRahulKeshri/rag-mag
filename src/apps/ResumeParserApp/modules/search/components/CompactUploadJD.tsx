@@ -4,17 +4,7 @@ import type { UploadJDProps } from "../types";
 /**
  * CompactUploadJD Component
  *
- * Elegant job description upload interface with sophisticated design and brand colors.
- * Features modern glassmorphism effects, smooth animations, and premium feel.
- *
- * Features:
- * - Sophisticated glassmorphism design
- * - Brand gradient colors and animations
- * - Drag and drop with elegant styling
- * - File type validation with visual feedback
- * - File size validation (max 10MB)
- * - Group selection with elegant styling
- * - Modern, premium design
+ * Premium job description upload interface with sophisticated design and brand colors.
  */
 const CompactUploadJD: React.FC<UploadJDProps> = ({
   selectedFile,
@@ -102,7 +92,7 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
   const getFileIcon = useCallback((fileType: string) => {
     if (fileType.includes("pdf")) {
       return (
-        <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+        <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
           <svg
             className="w-6 h-6 text-white"
             fill="currentColor"
@@ -116,7 +106,7 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
     }
     if (fileType.includes("word") || fileType.includes("document")) {
       return (
-        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
           <svg
             className="w-6 h-6 text-white"
             fill="currentColor"
@@ -129,7 +119,7 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
       );
     }
     return (
-      <div className="w-12 h-12 bg-gradient-to-r from-neutral-n500 to-neutral-n600 rounded-2xl flex items-center justify-center shadow-lg">
+      <div className="w-12 h-12 bg-gradient-to-r from-neutral-n500 to-neutral-n600 rounded-xl flex items-center justify-center shadow-lg">
         <svg
           className="w-6 h-6 text-white"
           fill="currentColor"
@@ -146,9 +136,9 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Group Selection with Elegant Design */}
+      {/* Group Selection */}
       <div className="relative">
-        <label className="block text-sm font-semibold text-neutral-n800 mb-3">
+        <label className="block text-sm font-semibold text-neutral-n1000 mb-3">
           <span className="bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple bg-clip-text text-transparent">
             Filter by Group
           </span>
@@ -158,16 +148,16 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
             disabled={isUploading}
-            className="w-full bg-white/70 backdrop-blur-sm border-2 border-neutral-n200 rounded-2xl px-4 py-3.5 text-neutral-n800 font-medium focus:outline-none focus:border-brand-gradient-blue focus:ring-4 focus:ring-brand-gradient-blue/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:border-neutral-n300 shadow-lg appearance-none"
+            className="w-full bg-white/90 backdrop-blur-sm border-2 border-neutral-n200 rounded-xl px-4 py-3 text-neutral-n1000 font-medium focus:outline-none focus:border-brand-gradient-blue focus:ring-4 focus:ring-brand-gradient-blue/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:border-neutral-n300 shadow-lg appearance-none"
           >
-            <option value="" className="text-neutral-n600">
+            <option value="" className="text-neutral-n700">
               All Groups
             </option>
             {groups.map((group) => (
               <option
                 key={group.id}
                 value={group.name}
-                className="text-neutral-n800"
+                className="text-neutral-n1000"
               >
                 {group.name}
               </option>
@@ -175,7 +165,7 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
             <svg
-              className="w-5 h-5 text-neutral-n500"
+              className="w-5 h-5 text-neutral-n700"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -192,9 +182,9 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
         </div>
       </div>
 
-      {/* File Upload Area with Sophisticated Design */}
+      {/* File Upload Area */}
       <div className="relative">
-        <label className="block text-sm font-semibold text-neutral-n800 mb-3">
+        <label className="block text-sm font-semibold text-neutral-n1000 mb-3">
           <span className="bg-gradient-to-r from-brand-gradient-purple to-brand-gradient-blue bg-clip-text text-transparent">
             Upload Job Description
           </span>
@@ -203,7 +193,7 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
-          className="relative border-2 border-dashed border-neutral-n300 rounded-2xl p-8 text-center hover:border-brand-gradient-blue hover:bg-gradient-to-r hover:from-brand-gradient-blue/5 hover:to-brand-gradient-cyan/5 transition-all duration-300 cursor-pointer bg-white/50 backdrop-blur-sm shadow-lg"
+          className="relative border-2 border-dashed border-neutral-n300 rounded-xl p-8 text-center hover:border-brand-gradient-blue hover:bg-primary-ui-blue-p100 transition-all duration-300 cursor-pointer bg-white/90 backdrop-blur-sm shadow-lg"
           onClick={() => fileInputRef.current?.click()}
         >
           <input
@@ -216,16 +206,16 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
           />
 
           {selectedFile ? (
-            /* Selected File Display with Elegant Design */
+            /* Selected File Display */
             <div className="space-y-4">
               <div className="flex items-center justify-center">
                 {getFileIcon(selectedFile.type)}
               </div>
               <div className="space-y-2">
-                <p className="text-neutral-n800 font-semibold text-lg">
+                <p className="text-neutral-n1000 font-semibold text-lg">
                   {selectedFile.name}
                 </p>
-                <p className="text-neutral-n600 text-sm">
+                <p className="text-neutral-n700 text-sm">
                   {formatFileSize(selectedFile.size)}
                 </p>
               </div>
@@ -242,10 +232,10 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
               </button>
             </div>
           ) : (
-            /* Upload Prompt with Elegant Design */
+            /* Upload Prompt */
             <div className="space-y-4">
               <div className="flex justify-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-brand-gradient-cyan to-brand-gradient-blue rounded-2xl flex items-center justify-center shadow-lg">
+                <div className="w-16 h-16 bg-gradient-to-r from-brand-gradient-blue to-brand-gradient-cyan rounded-xl flex items-center justify-center shadow-lg">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -263,14 +253,14 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
                 </div>
               </div>
               <div className="space-y-2">
-                <p className="text-neutral-n800 font-semibold text-lg">
+                <p className="text-neutral-n1000 font-semibold text-lg">
                   Drop your job description here
                 </p>
-                <p className="text-neutral-n600 text-sm">
+                <p className="text-neutral-n700 text-sm">
                   or click to browse files
                 </p>
               </div>
-              <div className="text-neutral-n500 text-xs">
+              <div className="text-neutral-n700 text-xs">
                 Supports PDF, DOC, DOCX, TXT (max 10MB)
               </div>
             </div>
@@ -278,9 +268,9 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
         </div>
       </div>
 
-      {/* Error Message with Elegant Design */}
+      {/* Error Message */}
       {error && (
-        <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-2xl p-4 shadow-lg">
+        <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-xl p-4 shadow-lg">
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center">
               <svg
@@ -297,14 +287,14 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
         </div>
       )}
 
-      {/* Upload Button with Gradient */}
+      {/* Upload JD Button - EXACT BRAND COLOR */}
       <button
         onClick={onUpload}
         disabled={isUploadDisabled}
-        className={`w-full px-6 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-xl ${
+        className={`w-full px-4 py-3 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-xl ${
           isUploadDisabled
-            ? "bg-neutral-n200 text-neutral-n500 cursor-not-allowed shadow-none"
-            : "bg-gradient-to-r from-brand-gradient-purple via-brand-gradient-blue to-brand-gradient-cyan text-white hover:shadow-2xl hover:shadow-brand-gradient-blue/25 active:scale-95 transform"
+            ? "bg-neutral-n200 text-neutral-n700 cursor-not-allowed shadow-none"
+            : "bg-[#3077F3] text-white hover:shadow-2xl hover:shadow-[#3077F3]/25 active:scale-95 transform"
         }`}
       >
         {isUploading ? (
@@ -327,8 +317,8 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
         )}
       </button>
 
-      {/* Upload Tips with Elegant Design */}
-      <div className="bg-gradient-to-r from-neutral-n100 to-neutral-n150 rounded-2xl p-4 border border-neutral-n200">
+      {/* Upload Tips */}
+      <div className="bg-primary-ui-blue-p100 rounded-xl p-4 border border-primary-ui-blue-p200 shadow-lg">
         <div className="flex items-start gap-3">
           <div className="w-6 h-6 bg-gradient-to-r from-brand-gradient-purple to-brand-gradient-blue rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
             <svg
@@ -341,10 +331,10 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
             </svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-neutral-n800 mb-1">
+            <p className="text-sm font-semibold text-neutral-n1000 mb-1">
               Upload Tips for Better Results
             </p>
-            <p className="text-sm text-neutral-n600 leading-relaxed">
+            <p className="text-sm text-neutral-n700 leading-relaxed">
               Upload a detailed job description with specific requirements,
               skills, and experience levels for more accurate candidate
               matching.

@@ -7,6 +7,7 @@ import {
   LoadingSpinner,
   LoadingDots,
 } from "../../../components/ui/Skeleton";
+import { SparklesIcon, UserIcon } from "@heroicons/react/24/outline";
 
 // Pitch list skeleton
 interface PitchListSkeletonProps {
@@ -211,31 +212,74 @@ export const PitchChatSkeleton: React.FC<PitchChatSkeletonProps> = ({
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* AI Message */}
           <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-2xl px-4 py-3 max-w-xs">
-              <div className="space-y-2">
-                <Skeleton height="16px" width="80%" />
-                <Skeleton height="16px" width="60%" />
-                <Skeleton height="16px" width="90%" />
+            <div className="flex items-end space-x-3 max-w-2xl">
+              {/* AI Avatar */}
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center animate-pulse">
+                  <SparklesIcon className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              {/* AI Message Bubble */}
+              <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm max-w-xs">
+                <div className="space-y-2">
+                  <Skeleton height="16px" width="80%" />
+                  <Skeleton height="16px" width="60%" />
+                  <Skeleton height="16px" width="90%" />
+                </div>
+                {/* Timestamp */}
+                <div className="mt-2">
+                  <Skeleton height="12px" width="60px" />
+                </div>
               </div>
             </div>
           </div>
 
           {/* User Message */}
           <div className="flex justify-end">
-            <div className="bg-blue-500 rounded-2xl px-4 py-3 max-w-xs">
-              <div className="space-y-2">
-                <Skeleton height="16px" width="70%" />
-                <Skeleton height="16px" width="85%" />
+            <div className="flex items-end space-x-3 max-w-2xl">
+              {/* User Message Bubble */}
+              <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl px-4 py-3 shadow-lg max-w-xs">
+                <div className="space-y-2">
+                  <Skeleton height="16px" width="70%" className="bg-white/30" />
+                  <Skeleton height="16px" width="85%" className="bg-white/30" />
+                </div>
+                {/* Timestamp */}
+                <div className="mt-2">
+                  <Skeleton
+                    height="12px"
+                    width="60px"
+                    className="bg-white/20"
+                  />
+                </div>
+              </div>
+              {/* User Avatar */}
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center animate-pulse">
+                  <UserIcon className="w-4 h-4 text-white" />
+                </div>
               </div>
             </div>
           </div>
 
           {/* AI Message */}
           <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-2xl px-4 py-3 max-w-xs">
-              <div className="space-y-2">
-                <Skeleton height="16px" width="90%" />
-                <Skeleton height="16px" width="75%" />
+            <div className="flex items-end space-x-3 max-w-2xl">
+              {/* AI Avatar */}
+              <div className="flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center animate-pulse">
+                  <SparklesIcon className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              {/* AI Message Bubble */}
+              <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-sm max-w-xs">
+                <div className="space-y-2">
+                  <Skeleton height="16px" width="90%" />
+                  <Skeleton height="16px" width="75%" />
+                </div>
+                {/* Timestamp */}
+                <div className="mt-2">
+                  <Skeleton height="12px" width="60px" />
+                </div>
               </div>
             </div>
           </div>

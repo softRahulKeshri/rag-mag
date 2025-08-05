@@ -4,17 +4,7 @@ import type { SearchInputProps } from "../types";
 /**
  * CompactSearchInput Component
  *
- * Elegant text-based search interface with sophisticated design and brand colors.
- * Features modern glassmorphism effects, smooth animations, and premium feel.
- *
- * Features:
- * - Sophisticated glassmorphism design
- * - Brand gradient colors and animations
- * - Group selection with elegant styling
- * - Real-time validation with visual feedback
- * - Keyboard shortcuts (Enter to search)
- * - Loading states with brand colors
- * - Modern, premium design
+ * Premium text-based search interface with sophisticated design and brand colors.
  */
 const CompactSearchInput: React.FC<SearchInputProps> = ({
   searchQuery,
@@ -44,9 +34,9 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Group Selection with Elegant Design */}
+      {/* Group Selection */}
       <div className="relative">
-        <label className="block text-sm font-semibold text-neutral-n800 mb-3">
+        <label className="block text-sm font-semibold text-neutral-n1000 mb-3">
           <span className="bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple bg-clip-text text-transparent">
             Filter by Group
           </span>
@@ -56,16 +46,16 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
             disabled={isSearching}
-            className="w-full bg-white/70 backdrop-blur-sm border-2 border-neutral-n200 rounded-2xl px-4 py-3.5 text-neutral-n800 font-medium focus:outline-none focus:border-brand-gradient-blue focus:ring-4 focus:ring-brand-gradient-blue/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:border-neutral-n300 shadow-lg appearance-none"
+            className="w-full bg-white/90 backdrop-blur-sm border-2 border-neutral-n200 rounded-xl px-4 py-3 text-neutral-n1000 font-medium focus:outline-none focus:border-brand-gradient-blue focus:ring-4 focus:ring-brand-gradient-blue/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:border-neutral-n300 shadow-lg appearance-none"
           >
-            <option value="" className="text-neutral-n600">
+            <option value="" className="text-neutral-n700">
               All Groups
             </option>
             {groups.map((group) => (
               <option
                 key={group.id}
                 value={group.name}
-                className="text-neutral-n800"
+                className="text-neutral-n1000"
               >
                 {group.name}
               </option>
@@ -73,7 +63,7 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
             <svg
-              className="w-5 h-5 text-neutral-n500"
+              className="w-5 h-5 text-neutral-n700"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -90,10 +80,10 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
         </div>
       </div>
 
-      {/* Search Input and Button with Sophisticated Design */}
+      {/* Search Input */}
       <div className="space-y-4">
         <div className="relative">
-          <label className="block text-sm font-semibold text-neutral-n800 mb-3">
+          <label className="block text-sm font-semibold text-neutral-n1000 mb-3">
             <span className="bg-gradient-to-r from-brand-gradient-purple to-brand-gradient-blue bg-clip-text text-transparent">
               Describe Your Ideal Candidate
             </span>
@@ -109,12 +99,12 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={isSearching}
-              className="w-full px-5 py-4 text-neutral-n800 placeholder-neutral-n500 bg-white/70 backdrop-blur-sm border-2 border-neutral-n200 rounded-2xl outline-none disabled:cursor-not-allowed focus:border-brand-gradient-blue focus:ring-4 focus:ring-brand-gradient-blue/20 transition-all duration-300 hover:border-neutral-n300 shadow-lg font-medium text-base"
+              className="w-full px-4 py-3 text-neutral-n1000 placeholder-neutral-n700 bg-white/90 backdrop-blur-sm border-2 border-neutral-n200 rounded-xl outline-none disabled:cursor-not-allowed focus:border-brand-gradient-blue focus:ring-4 focus:ring-brand-gradient-blue/20 transition-all duration-300 hover:border-neutral-n300 shadow-lg font-medium text-base"
             />
 
             {/* Character Count Indicator */}
             {searchQuery.trim().length > 0 && searchQuery.trim().length < 5 && (
-              <div className="absolute -bottom-8 left-0 text-xs font-medium text-neutral-n600">
+              <div className="absolute -bottom-8 left-0 text-xs font-medium text-neutral-n700">
                 <span className="bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple bg-clip-text text-transparent">
                   {5 - searchQuery.trim().length} more characters needed
                 </span>
@@ -123,7 +113,7 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
 
             {/* Search Icon */}
             <div className="absolute inset-y-0 right-0 flex items-center pr-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-brand-gradient-cyan to-brand-gradient-blue rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple rounded-lg flex items-center justify-center shadow-lg">
                 <svg
                   className="w-4 h-4 text-white"
                   fill="currentColor"
@@ -137,14 +127,14 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
           </div>
         </div>
 
-        {/* Search Button with Gradient */}
+        {/* Find Perfect Candidates Button - EXACT BRAND GRADIENT */}
         <button
           onClick={onSearch}
           disabled={isSearchDisabled}
-          className={`w-full px-6 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-xl ${
+          className={`w-full px-4 py-3 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-xl ${
             isSearchDisabled
-              ? "bg-neutral-n200 text-neutral-n500 cursor-not-allowed shadow-none"
-              : "bg-gradient-to-r from-brand-gradient-orange via-brand-gradient-purple to-brand-gradient-blue text-white hover:shadow-2xl hover:shadow-brand-gradient-purple/25 active:scale-95 transform"
+              ? "bg-neutral-n200 text-neutral-n700 cursor-not-allowed shadow-none"
+              : "bg-gradient-to-r from-[#FDA052] to-[#B96AF7] text-white hover:shadow-2xl hover:shadow-[#B96AF7]/25 active:scale-95 transform"
           }`}
         >
           {isSearching ? (
@@ -168,8 +158,8 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
         </button>
       </div>
 
-      {/* Search Tips with Elegant Design */}
-      <div className="bg-gradient-to-r from-neutral-n100 to-neutral-n150 rounded-2xl p-4 border border-neutral-n200">
+      {/* Search Tips */}
+      <div className="bg-primary-ui-blue-p100 rounded-xl p-4 border border-primary-ui-blue-p200 shadow-lg">
         <div className="flex items-start gap-3">
           <div className="w-6 h-6 bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
             <svg
@@ -182,16 +172,16 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
             </svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-neutral-n800 mb-1">
+            <p className="text-sm font-semibold text-neutral-n1000 mb-1">
               Pro Tips for Better Results
             </p>
-            <p className="text-sm text-neutral-n600 leading-relaxed">
+            <p className="text-sm text-neutral-n700 leading-relaxed">
               Try:{" "}
-              <span className="font-medium text-neutral-n800">
+              <span className="font-medium text-neutral-n1000">
                 "Senior React developer with 5+ years"
               </span>{" "}
               or{" "}
-              <span className="font-medium text-neutral-n800">
+              <span className="font-medium text-neutral-n1000">
                 "Marketing manager with digital strategy expertise"
               </span>
             </p>

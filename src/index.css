@@ -1,5 +1,323 @@
 @import "tailwindcss";
 
+/* Brand Color CSS Custom Properties */
+:root {
+  /* Brand Gradient Colors */
+  --brand-gradient-orange: #fda052;
+  --brand-gradient-purple: #b96af7;
+  --brand-gradient-blue: #3077f3;
+  --brand-gradient-cyan: #41e6f8;
+
+  /* Primary Colors */
+  --primary-charcoal-slate: #2e3141;
+
+  /* Neutral Palette */
+  --neutral-n-black: #050507;
+  --neutral-n3000: #171921;
+  --neutral-n2000: #20222e;
+  --neutral-n1000: #2e3141;
+  --neutral-n900: #434654;
+  --neutral-n800: #585a67;
+  --neutral-n700: #6d6f7a;
+  --neutral-n600: #82838d;
+  --neutral-n500: #9698a0;
+  --neutral-n400: #abadb3;
+  --neutral-n300: #c0c1c6;
+  --neutral-n200: #d5d6d9;
+  --neutral-n150: #eaeaec;
+  --neutral-n100: #f5f5f5;
+  --neutral-n-white: #ffffff;
+
+  /* Absolute Greyscale */
+  --absolute-g-black: #070707;
+  --absolute-g3000: #212121;
+  --absolute-g2000: #2e2e2e;
+  --absolute-g1000: #414141;
+  --absolute-g900: #545454;
+  --absolute-g800: #676767;
+  --absolute-g700: #7a7a7a;
+  --absolute-g600: #8d8d8d;
+  --absolute-g500: #a0a0a0;
+  --absolute-g400: #b3b3b3;
+  --absolute-g300: #c6c6c6;
+  --absolute-g200: #d9d9d9;
+  --absolute-g150: #ececec;
+  --absolute-g100: #f5f5f5;
+  --absolute-g-white: #ffffff;
+
+  /* Primary UI Blue */
+  --primary-ui-blue-p700: #11397e;
+  --primary-ui-blue-p600: #1e50a8;
+  --primary-ui-blue-p500: #3077f3;
+  --primary-ui-blue-p400: #94bafd;
+  --primary-ui-blue-p300: #bfd6ff;
+  --primary-ui-blue-p200: #e3edff;
+  --primary-ui-blue-p100: #eff5ff;
+}
+
+/* Brand Gradient Utility Classes */
+.brand-gradient-orange {
+  color: var(--brand-gradient-orange);
+}
+.bg-brand-gradient-orange {
+  background-color: var(--brand-gradient-orange);
+}
+.border-brand-gradient-orange {
+  border-color: var(--brand-gradient-orange);
+}
+
+.brand-gradient-purple {
+  color: var(--brand-gradient-purple);
+}
+.bg-brand-gradient-purple {
+  background-color: var(--brand-gradient-purple);
+}
+.border-brand-gradient-purple {
+  border-color: var(--brand-gradient-purple);
+}
+
+.brand-gradient-blue {
+  color: var(--brand-gradient-blue);
+}
+.bg-brand-gradient-blue {
+  background-color: var(--brand-gradient-blue);
+}
+.border-brand-gradient-blue {
+  border-color: var(--brand-gradient-blue);
+}
+
+.brand-gradient-cyan {
+  color: var(--brand-gradient-cyan);
+}
+.bg-brand-gradient-cyan {
+  background-color: var(--brand-gradient-cyan);
+}
+.border-brand-gradient-cyan {
+  border-color: var(--brand-gradient-cyan);
+}
+
+/* Neutral Color Utility Classes */
+.neutral-n-black {
+  color: var(--neutral-n-black);
+}
+.bg-neutral-n-black {
+  background-color: var(--neutral-n-black);
+}
+.border-neutral-n-black {
+  border-color: var(--neutral-n-black);
+}
+
+.neutral-n3000 {
+  color: var(--neutral-n3000);
+}
+.bg-neutral-n3000 {
+  background-color: var(--neutral-n3000);
+}
+.border-neutral-n3000 {
+  border-color: var(--neutral-n3000);
+}
+
+.neutral-n2000 {
+  color: var(--neutral-n2000);
+}
+.bg-neutral-n2000 {
+  background-color: var(--neutral-n2000);
+}
+.border-neutral-n2000 {
+  border-color: var(--neutral-n2000);
+}
+
+.neutral-n1000 {
+  color: var(--neutral-n1000);
+}
+.bg-neutral-n1000 {
+  background-color: var(--neutral-n1000);
+}
+.border-neutral-n1000 {
+  border-color: var(--neutral-n1000);
+}
+
+.neutral-n900 {
+  color: var(--neutral-n900);
+}
+.bg-neutral-n900 {
+  background-color: var(--neutral-n900);
+}
+.border-neutral-n900 {
+  border-color: var(--neutral-n900);
+}
+
+.neutral-n800 {
+  color: var(--neutral-n800);
+}
+.bg-neutral-n800 {
+  background-color: var(--neutral-n800);
+}
+.border-neutral-n800 {
+  border-color: var(--neutral-n800);
+}
+
+.neutral-n700 {
+  color: var(--neutral-n700);
+}
+.bg-neutral-n700 {
+  background-color: var(--neutral-n700);
+}
+.border-neutral-n700 {
+  border-color: var(--neutral-n700);
+}
+
+.neutral-n600 {
+  color: var(--neutral-n600);
+}
+.bg-neutral-n600 {
+  background-color: var(--neutral-n600);
+}
+.border-neutral-n600 {
+  border-color: var(--neutral-n600);
+}
+
+.neutral-n500 {
+  color: var(--neutral-n500);
+}
+.bg-neutral-n500 {
+  background-color: var(--neutral-n500);
+}
+.border-neutral-n500 {
+  border-color: var(--neutral-n500);
+}
+
+.neutral-n400 {
+  color: var(--neutral-n400);
+}
+.bg-neutral-n400 {
+  background-color: var(--neutral-n400);
+}
+.border-neutral-n400 {
+  border-color: var(--neutral-n400);
+}
+
+.neutral-n300 {
+  color: var(--neutral-n300);
+}
+.bg-neutral-n300 {
+  background-color: var(--neutral-n300);
+}
+.border-neutral-n300 {
+  border-color: var(--neutral-n300);
+}
+
+.neutral-n200 {
+  color: var(--neutral-n200);
+}
+.bg-neutral-n200 {
+  background-color: var(--neutral-n200);
+}
+.border-neutral-n200 {
+  border-color: var(--neutral-n200);
+}
+
+.neutral-n150 {
+  color: var(--neutral-n150);
+}
+.bg-neutral-n150 {
+  background-color: var(--neutral-n150);
+}
+.border-neutral-n150 {
+  border-color: var(--neutral-n150);
+}
+
+.neutral-n100 {
+  color: var(--neutral-n100);
+}
+.bg-neutral-n100 {
+  background-color: var(--neutral-n100);
+}
+.border-neutral-n100 {
+  border-color: var(--neutral-n100);
+}
+
+.neutral-n-white {
+  color: var(--neutral-n-white);
+}
+.bg-neutral-n-white {
+  background-color: var(--neutral-n-white);
+}
+.border-neutral-n-white {
+  border-color: var(--neutral-n-white);
+}
+
+/* Primary UI Blue Utility Classes */
+.primary-ui-blue-p700 {
+  color: var(--primary-ui-blue-p700);
+}
+.bg-primary-ui-blue-p700 {
+  background-color: var(--primary-ui-blue-p700);
+}
+.border-primary-ui-blue-p700 {
+  border-color: var(--primary-ui-blue-p700);
+}
+
+.primary-ui-blue-p600 {
+  color: var(--primary-ui-blue-p600);
+}
+.bg-primary-ui-blue-p600 {
+  background-color: var(--primary-ui-blue-p600);
+}
+.border-primary-ui-blue-p600 {
+  border-color: var(--primary-ui-blue-p600);
+}
+
+.primary-ui-blue-p500 {
+  color: var(--primary-ui-blue-p500);
+}
+.bg-primary-ui-blue-p500 {
+  background-color: var(--primary-ui-blue-p500);
+}
+.border-primary-ui-blue-p500 {
+  border-color: var(--primary-ui-blue-p500);
+}
+
+.primary-ui-blue-p400 {
+  color: var(--primary-ui-blue-p400);
+}
+.bg-primary-ui-blue-p400 {
+  background-color: var(--primary-ui-blue-p400);
+}
+.border-primary-ui-blue-p400 {
+  border-color: var(--primary-ui-blue-p400);
+}
+
+.primary-ui-blue-p300 {
+  color: var(--primary-ui-blue-p300);
+}
+.bg-primary-ui-blue-p300 {
+  background-color: var(--primary-ui-blue-p300);
+}
+.border-primary-ui-blue-p300 {
+  border-color: var(--primary-ui-blue-p300);
+}
+
+.primary-ui-blue-p200 {
+  color: var(--primary-ui-blue-p200);
+}
+.bg-primary-ui-blue-p200 {
+  background-color: var(--primary-ui-blue-p200);
+}
+.border-primary-ui-blue-p200 {
+  border-color: var(--primary-ui-blue-p200);
+}
+
+.primary-ui-blue-p100 {
+  color: var(--primary-ui-blue-p100);
+}
+.bg-primary-ui-blue-p100 {
+  background-color: var(--primary-ui-blue-p100);
+}
+.border-primary-ui-blue-p100 {
+  border-color: var(--primary-ui-blue-p100);
+}
+
 /* Premium ChatServiceApp Animations & Effects */
 @layer utilities {
   /* Scroll Behavior */
