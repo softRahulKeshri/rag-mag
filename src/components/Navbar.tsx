@@ -224,24 +224,18 @@ const Navbar = () => {
                   {/* Menu items */}
                   <div className="py-2">
                     <button
-                      onClick={() => {
-                        handleAppChange("/profile");
-                        setIsProfileOpen(false);
-                      }}
-                      className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 transition-all duration-200 ease-out group border-l-4 border-transparent hover:border-purple-200"
+                      disabled
+                      className="flex items-center w-full px-4 py-3 text-sm text-gray-400 cursor-not-allowed opacity-60 group border-l-4 border-transparent"
                     >
-                      <UserCircleIcon className="h-4 w-4 mr-3 text-gray-400 group-hover:text-purple-600 transition-colors duration-200" />
+                      <UserCircleIcon className="h-4 w-4 mr-3 text-gray-400" />
                       <span>View Profile</span>
                     </button>
 
                     <button
-                      onClick={() => {
-                        // Handle settings
-                        setIsProfileOpen(false);
-                      }}
-                      className="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 transition-all duration-200 ease-out group border-l-4 border-transparent hover:border-purple-200"
+                      disabled
+                      className="flex items-center w-full px-4 py-3 text-sm text-gray-400 cursor-not-allowed opacity-60 group border-l-4 border-transparent"
                     >
-                      <Cog6ToothIcon className="h-4 w-4 mr-3 text-gray-400 group-hover:text-purple-600 transition-colors duration-200" />
+                      <Cog6ToothIcon className="h-4 w-4 mr-3 text-gray-400" />
                       <span>Settings</span>
                     </button>
 
