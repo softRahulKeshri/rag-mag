@@ -130,3 +130,14 @@ export interface SearchResponse {
   page: number;
   limit: number;
 }
+
+// Resume Processing Status Types
+export interface ResumeProcessingStatus {
+  total_cvs: number;
+  parsed_cvs: number;
+  pending_cvs: number;
+}
+
+export interface ResumeProcessingStatusResponse extends ApiResponse {
+  data?: ResumeProcessingStatus;
+}

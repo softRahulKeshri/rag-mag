@@ -157,8 +157,6 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
           )}
         </button>
       </div>
-
-     
     </div>
   );
 };

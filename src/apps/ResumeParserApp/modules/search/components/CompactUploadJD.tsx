@@ -319,31 +319,7 @@ const CompactUploadJD: React.FC<UploadJDProps> = ({
         </button>
       </div>
 
-      {/* Upload Tips */}
-      <div className="bg-[#ECFDF5] rounded-xl p-4 border-2 border-[#A7F3D0] shadow-sm">
-        <div className="flex items-start gap-3">
-          <div className="w-7 h-7 bg-[#10B981] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-            <svg
-              className="w-4 h-4 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-[#065F46] mb-2">
-              📁 Upload Tips for Better Results
-            </p>
-            <p className="text-sm text-[#374151] leading-relaxed">
-              Upload a detailed job description with specific requirements,
-              skills, and experience levels for more accurate candidate
-              matching.
-            </p>
-          </div>
-        </div>
-      </div>
+     
     </div>
   );
 };
