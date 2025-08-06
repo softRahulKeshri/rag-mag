@@ -39,6 +39,7 @@ export const ROUTES = {
   LOGIN: "/login",
   SIGNUP: "/signup",
   PROFILE: "/profile",
+  ADMIN: "/admin",
   RESUME_PARSER: "/resume-parser",
   CHAT_SERVICE: "/chat-service",
   PITCH_ANALYZER: "/pitch-analyzer",
