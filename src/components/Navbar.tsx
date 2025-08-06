@@ -42,7 +42,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Global store hooks
-  const { logout } = useActions();
+  const { logout, setLoading } = useActions();
   const user = useUser();
 
   // Check if we're in admin mode
@@ -58,8 +58,20 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleAppChange = (path: string) => {
+  const handleAppChange = async (path: string) => {
+    // Set loading state for service switching
+    setLoading("serviceSwitch", true);
+
+    // Simulate a small delay to show loading state and allow for resource fetching
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    // Navigate to the new service
     navigate(path);
+
+    // Clear loading state after navigation
+    setTimeout(() => {
+      setLoading("serviceSwitch", false);
+    }, 200);
   };
 
   const handleLogout = () => {

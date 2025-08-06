@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   Square2StackIcon,
   DocumentDuplicateIcon,
-  ChatBubbleLeftRightIcon,
   UserIcon,
   CheckIcon,
 } from "@heroicons/react/24/outline";
@@ -137,18 +136,8 @@ export const ChatMessages = ({
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8 lg:p-12 bg-gradient-to-br from-gray-50/30 to-white overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center p-8 lg:p-12 bg-gradient-to-br from-gray-50/30 to-white overflow-y-auto h-full">
         <div className="text-center max-w-md mx-auto">
-          {/* Welcome Icon */}
-          <div className="relative mb-10">
-            <div className="relative mx-auto w-24 h-24">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 rounded-3xl flex items-center justify-center shadow-2xl">
-                <ChatBubbleLeftRightIcon className="h-12 w-12 text-white" />
-              </div>
-              <div className="absolute -inset-2 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-3xl blur-xl"></div>
-            </div>
-          </div>
-
           {/* Welcome Content */}
           <div className="space-y-4">
             <h1 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">

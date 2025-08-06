@@ -1,6 +1,5 @@
 import {
   EllipsisVerticalIcon,
-  ClockIcon,
   PencilIcon,
   TrashIcon,
   Bars3Icon,
@@ -11,7 +10,6 @@ import { ModelSelectorDropdown } from "./ModelSelectorDropdown";
 
 interface ChatHeaderProps {
   title?: string;
-  subtitle?: string;
   selectedModel?: ModelType;
   onClearChat?: () => void;
   onRenameChat?: (newName: string) => void;
@@ -21,7 +19,6 @@ interface ChatHeaderProps {
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   title = "New Chat",
-  subtitle,
   selectedModel = ModelType.OPENAI,
   onClearChat,
   onRenameChat,
@@ -49,7 +46,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   return (
     <div className="bg-white border-b border-[#EAEAEC] shadow-sm">
       <div className="flex items-center justify-between px-4 py-3 h-14">
-        {/* Left Section */}
+        {/* Left Section - Mobile Sidebar Toggle and Model Selector */}
         <div className="flex items-center space-x-3">
           {/* Mobile Sidebar Toggle */}
           {onToggleSidebar && (
@@ -62,37 +59,17 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             </button>
           )}
 
-          {/* Title Section */}
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-             
-            </div>
-            <div className="flex items-center space-x-3">
-              <h1 className="text-base font-semibold text-[#2E3141] leading-tight">
-                {title}
-              </h1>
-              <div className="flex items-center space-x-2 text-xs text-[#6D6F7A]">
-                <div className="flex items-center space-x-1">
-                  <ClockIcon className="h-3 w-3 text-[#3077F3]" />
-                  <span className="font-medium text-[#6D6F7A]">{subtitle}</span>
-                </div>
-                {onModelChange && (
-                  <>
-                    <div className="w-1 h-1 bg-[#D5D6D9] rounded-full"></div>
-                    <ModelSelectorDropdown
-                      selectedModel={selectedModel}
-                      onModelChange={onModelChange}
-                    />
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
+          {/* Model Selector */}
+          {onModelChange && (
+            <ModelSelectorDropdown
+              selectedModel={selectedModel}
+              onModelChange={onModelChange}
+            />
+          )}
         </div>
 
-        {/* Right Section */}
-        <div className="flex items-center space-x-2">
-          {/* Menu Button */}
+        {/* Right Section - Menu Button */}
+        <div className="flex items-center">
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}

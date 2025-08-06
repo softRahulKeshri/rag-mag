@@ -8,7 +8,7 @@ import {
   useImperativeHandle,
 } from "react";
 import {
-  PaperClipIcon,
+  PlusIcon,
   PaperAirplaneIcon,
   XMarkIcon,
   DocumentIcon,
@@ -110,7 +110,7 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
     const hasContent = message.trim() || selectedFile;
 
     return (
-      <div className="relative bg-gradient-to-b from-white to-gray-50/30 border-t border-gray-100">
+      <div className="relative bg-gradient-to-b from-white to-gray-50/30">
         {/* File Attachment Preview */}
         {selectedFile && (
           <div className="mx-4 mt-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/60 shadow-sm">
@@ -145,31 +145,36 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
           </div>
         )}
 
-        {/* Main Input Container */}
+        {/* Main Input Container - Enhanced with spotlight effect */}
         <div className="p-4">
           <form
             onSubmit={handleSubmit}
             className={`relative bg-white rounded-2xl transition-all duration-300 ${
               isFocused
-                ? "ring-2 ring-blue-500/20 shadow-xl border border-blue-200"
-                : "shadow-lg border border-gray-200/60 hover:shadow-xl hover:border-gray-300/60"
+                ? "ring-2 ring-blue-500/20 shadow-2xl border border-blue-200 transform scale-[1.02]"
+                : "shadow-xl border border-gray-200/60 hover:shadow-2xl hover:border-gray-300/60 hover:scale-[1.01]"
             }`}
+            style={{
+              boxShadow: isFocused
+                ? "0 25px 50px -12px rgba(59, 130, 246, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.1)"
+                : "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+            }}
           >
             {/* Input Area */}
-            <div className="flex items-center space-x-2 p-2.5">
-              {/* Attach Button */}
+            <div className="flex items-center space-x-3 p-3">
+              {/* Attach Button - Changed to Plus Icon */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isSending}
-                className={`flex-shrink-0 p-2 rounded-xl transition-all duration-200 ${
+                className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-200 ${
                   isSending
                     ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
+                    : "text-gray-500 hover:text-blue-600 hover:bg-blue-50 hover:scale-110"
                 }`}
                 aria-label="Attach file"
               >
-                <PaperClipIcon className="h-4 w-4" />
+                <PlusIcon className="h-5 w-5" />
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -190,9 +195,7 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
                   onKeyDown={handleKeyDown}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
-                  placeholder={
-                    isSending ? "Generating..." : "Ask something..."
-                  }
+                  placeholder={isSending ? "Generating..." : "Ask something..."}
                   disabled={isSending}
                   className={`w-full bg-transparent border-0 text-gray-900 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[36px] max-h-[100px] text-[15px] leading-relaxed font-normal transition-colors ${
                     isSending ? "text-gray-400 cursor-not-allowed" : ""
@@ -208,21 +211,21 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
                 )}
               </div>
 
-              {/* Send Button */}
+              {/* Send Button - Enhanced with more padding and better radius */}
               <button
                 type="submit"
                 disabled={!hasContent || isSending}
-                className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-200 ${
+                className={`flex-shrink-0 px-6 py-3 rounded-2xl transition-all duration-200 ${
                   !hasContent || isSending
                     ? "text-gray-300 bg-gray-100 cursor-not-allowed"
-                    : "text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-md hover:shadow-lg transform hover:scale-105"
+                    : "text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105"
                 }`}
                 aria-label={isSending ? "Sending..." : "Send message"}
               >
                 {isSending ? (
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <PaperAirplaneIcon className="h-4 w-4" />
+                  <PaperAirplaneIcon className="h-5 w-5" />
                 )}
               </button>
             </div>

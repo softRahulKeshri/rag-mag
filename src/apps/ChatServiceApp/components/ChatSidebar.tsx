@@ -1,6 +1,5 @@
 import {
   MagnifyingGlassIcon,
-  PlusIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 import { SidebarToggle } from "./SidebarToggle";
@@ -76,7 +75,6 @@ export const ChatSidebar = ({
               disabled={isCreatingSession}
               className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg transition-all duration-300 text-sm font-bold bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
             >
-              <PlusIcon className="h-4 w-4" />
               <span>{isCreatingSession ? "Creating..." : "New Chat"}</span>
             </button>
           </div>
