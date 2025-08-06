@@ -473,6 +473,17 @@
   }
 }
 
+@keyframes slide-in-from-bottom-4 {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @keyframes scale-in {
   from {
     transform: scale(0.95);
@@ -542,6 +553,14 @@
 
 .animate-slide-up {
   animation: slide-up 0.4s ease-out;
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.slide-in-from-bottom-4 {
+  animation: slide-in-from-bottom-4 0.5s ease-out;
 }
 
 .animate-scale-in {

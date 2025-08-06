@@ -285,7 +285,7 @@ const ResumeProcessingStatus: React.FC = () => {
                 <span>Last updated: {formatLastUpdated(lastUpdated)}</span>
                 <span className="flex items-center space-x-1">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span>Auto-refreshing every 30s</span>
+                  <span>Auto-refreshing every 60s</span>
                 </span>
               </div>
             </div>

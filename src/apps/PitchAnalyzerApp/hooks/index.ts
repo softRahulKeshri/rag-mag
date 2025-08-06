@@ -5,6 +5,7 @@
  */
 
 export { usePitchUpload } from "./usePitchUpload";
+export { usePitchProcessingStatus } from "./usePitchProcessingStatus";
 
 /**
  * Company Pitches Hook

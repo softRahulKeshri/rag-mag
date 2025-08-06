@@ -6,6 +6,7 @@ import {
   PitchChat,
   PitchDetailsWithChat,
   UploadArea,
+  FloatingPitchProcessingStatus,
 } from "./components";
 import type { TabId } from "./types/navigation";
 import type { Pitch } from "./types/types";
@@ -112,6 +113,9 @@ const PitchAnalyzerApp = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating Pitch Processing Status */}
+      <FloatingPitchProcessingStatus />
     </div>
   );
 };

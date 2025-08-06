@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useResumeProcessingStatus } from "../hooks/useResumeProcessingStatus";
+import {
+  ArrowPathIcon,
+  XMarkIcon,
+  DocumentTextIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
+import { usePitchProcessingStatus } from "../hooks/usePitchProcessingStatus";
 
 /**
- * FloatingResumeProcessingStatus Component
+ * FloatingPitchProcessingStatus Component
  *
  * A compact floating status bar that appears at the bottom center of the page
- * only when resumes are still being processed. Automatically hides when
+ * only when pitches are still being processed. Automatically hides when
  * processing is complete.
  *
  * Features:
- * - Only shows when pending_cvs > 0
+ * - Only shows when pending_pitches > 0
  * - Auto-hides with fade animation when processing completes
  * - Polls API every 10 seconds for updates
  * - Accessible with aria-live for screen readers
@@ -18,16 +24,16 @@ import { useResumeProcessingStatus } from "../hooks/useResumeProcessingStatus";
  * - Smooth fade-in/fade-out transitions
  * - Click to open detailed modal view
  */
-const FloatingResumeProcessingStatus: React.FC = () => {
-  const { status, processingProgress, refreshStatus } =
-    useResumeProcessingStatus();
+const FloatingPitchProcessingStatus: React.FC = () => {
+  const { status, processingProgress, refreshStatus, error, lastUpdated } =
+    usePitchProcessingStatus();
 
   const [isVisible, setIsVisible] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Determine if we should show the floating UI
-  const shouldShow = status && status.pending_cvs > 0;
+  const shouldShow = status && status.pending_pitches > 0;
 
   // Handle visibility transitions
   useEffect(() => {
@@ -117,7 +123,7 @@ const FloatingResumeProcessingStatus: React.FC = () => {
           isFadingOut ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"
         }`}
         aria-live="polite"
-        aria-label="Resume processing status"
+        aria-label="Pitch processing status"
       >
         {/* Main Floating Card - Clickable */}
         <button
@@ -130,19 +136,29 @@ const FloatingResumeProcessingStatus: React.FC = () => {
             {/* Animated Icon */}
             <div className="relative">
               <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-                <ArrowPathIcon className="h-4 w-4 text-white animate-spin" />
+                {error ? (
+                  <ExclamationTriangleIcon className="h-4 w-4 text-white" />
+                ) : (
+                  <ArrowPathIcon className="h-4 w-4 text-white animate-spin" />
+                )}
               </div>
-              {/* Subtle pulse ring */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-500 rounded-lg animate-ping opacity-20" />
+              {/* Subtle pulse ring - only when not in error state */}
+              {!error && (
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-blue-500 rounded-lg animate-ping opacity-20" />
+              )}
             </div>
 
             {/* Status Text */}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-900 truncate">
-                Processing resumes...
+                {error ? "Processing error" : "Processing pitch files..."}
               </p>
               <p className="text-xs text-gray-500">
-                {status?.parsed_cvs} of {status?.total_cvs} completed
+                {error
+                  ? "Failed to fetch status"
+                  : `${status?.parsed_pitches || 0} of ${
+                      status?.total_pitches || 0
+                    } completed`}
               </p>
             </div>
           </div>
@@ -184,11 +200,11 @@ const FloatingResumeProcessingStatus: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                    <ArrowPathIcon className="h-5 w-5 text-white" />
+                    <DocumentTextIcon className="h-5 w-5 text-white" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-white">
-                      Resume Processing Status
+                      Pitch Processing Status
                     </h2>
                     <p className="text-indigo-100 text-sm">
                       Real-time processing overview
@@ -210,31 +226,38 @@ const FloatingResumeProcessingStatus: React.FC = () => {
             {/* Content */}
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
               {/* Completion Status Banner */}
-              {status && status.pending_cvs === 0 && status.total_cvs > 0 && (
-                <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-                      <svg
-                        className="h-4 w-4 text-green-600"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+              {status &&
+                status.pending_pitches === 0 &&
+                status.total_pitches > 0 && (
+                  <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                        <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-green-800">
+                          All pitch files have been processed!
+                        </h3>
+                        <p className="text-sm text-green-600 mt-1">
+                          {status.total_pitches} pitch file
+                          {status.total_pitches !== 1 ? "s" : ""} successfully
+                          parsed and ready for analysis.
+                        </p>
+                      </div>
                     </div>
+                  </div>
+                )}
+
+              {/* Error State */}
+              {error && (
+                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-center space-x-3">
+                    <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />
                     <div>
-                      <h3 className="text-sm font-semibold text-green-800">
-                        All resumes have been processed!
+                      <h3 className="text-sm font-semibold text-red-800">
+                        Processing Status Error
                       </h3>
-                      <p className="text-sm text-green-600 mt-1">
-                        {status.total_cvs} resume
-                        {status.total_cvs !== 1 ? "s" : ""} successfully parsed
-                        and ready for search.
-                      </p>
+                      <p className="text-sm text-red-600 mt-1">{error}</p>
                     </div>
                   </div>
                 </div>
@@ -242,66 +265,44 @@ const FloatingResumeProcessingStatus: React.FC = () => {
 
               {/* Metrics Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                {/* Total Resumes */}
+                {/* Total Pitches */}
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-blue-600 uppercase tracking-wide">
-                        Total Resumes
+                        Total Pitches
                       </p>
                       <p className="text-3xl font-bold text-blue-900 mt-2">
-                        {status?.total_cvs.toLocaleString() || 0}
+                        {status?.total_pitches.toLocaleString() || 0}
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <svg
-                        className="h-6 w-6 text-blue-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
+                      <DocumentTextIcon className="h-6 w-6 text-blue-600" />
                     </div>
                   </div>
                 </div>
 
-                {/* Parsed Resumes */}
+                {/* Parsed Pitches */}
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-green-600 uppercase tracking-wide">
-                        Parsed Resumes
+                        Parsed Pitches
                       </p>
                       <p className="text-3xl font-bold text-green-900 mt-2">
-                        {status?.parsed_cvs.toLocaleString() || 0}
+                        {status?.parsed_pitches.toLocaleString() || 0}
                       </p>
                     </div>
                     <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                      <svg
-                        className="h-6 w-6 text-green-600"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                      <CheckCircleIcon className="h-6 w-6 text-green-600" />
                     </div>
                   </div>
                 </div>
 
-                {/* Processing Resumes */}
+                {/* Processing Pitches */}
                 <div
                   className={`rounded-lg p-6 border ${
-                    status?.pending_cvs && status.pending_cvs > 0
+                    status?.pending_pitches && status.pending_pitches > 0
                       ? "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200"
                       : "bg-gradient-to-br from-gray-50 to-slate-50 border-gray-200"
                   }`}
@@ -310,7 +311,7 @@ const FloatingResumeProcessingStatus: React.FC = () => {
                     <div>
                       <p
                         className={`text-sm font-medium uppercase tracking-wide ${
-                          status?.pending_cvs && status.pending_cvs > 0
+                          status?.pending_pitches && status.pending_pitches > 0
                             ? "text-amber-600"
                             : "text-gray-600"
                         }`}
@@ -319,47 +320,25 @@ const FloatingResumeProcessingStatus: React.FC = () => {
                       </p>
                       <p
                         className={`text-3xl font-bold mt-2 ${
-                          status?.pending_cvs && status.pending_cvs > 0
+                          status?.pending_pitches && status.pending_pitches > 0
                             ? "text-amber-900"
                             : "text-gray-900"
                         }`}
                       >
-                        {status?.pending_cvs.toLocaleString() || 0}
+                        {status?.pending_pitches.toLocaleString() || 0}
                       </p>
                     </div>
                     <div
                       className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                        status?.pending_cvs && status.pending_cvs > 0
+                        status?.pending_pitches && status.pending_pitches > 0
                           ? "bg-amber-100"
                           : "bg-gray-100"
                       }`}
                     >
-                      {status?.pending_cvs && status.pending_cvs > 0 ? (
-                        <svg
-                          className="h-6 w-6 text-amber-600 animate-pulse"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
+                      {status?.pending_pitches && status.pending_pitches > 0 ? (
+                        <ArrowPathIcon className="h-6 w-6 text-amber-600 animate-spin" />
                       ) : (
-                        <svg
-                          className="h-6 w-6 text-gray-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                        <CheckCircleIcon className="h-6 w-6 text-gray-600" />
                       )}
                     </div>
                   </div>
@@ -367,7 +346,7 @@ const FloatingResumeProcessingStatus: React.FC = () => {
               </div>
 
               {/* Progress Bar */}
-              {status && status.total_cvs > 0 && (
+              {status && status.total_pitches > 0 && (
                 <div className="bg-gray-50 rounded-lg p-4 mb-6">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-700">
@@ -384,14 +363,15 @@ const FloatingResumeProcessingStatus: React.FC = () => {
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    {status.parsed_cvs} of {status.total_cvs} resumes processed
+                    {status.parsed_pitches} of {status.total_pitches} pitch
+                    files processed
                   </p>
                 </div>
               )}
 
               {/* Last Updated */}
               <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-                <span>Last updated: {formatLastUpdated(new Date())}</span>
+                <span>Last updated: {formatLastUpdated(lastUpdated)}</span>
                 <span className="flex items-center space-x-1">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                   <span>Auto-refreshing every 60s</span>
@@ -405,4 +385,4 @@ const FloatingResumeProcessingStatus: React.FC = () => {
   );
 };
 
-export default FloatingResumeProcessingStatus;
+export default FloatingPitchProcessingStatus;

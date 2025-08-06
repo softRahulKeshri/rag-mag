@@ -101,7 +101,7 @@ export const useResumeProcessingStatus = () => {
       clearInterval(intervalRef.current);
     }
 
-    // Set up new interval for 30 seconds
+    // Set up new interval for 60 seconds
     intervalRef.current = setInterval(() => {
       if (mountedRef.current) {
         fetchStatus();
