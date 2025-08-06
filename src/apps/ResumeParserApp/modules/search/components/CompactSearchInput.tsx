@@ -46,16 +46,16 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
             value={selectedGroup}
             onChange={(e) => setSelectedGroup(e.target.value)}
             disabled={isSearching}
-            className="w-full bg-white/90 backdrop-blur-sm border-2 border-neutral-n200 rounded-xl px-4 py-3 text-neutral-n1000 font-medium focus:outline-none focus:border-brand-gradient-blue focus:ring-4 focus:ring-brand-gradient-blue/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:border-neutral-n300 shadow-lg appearance-none"
+            className="w-full bg-white border-2 border-[#E5E7EB] rounded-xl px-4 py-3 text-[#1F2937] font-medium focus:outline-none focus:border-[#3B82F6] focus:ring-3 focus:ring-[#3B82F6]/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[#F9FAFB] transition-all duration-200 hover:border-[#9CA3AF] shadow-sm appearance-none"
           >
-            <option value="" className="text-neutral-n700">
+            <option value="" className="text-[#6B7280]">
               All Groups
             </option>
             {groups.map((group) => (
               <option
                 key={group.id}
                 value={group.name}
-                className="text-neutral-n1000"
+                className="text-[#1F2937]"
               >
                 {group.name}
               </option>
@@ -63,7 +63,7 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
             <svg
-              className="w-5 h-5 text-neutral-n700"
+              className="w-5 h-5 text-[#6B7280]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={isSearching}
-              className="w-full px-4 py-3 text-neutral-n1000 placeholder-neutral-n700 bg-white/90 backdrop-blur-sm border-2 border-neutral-n200 rounded-xl outline-none disabled:cursor-not-allowed focus:border-brand-gradient-blue focus:ring-4 focus:ring-brand-gradient-blue/20 transition-all duration-300 hover:border-neutral-n300 shadow-lg font-medium text-base"
+              className="w-full px-4 py-3 text-[#1A1A1A] placeholder-[#6B7280] bg-white border-2 border-[#E5E7EB] rounded-xl outline-none disabled:cursor-not-allowed disabled:bg-[#F9FAFB] focus:border-[#3B82F6] focus:ring-3 focus:ring-[#3B82F6]/20 transition-all duration-200 hover:border-[#9CA3AF] shadow-sm font-medium text-base"
             />
 
             {/* Character Count Indicator */}
@@ -131,10 +131,10 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
         <button
           onClick={onSearch}
           disabled={isSearchDisabled}
-          className={`w-full px-4 py-3 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-xl ${
+          className={`w-full px-6 py-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 font-semibold text-base ${
             isSearchDisabled
-              ? "bg-neutral-n200 text-neutral-n700 cursor-not-allowed shadow-none"
-              : "bg-gradient-to-r from-[#FDA052] to-[#B96AF7] text-white hover:shadow-2xl hover:shadow-[#B96AF7]/25 active:scale-95 transform"
+              ? "bg-[#F3F4F6] text-[#9CA3AF] cursor-not-allowed border-2 border-[#E5E7EB]"
+              : "bg-gradient-to-r from-[#3B82F6] to-[#1D4ED8] text-white hover:from-[#2563EB] hover:to-[#1E40AF] hover:shadow-lg hover:shadow-[#3B82F6]/30 active:scale-98 transform border-2 border-transparent"
           }`}
         >
           {isSearching ? (
@@ -159,29 +159,29 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
       </div>
 
       {/* Search Tips */}
-      <div className="bg-primary-ui-blue-p100 rounded-xl p-4 border border-primary-ui-blue-p200 shadow-lg">
+      <div className="bg-[#F0F9FF] rounded-xl p-4 border-2 border-[#BAE6FD] shadow-sm">
         <div className="flex items-start gap-3">
-          <div className="w-6 h-6 bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+          <div className="w-7 h-7 bg-[#3B82F6] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
             <svg
-              className="w-3 h-3 text-white"
+              className="w-4 h-4 text-white"
               fill="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
             >
-              <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" />
+              <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div>
-            <p className="text-sm font-semibold text-neutral-n1000 mb-1">
-              Pro Tips for Better Results
+            <p className="text-sm font-semibold text-[#1E40AF] mb-2">
+              💡 Pro Tips for Better Results
             </p>
-            <p className="text-sm text-neutral-n700 leading-relaxed">
+            <p className="text-sm text-[#374151] leading-relaxed">
               Try:{" "}
-              <span className="font-medium text-neutral-n1000">
+              <span className="font-semibold text-[#1F2937] bg-[#E5E7EB] px-2 py-1 rounded">
                 "Senior React developer with 5+ years"
               </span>{" "}
               or{" "}
-              <span className="font-medium text-neutral-n1000">
+              <span className="font-semibold text-[#1F2937] bg-[#E5E7EB] px-2 py-1 rounded">
                 "Marketing manager with digital strategy expertise"
               </span>
             </p>
