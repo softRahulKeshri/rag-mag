@@ -1,15 +1,13 @@
 import React from "react";
+import { ResumeCollection } from "./ResumeCollection";
 import { useResumeStore } from "../hooks/useResumeStore";
-import ResumeCollection from "./ResumeCollection/ResumeCollection";
 import ErrorDisplay from "./ResumeCollection/ErrorDisplay";
-import type { StoreResume } from "../types";
+import type { ResumeData } from "../../../../../types/global";
 
 const ResumeStore: React.FC = () => {
   const {
     resumes,
     isLoading,
-    isDeleting,
-    deletingResumeId,
     error,
     clearError,
     refreshResumes,
@@ -19,31 +17,33 @@ const ResumeStore: React.FC = () => {
     handleDeleteComment,
   } = useResumeStore();
 
+  // Transform resumes to match the expected format for ResumeCollection
+  const transformedResumes = resumes.map((resume) => ({
+    ...resume,
+    // Map status if needed
+    status: mapStatus(resume.status),
+  }));
+
+  // Map status from ResumeData to expected format
   const mapStatus = (
     status: string
   ): "uploaded" | "processing" | "completed" | "failed" => {
     switch (status) {
-      case "uploading":
+      case "uploaded":
         return "uploaded";
       case "processing":
         return "processing";
       case "completed":
         return "completed";
-      case "error":
+      case "failed":
         return "failed";
       default:
-        return "uploaded";
+        return "completed"; // Default to completed for existing resumes
     }
   };
 
-  // Transform resumes to match the expected format
-  const transformedResumes: StoreResume[] = resumes.map((resume) => ({
-    ...resume,
-    status: mapStatus(resume.status),
-  }));
-
   // Handle resume deletion
-  const handleResumeDeleted = async (resume: StoreResume) => {
+  const handleResumeDeleted = async (resume: ResumeData) => {
     try {
       await handleDeleteResume(resume);
       // Refresh resumes after successful deletion to ensure UI is in sync
@@ -58,7 +58,7 @@ const ResumeStore: React.FC = () => {
   // Handle resume updates (for comments)
   const handleResumeUpdated = async (
     resumeId: number,
-    updates: Partial<StoreResume>
+    updates: Partial<ResumeData>
   ) => {
     try {
       console.log("🔄 ResumeStore: Handling resume update:", resumeId, updates);
@@ -89,7 +89,7 @@ const ResumeStore: React.FC = () => {
   // Individual comment handlers for direct use by ResumeCollection
   const handleCommentAdded = async (
     resumeId: number,
-    comment: StoreResume["comment"]
+    comment: ResumeData["comment"]
   ) => {
     if (comment) {
       console.log(
@@ -103,7 +103,7 @@ const ResumeStore: React.FC = () => {
 
   const handleCommentUpdated = async (
     resumeId: number,
-    comment: StoreResume["comment"]
+    comment: ResumeData["comment"]
   ) => {
     if (comment) {
       console.log(
@@ -152,8 +152,8 @@ const ResumeStore: React.FC = () => {
       onCommentUpdated={handleCommentUpdated}
       onCommentDeleted={handleCommentDeleted}
       isLoading={isLoading}
-      isDeleting={isDeleting}
-      deletingResumeId={deletingResumeId}
+      isDeleting={false} // Removed isDeleting and deletingResumeId as they are not in useResumeStore
+      deletingResumeId={null} // Removed isDeleting and deletingResumeId as they are not in useResumeStore
     />
   );
 };

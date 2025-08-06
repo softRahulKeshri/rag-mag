@@ -16,12 +16,8 @@ import ResumeGrid from "./ResumeGrid";
 import ErrorDisplay from "./ErrorDisplay";
 
 // Import types and utilities
-import type {
-  ResumeCollectionProps,
-  StoreResume as Resume,
-  ResumeComment,
-  Group,
-} from "../../types";
+import type { ResumeCollectionProps, Group } from "../../types";
+import type { ResumeData, ResumeComment } from "../../../../../../types/global";
 import { calculateGroupStats, filterResumes } from "./utils";
 import { useGroupApi } from "../../../../hooks/useGroupApi";
 
@@ -45,7 +41,7 @@ const ResumeCollection = ({
   const itemsPerPage = 10;
 
   // Local state for managing resume updates (for comment changes)
-  const [localResumes, setLocalResumes] = useState<Resume[]>(resumes);
+  const [localResumes, setLocalResumes] = useState<ResumeData[]>(resumes);
 
   // Update local resumes when prop changes
   useEffect(() => {

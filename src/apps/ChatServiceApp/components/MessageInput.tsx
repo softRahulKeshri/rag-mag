@@ -191,7 +191,7 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
                   placeholder={
-                    isSending ? "AI is thinking..." : "Message ChatAI..."
+                    isSending ? "Generating..." : "Ask something..."
                   }
                   disabled={isSending}
                   className={`w-full bg-transparent border-0 text-gray-900 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[36px] max-h-[100px] text-[15px] leading-relaxed font-normal transition-colors ${

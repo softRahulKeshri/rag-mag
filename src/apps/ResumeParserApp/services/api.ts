@@ -25,7 +25,7 @@ interface UploadApiResponse {
   }>;
 }
 
-// Unified upload function using XMLHttpRequest for better progress tracking
+// Updated upload function using axios with JWT authentication
 export const uploadResume = async (
   files: File | File[],
   groupId: string,
@@ -50,102 +50,89 @@ export const uploadResume = async (
     fileSizeMap.set(file.name, file.size);
   });
 
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
+  try {
+    console.log("📤 Starting file upload with JWT authentication");
 
-    // Handle abort signal
-    if (signal) {
-      signal.addEventListener('abort', () => {
-        xhr.abort();
-        reject(new Error('Upload cancelled'));
-      });
-    }
-
-    // Progress tracking
-    xhr.upload.addEventListener("progress", (event) => {
-      if (event.lengthComputable && onProgress) {
-        const percentComplete = (event.loaded / event.total) * 100;
-        onProgress(percentComplete);
-      }
+    // Log the request details
+    console.log(`🔐 JWT Token for uploadResume API call:`, {
+      endpoint: "/upload_cv",
+      method: "POST",
+      fileCount: fileArray.length,
+      fileNames: fileArray.map((f) => f.name),
+      groupId,
+      timestamp: new Date().toISOString(),
     });
 
-    xhr.addEventListener("load", () => {
-      if (xhr.status === 200) {
-        try {
-          const response: UploadApiResponse = JSON.parse(
-            xhr.responseText || "{}"
-          );
-
-          // Handle the new API response format
-          const uploadResult: UploadResult = {
-            successful: response.uploaded?.length || 0,
-            failed: response.errors?.length || 0,
-            total: fileArray.length,
-            message:
-              response.uploaded?.length > 0
-                ? `Successfully uploaded ${response.uploaded.length} file(s)`
-                : "Upload completed",
-            results:
-              response.uploaded?.map((item) => ({
-                id: item.id,
-                filename: item.original_filename || item.stored_filename,
-                original_filename: item.original_filename,
-                stored_filename: item.stored_filename,
-                filepath: item.filepath,
-                fileSize: fileSizeMap.get(item.original_filename) || 0, // Use actual file size from mapping
-                fileType: "pdf", // Assuming PDF based on context
-                uploadedAt: item.upload_time,
-                status: "uploaded" as const,
-                group: item.group,
-                cloud_url: item.cloud_url,
-                comment_text: item.comment,
-                commented_at: item.commented_at,
-              })) || [],
-            errors:
-              response.errors?.map((error) => ({
-                filename: error.filename || "Unknown file",
-                error: error.message || error.error || "Upload failed",
-              })) || [],
-          };
-
-          resolve(uploadResult);
-        } catch {
-          reject(new Error("Invalid response format from server"));
+    // Use axios with automatic JWT token injection
+    const response = await api.post<UploadApiResponse>("/upload_cv", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      signal,
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total && onProgress) {
+          const percentComplete =
+            (progressEvent.loaded / progressEvent.total) * 100;
+          onProgress(percentComplete);
         }
-      } else {
-        const errorMessage =
-          xhr.responseText || `Upload failed: ${xhr.status} ${xhr.statusText}`;
-        reject(new Error(errorMessage));
+      },
+    });
+
+    console.log("✅ Upload completed successfully:", response.data);
+
+    // Handle the new API response format
+    const uploadResult: UploadResult = {
+      successful: response.data.uploaded?.length || 0,
+      failed: response.data.errors?.length || 0,
+      total: fileArray.length,
+      message:
+        response.data.uploaded?.length > 0
+          ? `Successfully uploaded ${response.data.uploaded.length} file(s)`
+          : "Upload completed",
+      results:
+        response.data.uploaded?.map((item) => ({
+          id: item.id,
+          filename: item.original_filename || item.stored_filename,
+          original_filename: item.original_filename,
+          stored_filename: item.stored_filename,
+          filepath: item.filepath,
+          fileSize: fileSizeMap.get(item.original_filename) || 0,
+          fileType: "pdf", // Assuming PDF based on context
+          uploadedAt: item.upload_time,
+          status: "uploaded" as const,
+          group: item.group,
+          cloud_url: item.cloud_url,
+          comment_text: item.comment,
+          commented_at: item.commented_at,
+        })) || [],
+      errors:
+        response.data.errors?.map((error) => ({
+          filename: error.filename || "Unknown file",
+          error: error.message || error.error || "Upload failed",
+        })) || [],
+    };
+
+    return uploadResult;
+  } catch (error) {
+    console.error("❌ Upload failed:", error);
+
+    // Handle specific error cases
+    if (error && typeof error === "object" && "response" in error) {
+      const axiosError = error as {
+        response?: { status: number; data?: Record<string, unknown> };
+      };
+
+      if (axiosError.response?.status === 401) {
+        throw new Error("Authentication failed. Please login again.");
+      } else if (axiosError.response?.status === 413) {
+        throw new Error("File is too large. Please try a smaller file.");
+      } else if (axiosError.response?.status === 500) {
+        throw new Error("Server error. Please try again later.");
       }
-    });
-
-    xhr.addEventListener("error", () => {
-      reject(new Error("Network error: Unable to connect to server"));
-    });
-
-    xhr.addEventListener("timeout", () => {
-      reject(
-        new Error(
-          `Upload timeout after ${
-            30000 / 1000
-          } seconds. Please try with fewer or smaller files.`
-        )
-      );
-    });
-
-    xhr.timeout = 30000;
-    xhr.open("POST", `${api.defaults.baseURL}/upload_cv`);
-    xhr.setRequestHeader("Accept", "application/json");
-    xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-
-    // Add authorization header if available
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      xhr.setRequestHeader("Authorization", `Bearer ${token}`);
     }
 
-    xhr.send(formData);
-  });
+    throw new Error("Upload failed. Please try again.");
+  }
 };
 
 export const getResumes = async (): Promise<ApiResume[]> => {

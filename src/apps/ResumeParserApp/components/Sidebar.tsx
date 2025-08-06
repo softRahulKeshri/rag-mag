@@ -194,8 +194,8 @@ const Sidebar: React.FC<ExtendedSidebarProps> = ({
 
       {/* User Profile Section - Removed - available in navbar */}
       <div
-        className={`flex-shrink-0 border-t border-gray-200/60 ${
-          isCollapsed ? "p-2" : "p-4"
+        className={`flex-shrink-0 ${isCollapsed ? "p-2" : "p-4"} ${
+          isCollapsed ? "" : "border-t border-gray-200/60"
         }`}
       >
         {!isCollapsed && (

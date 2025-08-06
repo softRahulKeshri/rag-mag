@@ -45,9 +45,9 @@ const ChatServiceApp = () => {
 
   const {
     data: chatSessions,
-    isLoading: isLoadingSessions,
     error: sessionsError,
     refetch: refetchSessions,
+    isLoading: isLoadingSessions,
   } = useChatSessionsEnhanced(userId);
 
   // Conversation API for sending messages and getting AI responses
@@ -359,7 +359,7 @@ const ChatServiceApp = () => {
             Connection Failed
           </h3>
           <p className="text-sm text-[#6D6F7A] mb-6 leading-relaxed">
-            {sessionsError.message ||
+            {sessionsError?.message ||
               "Unable to load your conversations. Please check your connection and try again."}
           </p>
           <button

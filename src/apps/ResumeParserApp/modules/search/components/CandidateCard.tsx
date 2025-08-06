@@ -1,19 +1,17 @@
 import React, { useCallback } from "react";
 import type { CandidateCardProps } from "../types";
+import { resumeApi } from "../../../../../lib/axios";
 import { buildResumeApiUrl } from "../../store/components/ResumeCollection/utils";
 
 /**
- * CandidateCard Component
+ * Candidate Card Component
  *
- * Displays individual candidate information in a modern card layout.
- *
- * Features:
- * - Score visualizations with color coding
- * - Candidate highlights and details
- * - Interactive hover effects
- * - Responsive design
- * - Action buttons for viewing details
- * - Professional score breakdown
+ * Displays individual candidate information in a card format with:
+ * - Personal information (name, email, phone, location)
+ * - Professional details (current role, experience, education)
+ * - Skills and match score
+ * - Action buttons for viewing details, viewing resume, and downloading resume
+ * - Responsive design with hover effects
  */
 const CandidateCard: React.FC<CandidateCardProps> = ({
   candidate,
@@ -342,19 +340,63 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
 
         <button
           onClick={() => {
-            const viewUrl = buildResumeApiUrl(candidate.id);
             const viewFile = async () => {
               try {
-                const response = await fetch(viewUrl);
-                if (!response.ok)
-                  throw new Error(`HTTP error! status: ${response.status}`);
-                const blob = await response.blob();
+                console.log(
+                  `🔄 Loading resume for viewing with JWT authentication`
+                );
+
+                // Log the request details
+                console.log(
+                  `🔐 JWT Token for candidate resume view API call:`,
+                  {
+                    endpoint: `/resume/${candidate.id}`,
+                    method: "GET",
+                    candidateId: candidate.id,
+                    candidateName: candidate.name,
+                    timestamp: new Date().toISOString(),
+                  }
+                );
+
+                // Use axios with JWT authentication
+                const response = await resumeApi.get(
+                  `/resume/${candidate.id}`,
+                  {
+                    responseType: "blob",
+                  }
+                );
+
+                // Get the file as a blob
+                const blob = response.data;
+
+                // Create a blob URL for viewing
                 const blobUrl = window.URL.createObjectURL(blob);
                 window.open(blobUrl, "_blank");
                 setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
               } catch (error) {
                 console.error(`Failed to view resume:`, error);
+
+                // Handle specific error cases
+                if (error && typeof error === "object" && "response" in error) {
+                  const axiosError = error as { response?: { status: number } };
+
+                  if (axiosError.response?.status === 401) {
+                    alert("Authentication failed. Please login again.");
+                    return;
+                  } else if (axiosError.response?.status === 404) {
+                    alert("Resume file not found.");
+                    return;
+                  } else if (axiosError.response?.status === 403) {
+                    alert(
+                      "Access denied. You don't have permission to view this file."
+                    );
+                    return;
+                  }
+                }
+
+                // Fallback: try to open the URL directly
                 try {
+                  const viewUrl = buildResumeApiUrl(candidate.id);
                   window.open(viewUrl, "_blank");
                 } catch {
                   alert(`Unable to view resume - please try again`);
@@ -377,13 +419,36 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
 
         <button
           onClick={() => {
-            const downloadUrl = buildResumeApiUrl(candidate.id);
             const downloadFile = async () => {
               try {
-                const response = await fetch(downloadUrl);
-                if (!response.ok)
-                  throw new Error(`HTTP error! status: ${response.status}`);
-                const blob = await response.blob();
+                console.log(`🔄 Downloading resume with JWT authentication`);
+
+                // Log the request details
+                console.log(
+                  `🔐 JWT Token for candidate resume download API call:`,
+                  {
+                    endpoint: `/resume/${candidate.id}`,
+                    method: "GET",
+                    candidateId: candidate.id,
+                    candidateName: candidate.name,
+                    filename:
+                      candidate.filename || `${candidate.name}_resume.pdf`,
+                    timestamp: new Date().toISOString(),
+                  }
+                );
+
+                // Use axios with JWT authentication
+                const response = await resumeApi.get(
+                  `/resume/${candidate.id}`,
+                  {
+                    responseType: "blob",
+                  }
+                );
+
+                // Get the file as a blob
+                const blob = response.data;
+
+                // Create a blob URL for download
                 const blobUrl = window.URL.createObjectURL(blob);
                 const link = document.createElement("a");
                 link.href = blobUrl;
@@ -396,7 +461,28 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
                 window.URL.revokeObjectURL(blobUrl);
               } catch (error) {
                 console.error(`Failed to download resume:`, error);
+
+                // Handle specific error cases
+                if (error && typeof error === "object" && "response" in error) {
+                  const axiosError = error as { response?: { status: number } };
+
+                  if (axiosError.response?.status === 401) {
+                    alert("Authentication failed. Please login again.");
+                    return;
+                  } else if (axiosError.response?.status === 404) {
+                    alert("Resume file not found.");
+                    return;
+                  } else if (axiosError.response?.status === 403) {
+                    alert(
+                      "Access denied. You don't have permission to download this file."
+                    );
+                    return;
+                  }
+                }
+
+                // Fallback: try to download the URL directly
                 try {
+                  const downloadUrl = buildResumeApiUrl(candidate.id);
                   const link = document.createElement("a");
                   link.href = downloadUrl;
                   link.download =

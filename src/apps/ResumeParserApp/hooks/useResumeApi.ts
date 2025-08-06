@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useApiService } from "./useApiService";
+import { resumeApi } from "../../../lib/axios";
 import type { BaseResume as Resume } from "../types/shared";
 
 /**
@@ -10,9 +10,9 @@ import type { BaseResume as Resume } from "../types/shared";
  * - Deleting resumes
  * - Managing resume comments
  * - Error handling and loading states
+ * - JWT authentication via configured axios instance
  */
 export const useResumeApi = () => {
-  const { fetchWithRetry, handleApiError, buildUrl } = useApiService();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,6 +97,36 @@ export const useResumeApi = () => {
   );
 
   /**
+   * Handle API errors consistently
+   */
+  const handleApiError = useCallback(
+    (error: unknown): { message: string; status?: number } => {
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as {
+          response?: { status: number; data?: Record<string, unknown> };
+        };
+        const status = axiosError.response?.status;
+
+        let message = "An unexpected error occurred";
+        if (axiosError.response?.data?.message) {
+          message = axiosError.response.data.message as string;
+        } else if (axiosError.response?.data?.error) {
+          message = axiosError.response.data.error as string;
+        }
+
+        return { message, status };
+      }
+
+      if (error instanceof Error) {
+        return { message: error.message };
+      }
+
+      return { message: "An unexpected error occurred" };
+    },
+    []
+  );
+
+  /**
    * Fetch all resumes from the CVs endpoint
    * POST /cvs
    * @param groupName - Optional group name to filter resumes by specific group
@@ -107,26 +137,30 @@ export const useResumeApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl("/cvs");
-        console.log(`🌐 Resume API: Fetching resumes from: ${url}`);
+        console.log(`🌐 Resume API: Fetching resumes with JWT authentication`);
 
         // Prepare payload: empty object for all CVs, or object with group name for specific group
         const payload = groupName ? { group: groupName } : {};
         console.log(`📦 API Payload:`, payload);
 
-        const response = await fetchWithRetry<Record<string, unknown>>(url, {
+        // Log the request details
+        console.log(`🔐 JWT Token for getResumes API call:`, {
+          endpoint: "/cvs",
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
+          payload,
+          timestamp: new Date().toISOString(),
         });
 
-        console.log(`📡 API Response received:`, response);
+        const response = await resumeApi.post<Record<string, unknown>[]>(
+          "/cvs",
+          payload
+        );
+
+        console.log(`📡 API Response received:`, response.data);
 
         // Handle the actual API response structure
         // The API returns a direct array of resume objects
-        const resumesArray = Array.isArray(response) ? response : [];
+        const resumesArray = Array.isArray(response.data) ? response.data : [];
 
         // Transform backend data to match frontend Resume interface
         const transformedResumes: Resume[] =
@@ -150,7 +184,7 @@ export const useResumeApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, transformResumeData, handleApiError]
+    [transformResumeData, handleApiError]
   );
 
   /**
@@ -163,19 +197,29 @@ export const useResumeApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl(`/delete/${id}`);
-        console.log(`🗑️ Resume API: Deleting resume with ID ${id} at: ${url}`);
+        console.log(
+          `🗑️ Resume API: Deleting resume with ID ${id} with JWT authentication`
+        );
 
-        const response = await fetchWithRetry<Record<string, unknown>>(url, {
+        // Log the request details
+        console.log(`🔐 JWT Token for deleteResume API call:`, {
+          endpoint: `/delete/${id}`,
           method: "DELETE",
+          resumeId: id,
+          timestamp: new Date().toISOString(),
         });
 
-        console.log(`📡 Delete API Response:`, response);
+        const response = await resumeApi.delete<Record<string, unknown>>(
+          `/delete/${id}`
+        );
+
+        console.log(`📡 Delete API Response:`, response.data);
 
         // Handle success response
         return {
           success: true,
-          message: (response.message as string) || "Resume deleted successfully",
+          message:
+            (response.data.message as string) || "Resume deleted successfully",
         };
       } catch (error) {
         console.error("Error deleting resume:", error);
@@ -191,7 +235,7 @@ export const useResumeApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, handleApiError]
+    [handleApiError]
   );
 
   /**
@@ -204,30 +248,28 @@ export const useResumeApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl(`/cv/${cvId}/comment`);
         console.log(
-          `💬 Resume API: Adding/updating comment for CV ${cvId} at: ${url}`
+          `💬 Resume API: Adding/updating comment for CV ${cvId} with JWT authentication`
         );
         console.log(`📝 Comment content:`, comment);
 
-        const response = await fetch(url, {
+        // Log the request details
+        console.log(`🔐 JWT Token for addOrUpdateComment API call:`, {
+          endpoint: `/cv/${cvId}/comment`,
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ comment }),
+          cvId,
+          comment,
+          timestamp: new Date().toISOString(),
         });
 
-        console.log(`📡 Comment API Status:`, response.status);
+        const response = await resumeApi.post<Record<string, unknown>>(
+          `/cv/${cvId}/comment`,
+          { comment }
+        );
 
-        if (response.status === 200) {
-          console.log(`✅ Comment operation successful`);
-          return true;
-        } else {
-          console.error(
-            `❌ Comment operation failed with status:`,
-            response.status
-          );
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        console.log(`📡 Comment API Response:`, response.data);
+        console.log(`✅ Comment operation successful`);
+        return true;
       } catch (error) {
         console.error("❌ Error adding/updating comment:", error);
         const apiError = handleApiError(error);
@@ -237,7 +279,7 @@ export const useResumeApi = () => {
         setIsLoading(false);
       }
     },
-    [buildUrl, handleApiError]
+    [handleApiError]
   );
 
   /**
@@ -250,31 +292,27 @@ export const useResumeApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl(`/cv/${cvId}/comment`);
         console.log(
-          `🗑️ Resume API: Deleting comment for CV ${cvId} at: ${url}`
+          `🗑️ Resume API: Deleting comment for CV ${cvId} with JWT authentication`
         );
 
-        const response = await fetch(url, {
+        // Log the request details
+        console.log(`🔐 JWT Token for deleteComment API call:`, {
+          endpoint: `/cv/${cvId}/comment`,
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ action: "delete" }),
+          cvId,
+          action: "delete",
+          timestamp: new Date().toISOString(),
         });
 
-        console.log(`📡 Delete Comment API Status:`, response.status);
+        const response = await resumeApi.post<Record<string, unknown>>(
+          `/cv/${cvId}/comment`,
+          { action: "delete" }
+        );
 
-        if (response.status === 200) {
-          console.log(`✅ Comment deleted successfully`);
-          return true;
-        } else {
-          console.error(
-            `❌ Comment deletion failed with status:`,
-            response.status
-          );
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        console.log(`📡 Delete Comment API Response:`, response.data);
+        console.log(`✅ Comment deleted successfully`);
+        return true;
       } catch (error) {
         console.error("❌ Error deleting comment:", error);
         const apiError = handleApiError(error);
@@ -284,7 +322,7 @@ export const useResumeApi = () => {
         setIsLoading(false);
       }
     },
-    [buildUrl, handleApiError]
+    [handleApiError]
   );
 
   /**

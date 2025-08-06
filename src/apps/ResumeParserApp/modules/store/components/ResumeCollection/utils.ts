@@ -1,4 +1,5 @@
-import type { StoreResume as Resume, Group, GroupStat } from "../../types";
+import type { Group, GroupStat } from "../../types";
+import type { ResumeData } from "../../../../../../types/global";
 
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return "0 Bytes";
@@ -25,7 +26,7 @@ export const formatDate = (dateString: string): string => {
   }
 };
 
-export const getStatusColor = (status: Resume["status"]): string => {
+export const getStatusColor = (status: ResumeData["status"]): string => {
   switch (status) {
     case "uploaded":
       return "bg-gray-100 text-gray-800";
@@ -40,7 +41,7 @@ export const getStatusColor = (status: Resume["status"]): string => {
   }
 };
 
-export const getStatusText = (status: Resume["status"]): string => {
+export const getStatusText = (status: ResumeData["status"]): string => {
   switch (status) {
     case "uploaded":
       return "Uploaded";
@@ -57,7 +58,7 @@ export const getStatusText = (status: Resume["status"]): string => {
 
 export const calculateGroupStats = (
   groups: Group[],
-  resumes: Resume[]
+  resumes: ResumeData[]
 ): GroupStat[] => {
   // Create a map of group names to their counts
   const groupCounts = new Map<string, number>();
@@ -96,10 +97,10 @@ export const calculateGroupStats = (
 };
 
 export const filterResumes = (
-  resumes: Resume[],
+  resumes: ResumeData[],
   searchQuery: string,
   selectedGroup: string | null
-): Resume[] => {
+): ResumeData[] => {
   return resumes.filter((resume) => {
     // Group filter
     if (selectedGroup && resume.group !== selectedGroup) {
@@ -110,7 +111,7 @@ export const filterResumes = (
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       const filename = (
-        resume.original_filename || resume.filename
+        resume.originalFilename || resume.filename
       ).toLowerCase();
 
       // Search by filename, candidate name, and job profile using real data

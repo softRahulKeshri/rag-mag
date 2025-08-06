@@ -142,9 +142,9 @@ export const ChatSidebar = ({
 
       {/* Footer */}
       <div
-        className={`flex-shrink-0 ${
-          isCollapsed ? "p-2" : "p-4"
-        } border-t border-gray-200`}
+        className={`flex-shrink-0 ${isCollapsed ? "p-2" : "p-4"} ${
+          isCollapsed ? "" : "border-t border-gray-200"
+        }`}
       >
         {!isCollapsed && (
           <div className="text-center">
