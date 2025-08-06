@@ -158,36 +158,7 @@ const CompactSearchInput: React.FC<SearchInputProps> = ({
         </button>
       </div>
 
-      {/* Search Tips */}
-      <div className="bg-[#F0F9FF] rounded-xl p-4 border-2 border-[#BAE6FD] shadow-sm">
-        <div className="flex items-start gap-3">
-          <div className="w-7 h-7 bg-[#3B82F6] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-            <svg
-              className="w-4 h-4 text-white"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-[#1E40AF] mb-2">
-              💡 Pro Tips for Better Results
-            </p>
-            <p className="text-sm text-[#374151] leading-relaxed">
-              Try:{" "}
-              <span className="font-semibold text-[#1F2937] bg-[#E5E7EB] px-2 py-1 rounded">
-                "Senior React developer with 5+ years"
-              </span>{" "}
-              or{" "}
-              <span className="font-semibold text-[#1F2937] bg-[#E5E7EB] px-2 py-1 rounded">
-                "Marketing manager with digital strategy expertise"
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
+     
     </div>
   );
 };

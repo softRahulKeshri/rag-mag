@@ -150,6 +150,8 @@ export const useResumeStore = (): UseResumeStoreReturn => {
         job_profile: resume.job_profile,
         days_available: resume.days_available,
         total_experience: resume.total_experience,
+        // CRITICAL: Include comment data to preserve comments across tab switches
+        comment: resume.comment,
       }));
 
       setGlobalResumes(globalResumeData);
@@ -219,45 +221,76 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   const handleAddComment = useCallback(
     async (resumeId: number, comment: ResumeComment) => {
       try {
+        console.log(
+          "🔄 useResumeStore: Adding comment for resume:",
+          resumeId,
+          comment
+        );
+
         // Update global state immediately for optimistic UI
         setGlobalResumes(
           globalResumes.map((r) => (r.id === resumeId ? { ...r, comment } : r))
         );
+
+        console.log("✅ useResumeStore: Comment added to global state");
       } catch (err) {
+        console.error("❌ useResumeStore: Failed to add comment:", err);
         setError(err instanceof Error ? err.message : "Failed to add comment");
       }
     },
-    []
+    [globalResumes, setGlobalResumes]
   );
 
   const handleUpdateComment = useCallback(
     async (resumeId: number, comment: ResumeComment) => {
       try {
+        console.log(
+          "🔄 useResumeStore: Updating comment for resume:",
+          resumeId,
+          comment
+        );
+
         // Update global state immediately for optimistic UI
         setGlobalResumes(
           globalResumes.map((r) => (r.id === resumeId ? { ...r, comment } : r))
         );
+
+        console.log("✅ useResumeStore: Comment updated in global state");
       } catch (err) {
+        console.error("❌ useResumeStore: Failed to update comment:", err);
         setError(
           err instanceof Error ? err.message : "Failed to update comment"
         );
       }
     },
-    []
+    [globalResumes, setGlobalResumes]
   );
 
-  const handleDeleteComment = useCallback(async (resumeId: number) => {
-    try {
-      // Update global state immediately for optimistic UI
-      setGlobalResumes(
-        globalResumes.map((r) =>
-          r.id === resumeId ? { ...r, comment: undefined } : r
-        )
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete comment");
-    }
-  }, []);
+  const handleDeleteComment = useCallback(
+    async (resumeId: number) => {
+      try {
+        console.log(
+          "🔄 useResumeStore: Deleting comment for resume:",
+          resumeId
+        );
+
+        // Update global state immediately for optimistic UI
+        setGlobalResumes(
+          globalResumes.map((r) =>
+            r.id === resumeId ? { ...r, comment: undefined } : r
+          )
+        );
+
+        console.log("✅ useResumeStore: Comment deleted from global state");
+      } catch (err) {
+        console.error("❌ useResumeStore: Failed to delete comment:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to delete comment"
+        );
+      }
+    },
+    [globalResumes, setGlobalResumes]
+  );
 
   // Clear error function
   const clearError = useCallback(() => {

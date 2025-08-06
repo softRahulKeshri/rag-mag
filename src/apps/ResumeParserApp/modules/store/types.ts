@@ -70,8 +70,15 @@ export interface ResumeCollectionProps {
   resumes: StoreResume[];
   onDelete?: (resume: StoreResume) => void;
   onResumeDeleted?: (resumeId: number) => void;
-  onResumeUpdated?: (resumeId: number, updatedResume: StoreResume) => void;
+  onResumeUpdated?: (resumeId: number, updates: Partial<StoreResume>) => void;
   onRefreshResumes?: () => Promise<void>;
+  // Comment handlers for direct state management
+  onCommentAdded?: (resumeId: number, comment: ResumeComment) => Promise<void>;
+  onCommentUpdated?: (
+    resumeId: number,
+    comment: ResumeComment
+  ) => Promise<void>;
+  onCommentDeleted?: (resumeId: number) => Promise<void>;
   isLoading?: boolean;
   isDeleting?: boolean;
   deletingResumeId?: number | null;
