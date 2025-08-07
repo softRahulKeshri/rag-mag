@@ -1,48 +1,173 @@
 import { useCallback, useMemo } from "react";
-import { API_CONFIG } from "../theme/constants";
+import { resumeApi } from "../../../lib/axios";
+import type { AxiosError } from "axios";
 import type { ApiError } from "../types/api";
 
 /**
  * Base API Service Hook
  *
- * Provides core fetch functionality with retry logic, error handling,
- * and consistent request/response patterns for all API calls.
- *
- * Features:
- * - Type-safe API calls
- * - Centralized error handling
+ * Provides axios-based functionality with JWT authentication and error handling
+ * Uses the centralized resumeApi instance which includes:
+ * - Automatic JWT Bearer token injection
+ * - Token refresh on 401 errors
+ * - Consistent error handling
  * - Request/response interceptors
  * - Retry logic with exponential backoff
  * - Timeout handling
- * - JWT authentication
  */
 export const useApiService = () => {
   /**
-   * Get JWT token from localStorage
+   * POST request helper using axios
    */
-  const getAuthToken = useCallback((): string | null => {
-    const token =
-      localStorage.getItem("accessToken") || localStorage.getItem("authToken");
+  const post = useCallback(
+    async <T>(url: string, data: unknown): Promise<T> => {
+      try {
+        const response = await resumeApi.post<T>(url, data);
+        return response.data;
+      } catch (error) {
+        const axiosError = error as AxiosError;
+        console.error("❌ POST request failed:", {
+          url,
+          status: axiosError.response?.status,
+          message: axiosError.message,
+        });
+        throw error;
+      }
+    },
+    []
+  );
 
-    if (token) {
-      console.log(`🔐 JWT Token retrieved for fetch request:`, {
-        tokenPreview: `${token.substring(0, 20)}...${token.substring(
-          token.length - 10
-        )}`,
-        fullToken: token, // Full token for debugging
-        source: localStorage.getItem("accessToken")
-          ? "accessToken"
-          : "authToken",
+  /**
+   * GET request helper using axios
+   */
+  const get = useCallback(async <T>(url: string): Promise<T> => {
+    try {
+      const response = await resumeApi.get<T>(url);
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.error("❌ GET request failed:", {
+        url,
+        status: axiosError.response?.status,
+        message: axiosError.message,
       });
-    } else {
-      console.warn(`⚠️ No JWT token found in localStorage for fetch request`);
+      throw error;
     }
-
-    return token;
   }, []);
 
   /**
-   * Generic fetch wrapper with retry logic and proper error handling
+   * PUT request helper using axios
+   */
+  const put = useCallback(async <T>(url: string, data: unknown): Promise<T> => {
+    try {
+      const response = await resumeApi.put<T>(url, data);
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.error("❌ PUT request failed:", {
+        url,
+        status: axiosError.response?.status,
+        message: axiosError.message,
+      });
+      throw error;
+    }
+  }, []);
+
+  /**
+   * DELETE request helper using axios
+   */
+  const del = useCallback(async <T>(url: string): Promise<T> => {
+    try {
+      const response = await resumeApi.delete<T>(url);
+      return response.data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+      console.error("❌ DELETE request failed:", {
+        url,
+        status: axiosError.response?.status,
+        message: axiosError.message,
+      });
+      throw error;
+    }
+  }, []);
+
+  /**
+   * Handle API errors consistently
+   */
+  const handleApiError = useCallback((error: unknown): ApiError => {
+    if (error && typeof error === "object" && "response" in error) {
+      const axiosError = error as AxiosError<{
+        message?: string;
+        error?: string;
+        detail?: string;
+      }>;
+
+      const status = axiosError.response?.status;
+      const responseData = axiosError.response?.data;
+
+      // Extract error message from response
+      let message = "An unexpected error occurred";
+      if (responseData?.message) {
+        message = responseData.message;
+      } else if (responseData?.error) {
+        message = responseData.error;
+      } else if (responseData?.detail) {
+        message = responseData.detail;
+      } else if (axiosError.message) {
+        message = axiosError.message;
+      }
+
+      // Handle specific error codes
+      if (status === 401) {
+        message = "Authentication failed. Please login again.";
+      } else if (status === 403) {
+        message =
+          "Access forbidden. You don't have permission to perform this action.";
+      } else if (status === 404) {
+        message = "Resource not found.";
+      } else if (status === 500) {
+        message = "Internal server error. Please try again later.";
+      } else if (status === 502 || status === 503 || status === 504) {
+        message = "Service temporarily unavailable. Please try again later.";
+      }
+
+      return {
+        message,
+        status: status || 0,
+        code: axiosError.code,
+      };
+    }
+
+    // Handle network errors
+    if (error && typeof error === "object" && "request" in error) {
+      return {
+        message: "Network error - no response received",
+        status: 0,
+        code: "NETWORK_ERROR",
+      };
+    }
+
+    // Handle other errors
+    const errorMessage =
+      error instanceof Error ? error.message : "An unexpected error occurred";
+    return {
+      message: errorMessage,
+      status: 0,
+      code: "UNKNOWN_ERROR",
+    };
+  }, []);
+
+  /**
+   * Build full URL with base URL (for backward compatibility)
+   */
+  const buildUrl = useCallback((endpoint: string): string => {
+    // Since we're using axios with baseURL, this is mainly for logging
+    return endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  }, []);
+
+  /**
+   * Legacy fetchWithRetry for backward compatibility
+   * Now uses axios under the hood
    */
   const fetchWithRetry = useCallback(
     async <T>(
@@ -50,146 +175,55 @@ export const useApiService = () => {
       options: RequestInit = {},
       attempt: number = 1
     ): Promise<T> => {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(
-        () => controller.abort(),
-        API_CONFIG.timeout
-      );
-
       try {
-        // Prepare headers - don't set Content-Type for FormData
-        const headers: Record<string, string> = {};
+        const method = options.method?.toLowerCase() || "get";
+        const data = options.body
+          ? JSON.parse(options.body as string)
+          : undefined;
 
-        // Only add Content-Type if it's not FormData and not already set
-        if (!(options.body instanceof FormData)) {
-          headers["Content-Type"] = "application/json";
+        let response: T;
+
+        switch (method) {
+          case "get":
+            response = await get<T>(url);
+            break;
+          case "post":
+            response = await post<T>(url, data);
+            break;
+          case "put":
+            response = await put<T>(url, data);
+            break;
+          case "delete":
+            response = await del<T>(url);
+            break;
+          default:
+            throw new Error(`Unsupported HTTP method: ${method}`);
         }
 
-        // Add JWT authentication token
-        const token = getAuthToken();
-        if (token) {
-          headers["Authorization"] = `Bearer ${token}`;
-          console.log(`🔐 JWT Token attached to fetch request:`, {
-            url,
-            method: options.method || "GET",
-            tokenPreview: `${token.substring(0, 20)}...${token.substring(
-              token.length - 10
-            )}`,
-            fullToken: token, // Full token for debugging
-            hasData: !!options.body,
-            dataPreview: options.body
-              ? typeof options.body === "string"
-                ? options.body.substring(0, 100) + "..."
-                : "Object/FormData"
-              : "No data",
-          });
-        } else {
-          console.warn(`⚠️ No JWT token available for fetch request:`, {
-            url,
-            method: options.method || "GET",
-          });
-        }
-
-        // Add any custom headers
-        if (options.headers) {
-          Object.assign(headers, options.headers);
-        }
-
-        console.log(`🚀 Fetch Request with JWT:`, {
-          url,
-          method: options.method || "GET",
-          headers: Object.keys(headers),
-          hasToken: !!token,
-        });
-
-        const response = await fetch(url, {
-          ...options,
-          signal: controller.signal,
-          headers,
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          // Try to extract the actual error message from the response body
-          let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-          try {
-            const errorData = await response.json();
-            // Look for common error message fields
-            if (errorData.error) {
-              errorMessage = errorData.error;
-            } else if (errorData.message) {
-              errorMessage = errorData.message;
-            } else if (errorData.detail) {
-              errorMessage = errorData.detail;
-            }
-          } catch (parseError) {
-            // If we can't parse the response body, keep the original error message
-            console.warn("Could not parse error response body:", parseError);
-          }
-          throw new Error(errorMessage);
-        }
-
-        const data = await response.json();
-        console.log(`✅ Fetch Response received:`, {
-          url,
-          status: response.status,
-          hasData: !!data,
-        });
-        return data;
+        return response;
       } catch (error) {
-        clearTimeout(timeoutId);
-
         // If it's an abort error and we have retries left, retry
         if (
-          attempt < API_CONFIG.retryAttempts &&
+          attempt < 3 &&
           error instanceof Error &&
           (error.name === "AbortError" || error.message.includes("fetch"))
         ) {
           console.warn(
-            `API call failed (attempt ${attempt}), retrying in ${API_CONFIG.retryDelay}ms...`
+            `API call failed (attempt ${attempt}), retrying in 1000ms...`
           );
-          await new Promise((resolve) =>
-            setTimeout(resolve, API_CONFIG.retryDelay)
-          );
+          await new Promise((resolve) => setTimeout(resolve, 1000));
           return fetchWithRetry<T>(url, options, attempt + 1);
         }
 
         throw error;
       }
     },
-    [getAuthToken]
+    [get, post, put, del]
   );
 
   /**
-   * Handle API errors consistently
-   */
-  const handleApiError = useCallback((error: unknown): ApiError => {
-    if (error instanceof Error) {
-      return {
-        message: error.message,
-        status: 0,
-        code: error.name,
-      };
-    }
-
-    return {
-      message: "An unexpected error occurred",
-      status: 0,
-    };
-  }, []);
-
-  /**
-   * Build full URL with base URL
-   */
-  const buildUrl = useCallback((endpoint: string): string => {
-    return `${API_CONFIG.baseURL}${
-      endpoint.startsWith("/") ? endpoint : `/${endpoint}`
-    }`;
-  }, []);
-
-  /**
    * Create request options with common headers and JWT authentication
+   * (for backward compatibility)
    */
   const createRequestOptions = useCallback(
     (
@@ -197,15 +231,10 @@ export const useApiService = () => {
       body?: unknown,
       customHeaders?: Record<string, string>
     ): RequestInit => {
-      const token = getAuthToken();
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
         ...customHeaders,
       };
-
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-      }
 
       const options: RequestInit = {
         method,
@@ -218,17 +247,40 @@ export const useApiService = () => {
 
       return options;
     },
-    [getAuthToken]
+    []
   );
 
   return useMemo(
     () => ({
-      fetchWithRetry,
+      // Axios-based methods (recommended)
+      post,
+      get,
+      put,
+      del,
       handleApiError,
       buildUrl,
+
+      // Legacy methods (for backward compatibility)
+      fetchWithRetry,
       createRequestOptions,
-      config: API_CONFIG,
+
+      // Configuration
+      config: {
+        baseURL: resumeApi.defaults.baseURL,
+        timeout: resumeApi.defaults.timeout,
+        retryAttempts: 3,
+        retryDelay: 1000,
+      },
     }),
-    [fetchWithRetry, handleApiError, buildUrl, createRequestOptions]
+    [
+      post,
+      get,
+      put,
+      del,
+      handleApiError,
+      buildUrl,
+      fetchWithRetry,
+      createRequestOptions,
+    ]
   );
 };

@@ -16,7 +16,7 @@ import type { ResumeProcessingStatus } from "../types/api";
  * - GET /resume-processing - Get current processing status
  */
 export const useResumeProcessingStatus = () => {
-  const { fetchWithRetry, handleApiError, buildUrl } = useApiService();
+  const { get, handleApiError } = useApiService();
   const [status, setStatus] = useState<ResumeProcessingStatus | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,12 +37,10 @@ export const useResumeProcessingStatus = () => {
     setError(null);
 
     try {
-      const url = buildUrl("/resume-processing");
+      const url = "/resume-processing";
       console.log(`📊 Processing Status API: Fetching status from: ${url}`);
 
-      const response = await fetchWithRetry<ResumeProcessingStatus>(url, {
-        method: "GET",
-      });
+      const response = await get<ResumeProcessingStatus>(url);
 
       console.log(`📡 Processing Status API Response:`, response);
 
@@ -83,7 +81,7 @@ export const useResumeProcessingStatus = () => {
         setIsLoading(false);
       }
     }
-  }, [fetchWithRetry, buildUrl, handleApiError]);
+  }, [get, handleApiError]);
 
   /**
    * Manual refresh function

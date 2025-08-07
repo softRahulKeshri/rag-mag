@@ -21,7 +21,7 @@ import type {
  * - POST /upload_jd - Job description upload and search
  */
 export const useSearchApi = () => {
-  const { fetchWithRetry, handleApiError, buildUrl } = useApiService();
+  const { post, handleApiError } = useApiService();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -104,22 +104,16 @@ export const useSearchApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl("/search_api");
+        const url = "/search_api";
         console.log(`🔍 Search API: Performing text search at: ${url}`);
         console.log(`📝 Search query:`, {
           query: query.trim(),
           group: group || null,
         });
 
-        const response = await fetchWithRetry<SearchApiResponse>(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            query: query.trim(),
-            group: group || null,
-          }),
+        const response = await post<SearchApiResponse>(url, {
+          query: query.trim(),
+          group: group || null,
         });
 
         console.log(`📡 Search API Response:`, response);
@@ -141,7 +135,7 @@ export const useSearchApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, transformApiResponse, handleApiError]
+    [post, transformApiResponse, handleApiError]
   );
 
   /**
@@ -182,7 +176,7 @@ export const useSearchApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl("/upload_jd");
+        const url = "/upload_jd";
         console.log(`📄 Upload JD API: Uploading job description at: ${url}`);
         console.log(`📁 File details:`, {
           name: file.name,
@@ -193,17 +187,24 @@ export const useSearchApi = () => {
 
         // Create FormData with exact field names expected by API
         const formData = new FormData();
-        
+
         // Append file with 'file' field name (binary data)
         formData.append("file", file);
-        
+
         // Append group with 'group' field name if provided and not empty
         // Only add group parameter if it has a meaningful value
-        if (group && typeof group === 'string' && group.trim() && group.trim() !== "") {
+        if (
+          group &&
+          typeof group === "string" &&
+          group.trim() &&
+          group.trim() !== ""
+        ) {
           formData.append("group", group.trim());
           console.log(`✅ Group parameter added: "${group.trim()}"`);
         } else {
-          console.log(`ℹ️ No group parameter added (group: "${group}", type: ${typeof group})`);
+          console.log(
+            `ℹ️ No group parameter added (group: "${group}", type: ${typeof group})`
+          );
         }
 
         // Log FormData contents for debugging (development only)
@@ -211,23 +212,21 @@ export const useSearchApi = () => {
           console.log("📤 FormData contents:");
           for (const [key, value] of formData.entries()) {
             if (value instanceof File) {
-              console.log(`  ${key}: File(${value.name}, ${value.size} bytes, ${value.type})`);
+              console.log(
+                `  ${key}: File(${value.name}, ${value.size} bytes, ${value.type})`
+              );
             } else {
               console.log(`  ${key}: ${value}`);
             }
           }
-          
+
           // Log the expected payload format
           console.log("📋 Expected API payload format:");
           console.log("  file: (binary data)");
           console.log(`  group: ${group || "not provided"}`);
         }
 
-        const response = await fetchWithRetry<SearchApiResponse>(url, {
-          method: "POST",
-          body: formData,
-          // Don't set any headers for FormData - browser will set Content-Type automatically
-        });
+        const response = await post<SearchApiResponse>(url, formData);
 
         console.log(`📡 Upload JD API Response:`, response);
 
@@ -249,7 +248,7 @@ export const useSearchApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, transformApiResponse, handleApiError]
+    [post, transformApiResponse, handleApiError]
   );
 
   /**
