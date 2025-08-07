@@ -13,7 +13,7 @@ import type { CreateGroupRequest } from "../types/api";
  * - Error handling and loading states
  */
 export const useGroupApi = () => {
-  const { fetchWithRetry, handleApiError, buildUrl } = useApiService();
+  const { get, post, put, del, handleApiError } = useApiService();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,12 +55,10 @@ export const useGroupApi = () => {
     setError(null);
 
     try {
-      const url = buildUrl("/groups");
+      const url = "/groups";
       console.log(`🌐 Group API: Fetching groups from: ${url}`);
 
-      const response = await fetchWithRetry<Record<string, unknown>>(url, {
-        method: "GET",
-      });
+      const response = await get<Record<string, unknown>>(url);
 
       console.log(`📡 Groups API Response:`, response);
 
@@ -84,7 +82,7 @@ export const useGroupApi = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [fetchWithRetry, buildUrl, transformGroupData, handleApiError]);
+  }, [get, transformGroupData, handleApiError]);
 
   /**
    * Create a new group
@@ -96,13 +94,10 @@ export const useGroupApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl("/groups");
+        const url = "/groups";
         console.log(`🆕 Group API: Creating group at: ${url}`, groupData);
 
-        const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "POST",
-          body: JSON.stringify(groupData),
-        });
+        const response = await post<Record<string, unknown>>(url, groupData);
 
         console.log(`📡 Create Group API Response:`, response);
 
@@ -179,7 +174,7 @@ export const useGroupApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, handleApiError]
+    [post, handleApiError]
   );
 
   /**
@@ -198,12 +193,10 @@ export const useGroupApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl(`/groups/${id}`);
+        const url = `/groups/${id}`;
         console.log(`🗑️ Group API: Deleting group with ID ${id} at: ${url}`);
 
-        const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "DELETE",
-        });
+        const response = await del<Record<string, unknown>>(url);
 
         console.log(`📡 Delete Group API Response:`, response);
 
@@ -246,7 +239,7 @@ export const useGroupApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, handleApiError]
+    [del, handleApiError]
   );
 
   /**
@@ -262,16 +255,13 @@ export const useGroupApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl(`/groups/${id}`);
+        const url = `/groups/${id}`;
         console.log(
           `✏️ Group API: Updating group with ID ${id} at: ${url}`,
           updates
         );
 
-        const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "PUT",
-          body: JSON.stringify(updates),
-        });
+        const response = await put<Record<string, unknown>>(url, updates);
 
         console.log(`📡 Update Group API Response:`, response);
 
@@ -291,7 +281,7 @@ export const useGroupApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, transformGroupData, handleApiError]
+    [put, transformGroupData, handleApiError]
   );
 
   /**
@@ -304,12 +294,10 @@ export const useGroupApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl(`/groups/${id}`);
+        const url = `/groups/${id}`;
         console.log(`🔍 Group API: Fetching group with ID ${id} from: ${url}`);
 
-        const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "GET",
-        });
+        const response = await get<Record<string, unknown>>(url);
 
         console.log(`📡 Get Group API Response:`, response);
 
@@ -332,7 +320,7 @@ export const useGroupApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, transformGroupData, handleApiError]
+    [get, transformGroupData, handleApiError]
   );
 
   /**

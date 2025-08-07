@@ -16,7 +16,7 @@ import type { ResumeComment } from "../types/api";
  * - DELETE /cv/{cvId}/comment - Delete comment
  */
 export const useCommentApi = () => {
-  const { fetchWithRetry, handleApiError, buildUrl } = useApiService();
+  const { post, handleApiError } = useApiService();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,19 +53,13 @@ export const useCommentApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl(`/cv/${cvId}/comment`);
+        const url = `/cv/${cvId}/comment`;
         console.log(
           `💬 Comment API: Creating/updating comment for CV ${cvId} at: ${url}`
         );
         console.log(`📝 Comment content:`, comment);
 
-        const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ comment }),
-        });
+        const response = await post<Record<string, unknown>>(url, { comment });
 
         console.log(`📡 Comment API Response:`, response);
 
@@ -83,7 +77,7 @@ export const useCommentApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, transformCommentResponse, handleApiError]
+    [post, transformCommentResponse, handleApiError]
   );
 
   /**
@@ -99,17 +93,13 @@ export const useCommentApi = () => {
       setError(null);
 
       try {
-        const url = buildUrl(`/cv/${cvId}/comment`);
+        const url = `/cv/${cvId}/comment`;
         console.log(
           `🗑️ Comment API: Deleting comment for CV ${cvId} at: ${url}`
         );
 
-        const response = await fetchWithRetry<Record<string, unknown>>(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ action: "delete" }),
+        const response = await post<Record<string, unknown>>(url, {
+          action: "delete",
         });
 
         console.log(`📡 Delete Comment API Response:`, response);
@@ -125,7 +115,7 @@ export const useCommentApi = () => {
         setIsLoading(false);
       }
     },
-    [fetchWithRetry, buildUrl, handleApiError]
+    [post, handleApiError]
   );
 
   /**

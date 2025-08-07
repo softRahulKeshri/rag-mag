@@ -13,7 +13,7 @@ import type { UploadResult } from "../types/api";
  * - Error handling and loading states
  */
 export const useUploadApi = () => {
-  const { buildUrl, handleApiError } = useApiService();
+  const { handleApiError } = useApiService();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
     {}
@@ -75,7 +75,7 @@ export const useUploadApi = () => {
           throw new Error(validationErrors.join(", "));
         }
 
-        const url = buildUrl("/upload_cv");
+        const url = "/upload_cv";
         console.log(
           `📤 Upload API: Uploading ${files.length} CVs to group "${groupName}" at: ${url}`
         );
@@ -143,7 +143,7 @@ export const useUploadApi = () => {
         setUploadProgress({});
       }
     },
-    [buildUrl, validateFiles, handleApiError]
+    [validateFiles, handleApiError]
   );
 
   /**
