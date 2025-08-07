@@ -113,22 +113,22 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
       <div className="relative bg-gradient-to-b from-white to-gray-50/30">
         {/* File Attachment Preview */}
         {selectedFile && (
-          <div className="mx-4 mt-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/60 shadow-sm">
+          <div className="mx-2 mt-2 p-2 bg-white/80 backdrop-blur-sm rounded-lg border border-gray-200/60 shadow-sm">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3 flex-1 min-w-0">
-                <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-sm">
-                  <DocumentIcon className="h-4 w-4 text-white" />
+              <div className="flex items-center space-x-2 flex-1 min-w-0">
+                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-md flex items-center justify-center shadow-sm">
+                  <DocumentIcon className="h-3 w-3 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-xs font-medium text-gray-900 truncate">
                     {selectedFile.name}
                   </p>
-                  <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
+                  <div className="flex items-center space-x-1 text-xs text-gray-500 mt-0.5">
                     <span className="font-medium">
                       {(selectedFile.size / 1024).toFixed(1)} KB
                     </span>
-                    <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                    <span className="capitalize font-medium bg-gray-100 px-2 py-1 rounded-md text-xs border border-gray-200">
+                    <div className="w-0.5 h-0.5 bg-gray-400 rounded-full"></div>
+                    <span className="capitalize font-medium bg-gray-100 px-1.5 py-0.5 rounded text-xs border border-gray-200">
                       {selectedFile.type.split("/")[1] || "Unknown"}
                     </span>
                   </div>
@@ -136,45 +136,45 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
               </div>
               <button
                 onClick={removeFile}
-                className="flex-shrink-0 p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-all duration-200 ml-2"
+                className="flex-shrink-0 p-1 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100 transition-all duration-200 ml-1"
                 aria-label="Remove file"
               >
-                <XMarkIcon className="h-4 w-4" />
+                <XMarkIcon className="h-3 w-3" />
               </button>
             </div>
           </div>
         )}
 
         {/* Main Input Container - Enhanced with spotlight effect */}
-        <div className="p-4">
+        <div className="p-2">
           <form
             onSubmit={handleSubmit}
-            className={`relative bg-white rounded-2xl transition-all duration-300 ${
+            className={`relative bg-white rounded-xl transition-all duration-300 ${
               isFocused
-                ? "ring-2 ring-blue-500/20 shadow-2xl border border-blue-200 transform scale-[1.02]"
-                : "shadow-xl border border-gray-200/60 hover:shadow-2xl hover:border-gray-300/60 hover:scale-[1.01]"
+                ? "ring-2 ring-blue-500/20 shadow-xl border border-blue-200 transform scale-[1.01]"
+                : "shadow-lg border border-gray-200/60 hover:shadow-xl hover:border-gray-300/60 hover:scale-[1.005]"
             }`}
             style={{
               boxShadow: isFocused
-                ? "0 25px 50px -12px rgba(59, 130, 246, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.1)"
-                : "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                ? "0 20px 40px -12px rgba(59, 130, 246, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.1)"
+                : "0 15px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -5px rgba(0, 0, 0, 0.04)",
             }}
           >
             {/* Input Area */}
-            <div className="flex items-center space-x-3 p-3">
+            <div className="flex items-center space-x-2 p-2">
               {/* Attach Button - Changed to Plus Icon */}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isSending}
-                className={`flex-shrink-0 p-2.5 rounded-xl transition-all duration-200 ${
+                className={`flex-shrink-0 p-2 rounded-lg transition-all duration-200 ${
                   isSending
                     ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-500 hover:text-blue-600 hover:bg-blue-50 hover:scale-110"
+                    : "text-gray-500 hover:text-blue-600 hover:bg-blue-50 hover:scale-105"
                 }`}
                 aria-label="Attach file"
               >
-                <PlusIcon className="h-5 w-5" />
+                <PlusIcon className="h-4 w-4" />
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -197,7 +197,7 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
                   onBlur={() => setIsFocused(false)}
                   placeholder={isSending ? "Generating..." : "Ask something..."}
                   disabled={isSending}
-                  className={`w-full bg-transparent border-0 text-gray-900 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-2 px-0 min-h-[36px] max-h-[100px] text-[15px] leading-relaxed font-normal transition-colors ${
+                  className={`w-full bg-transparent border-0 text-gray-900 placeholder-gray-400 focus:ring-0 focus:outline-none resize-none py-1.5 px-0 min-h-[32px] max-h-[80px] text-[14px] leading-relaxed font-normal transition-colors ${
                     isSending ? "text-gray-400 cursor-not-allowed" : ""
                   }`}
                   rows={1}
@@ -215,7 +215,7 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
               <button
                 type="submit"
                 disabled={!hasContent || isSending}
-                className={`flex-shrink-0 px-6 py-3 rounded-2xl transition-all duration-200 ${
+                className={`flex-shrink-0 px-4 py-2 rounded-xl transition-all duration-200 ${
                   !hasContent || isSending
                     ? "text-gray-300 bg-gray-100 cursor-not-allowed"
                     : "text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -223,9 +223,9 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
                 aria-label={isSending ? "Sending..." : "Send message"}
               >
                 {isSending ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <PaperAirplaneIcon className="h-5 w-5" />
+                  <PaperAirplaneIcon className="h-4 w-4" />
                 )}
               </button>
             </div>

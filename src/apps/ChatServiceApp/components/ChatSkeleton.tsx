@@ -100,7 +100,7 @@ export const ChatInterfaceSkeleton: React.FC<ChatInterfaceSkeletonProps> = ({
         )}
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-gradient-to-br from-gray-50/30 to-white">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-br from-gray-50/30 to-white">
           {/* AI Message */}
           <div className="flex justify-start animate-pulse">
             <div className="max-w-md bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl px-6 py-4 shadow-lg border border-white/20">
@@ -304,7 +304,7 @@ export const ChatMessagesSkeleton: React.FC<ChatMessagesSkeletonProps> = ({
     <div
       className={`h-full overflow-y-auto bg-gradient-to-br from-gray-50/30 via-white to-gray-50/20 ${className}`}
     >
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <div className="max-w-4xl mx-auto p-4 space-y-4">
         {Array.from({ length: messageCount }).map((_, index) => (
           <div
             key={index}

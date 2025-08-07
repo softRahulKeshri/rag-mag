@@ -109,7 +109,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                     </div>
                     <div>
                       <span className="block font-semibold text-sm">
-                        Clear Chat
+                        Delete Chat
                       </span>
                       <span className="text-xs text-[#6D6F7A] group-hover:text-[#EF4444] font-normal">
                         Remove all messages

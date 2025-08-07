@@ -17,7 +17,7 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
     return (
       <div
         onClick={onClick}
-        className={`group relative p-2 rounded-lg transition-all duration-300 ease-in-out cursor-pointer ${
+        className={`group relative p-1 rounded-md transition-all duration-300 ease-in-out cursor-pointer ${
           isSelected
             ? "bg-purple-50 text-purple-600"
             : "hover:bg-gray-50 text-gray-600"
@@ -25,7 +25,7 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
         title={chat.title || "New Chat"}
       >
         <div className="flex items-center justify-center">
-          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+          <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
         </div>
       </div>
     );
@@ -34,7 +34,7 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`group relative p-3 rounded-lg transition-all duration-300 ease-in-out cursor-pointer ${
+      className={`group relative p-2 rounded-md transition-all duration-300 ease-in-out cursor-pointer ${
         isSelected
           ? "bg-purple-50 text-purple-600"
           : "hover:bg-gray-50 text-gray-600"
@@ -43,7 +43,7 @@ const ChatListItem: React.FC<IChatListItemProps> = ({
       {/* Simple Chat Title */}
       <div className="flex items-center">
         <h3
-          className="text-sm font-medium transition-colors duration-300 truncate"
+          className="text-xs font-medium transition-colors duration-300 truncate"
           title={chat.title || "New Chat"}
         >
           {chat.title || "New Chat"}

@@ -100,20 +100,20 @@ export const ChatSidebar = ({
       {/* Chat List */}
       <div
         className={`flex-1 overflow-y-auto min-h-0 ${
-          isCollapsed ? "p-2" : "p-4"
-        } space-y-2 scroll-smooth`}
+          isCollapsed ? "p-1" : "p-2"
+        } space-y-1 scroll-smooth`}
       >
         {!isCollapsed && (
           <>
             {chats.length === 0 ? (
-              <div className="text-center py-8 px-2">
-                <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-gray-400" />
+              <div className="text-center py-4 px-2">
+                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3 shadow-lg">
+                  <ChatBubbleLeftRightIcon className="h-6 w-6 text-gray-400" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900 mb-2">
+                <h3 className="text-sm font-bold text-gray-900 mb-1">
                   No conversations yet
                 </h3>
-                <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+                <p className="text-xs text-gray-500 mb-2 leading-relaxed">
                   Start your first AI conversation to see it appear here
                 </p>
               </div>
