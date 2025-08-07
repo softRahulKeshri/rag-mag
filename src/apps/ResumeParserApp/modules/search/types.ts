@@ -32,11 +32,17 @@ export interface SearchApiResponse {
  */
 export interface CandidateDetail {
   candidate_name: string;
-  details: string;
-  file_name: string;
-  score_card: ScoreCard;
+  college: string[];
   comment?: string | null;
   commented_at?: string | null;
+  cv_id: number;
+  details: string;
+  email: string[];
+  file_name: string;
+  job_profile: string;
+  phone: string[];
+  score_card: ScoreCard;
+  total_experience: string;
 }
 
 /**
@@ -70,10 +76,13 @@ export interface SearchResult {
 export interface CandidateResult {
   id: string;
   name: string;
-  email?: string;
-  phone?: string;
+  email?: string[];
+  phone?: string[];
   location?: string;
   currentRole?: string;
+  jobProfile?: string;
+  totalExperience?: string;
+  college?: string[];
   skills?: string[];
   matchScore?: number;
   filename?: string;
@@ -88,6 +97,7 @@ export interface CandidateResult {
   group?: string;
   comment?: string | null;
   commentedAt?: string | null;
+  cvId?: number;
 }
 
 /**

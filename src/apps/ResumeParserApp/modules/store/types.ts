@@ -1,3 +1,8 @@
+import type { ResumeData, ResumeComment } from "../../../../types/global";
+
+// Re-export ResumeComment for backward compatibility
+export type { ResumeComment };
+
 // Store Module Types
 export interface StoreResume {
   id: number;
@@ -40,15 +45,6 @@ export interface BackendResumeResponse {
   total_experience: string;
 }
 
-export interface ResumeComment {
-  id: number;
-  resumeId: number;
-  comment: string;
-  createdAt: string;
-  updatedAt: string;
-  hrName?: string;
-}
-
 export interface Group {
   id: number;
   name: string;
@@ -67,11 +63,18 @@ export interface GroupStat {
 }
 
 export interface ResumeCollectionProps {
-  resumes: StoreResume[];
-  onDelete?: (resume: StoreResume) => void;
+  resumes: ResumeData[];
+  onDelete?: (resume: ResumeData) => void;
   onResumeDeleted?: (resumeId: number) => void;
-  onResumeUpdated?: (resumeId: number, updatedResume: StoreResume) => void;
+  onResumeUpdated?: (resumeId: number, updates: Partial<ResumeData>) => void;
   onRefreshResumes?: () => Promise<void>;
+  // Comment handlers for direct state management
+  onCommentAdded?: (resumeId: number, comment: ResumeComment) => Promise<void>;
+  onCommentUpdated?: (
+    resumeId: number,
+    comment: ResumeComment
+  ) => Promise<void>;
+  onCommentDeleted?: (resumeId: number) => Promise<void>;
   isLoading?: boolean;
   isDeleting?: boolean;
   deletingResumeId?: number | null;

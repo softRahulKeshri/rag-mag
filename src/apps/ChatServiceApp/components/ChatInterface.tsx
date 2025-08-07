@@ -213,28 +213,39 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
-  // Format timestamp for display
-  const formatTimestamp = (timestamp: string): string => {
-    try {
-      const date = new Date(timestamp);
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch {
-      return "Unknown";
-    }
-  };
-
   // Get sorted messages for display
   const sortedMessages = getSortedMessages();
   const totalMessages = getTotalMessages();
 
   return (
     <div
-      className={`flex flex-col h-full bg-gradient-to-br from-white via-gray-50/30 to-white rounded-2xl shadow-2xl border border-gray-200/60 backdrop-blur-sm ${className}`}
+      className={`flex flex-col h-full bg-gray-50 rounded-2xl border border-gray-200 ${className}`}
     >
       <style>{`
+        /* Message bubble shadows and elevation */
+        .message-bubble-user {
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+        .message-bubble-ai {
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        /* Connection line styles */
+        .connection-line {
+          position: absolute;
+          width: 1px;
+          background: #e5e7eb;
+          opacity: 0.6;
+        }
+        .connection-line-user {
+          right: 25px;
+          top: 60px;
+          height: 20px;
+        }
+        .connection-line-ai {
+          left: 25px;
+          top: 60px;
+          height: 20px;
+        }
         /* Markdown styling for AI responses */
         .ai-message-markdown {
           color: inherit;
@@ -328,9 +339,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       `}</style>
 
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200/60 bg-white/80 backdrop-blur-sm rounded-t-2xl">
+      <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white rounded-t-2xl">
         <div>
-          <h3 className="text-xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h3 className="text-xl font-bold text-gray-900">
             {useConversationMode ? "AI Conversation" : "Chat Messages"}
           </h3>
           <p className="text-sm text-gray-500 mt-1">
@@ -341,7 +352,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <button
           onClick={() => refreshMessages(chatId)}
           disabled={isLoadingMessages}
-          className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow-md"
+          className="p-3 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all duration-200 disabled:opacity-50"
           title="Refresh messages"
         >
           <ArrowPathIcon
@@ -351,16 +362,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gradient-to-b from-gray-50/20 to-white">
+      <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {isLoadingMessages ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center py-6">
             <ChatMessagesSkeleton messageCount={5} />
           </div>
         ) : sortedMessages.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-gray-300 mb-6">
+          <div className="text-center py-8">
+            <div className="text-gray-300 mb-4">
               <svg
-                className="h-16 w-16 mx-auto"
+                className="h-12 w-12 mx-auto"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -373,10 +384,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 />
               </svg>
             </div>
-            <p className="text-gray-600 font-semibold text-lg">
+            <p className="text-gray-600 font-semibold text-base">
               {useConversationMode ? "Start a conversation" : "No messages yet"}
             </p>
-            <p className="text-sm text-gray-400 mt-2">
+            <p className="text-sm text-gray-400 mt-1">
               {useConversationMode
                 ? "Send a message to begin chatting with AI"
                 : "Start the conversation!"}
@@ -386,16 +397,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           sortedMessages.map((message) => (
             <div
               key={message.id}
-              className={`group flex ${
+              className={`group flex relative ${
                 message.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
               <div className="relative">
                 <div
-                  className={`max-w-xs lg:max-w-md px-6 py-4 rounded-2xl shadow-lg ${
+                  className={`max-w-xs lg:max-w-md px-3 py-2 rounded-xl ${
                     message.role === "user"
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-blue-500/25"
-                      : "bg-white text-gray-900 shadow-gray-200/50 border border-gray-100"
+                      ? "message-bubble-user bg-blue-600 text-white"
+                      : "message-bubble-ai bg-white text-gray-900 border border-gray-200"
                   }`}
                 >
                   <div className="text-sm leading-relaxed">
@@ -413,7 +424,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                               const isInline =
                                 !className?.includes("language-");
                               return !isInline ? (
-                                <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                                <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg overflow-x-auto">
                                   <code className={className}>{children}</code>
                                 </pre>
                               ) : (
@@ -442,12 +453,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                               </div>
                             ),
                             th: ({ children }: TableCellProps) => (
-                              <th className="border border-gray-300 bg-gray-50 px-3 py-2 text-left font-semibold">
+                              <th className="border border-gray-300 bg-gray-50 px-2 py-1 text-left font-semibold">
                                 {children}
                               </th>
                             ),
                             td: ({ children }: TableCellProps) => (
-                              <td className="border border-gray-300 px-3 py-2">
+                              <td className="border border-gray-300 px-2 py-1">
                                 {children}
                               </td>
                             ),
@@ -458,29 +469,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       </div>
                     ) : (
                       // User messages remain as plain text
-                      <div className="whitespace-pre-wrap break-words">
+                      <div className="whitespace-pre-wrap leading-relaxed text-[14px] text-inherit">
                         {message.content}
                       </div>
                     )}
                   </div>
-                  <div
-                    className={`text-xs mt-3 ${
-                      message.role === "user"
-                        ? "text-blue-100"
-                        : "text-gray-400"
-                    }`}
-                  >
-                    {formatTimestamp(message.created_at)}
-                  </div>
                 </div>
 
-                {/* Copy Button - For both user and AI messages */}
-                <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                {/* Copy Button - Positioned below message */}
+                <div className="mt-0.5 opacity-0 group-hover:opacity-100 transition-all duration-300 flex justify-center">
                   <button
-                    className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-110 ${
+                    className={`px-1.5 py-0.5 rounded-md transition-all duration-200 hover:scale-105 text-xs ${
                       copiedMessageId === String(message.id)
                         ? "bg-green-500 text-white shadow-lg"
-                        : "bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 shadow-lg"
+                        : "bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 shadow-sm"
                     }`}
                     aria-label={`Copy ${
                       message.role === "user" ? "user" : "AI"
@@ -490,9 +492,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     }
                   >
                     {copiedMessageId === String(message.id) ? (
-                      <CheckIcon className="h-4 w-4" />
+                      <div className="flex items-center space-x-1">
+                        <CheckIcon className="h-2.5 w-2.5" />
+                        <span>Copied!</span>
+                      </div>
                     ) : (
-                      <Square2StackIcon className="h-4 w-4" />
+                      <div className="flex items-center space-x-1">
+                        <Square2StackIcon className="h-2.5 w-2.5" />
+                        <span>Copy</span>
+                      </div>
                     )}
                   </button>
                 </div>
@@ -542,7 +550,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       )}
 
       {/* Message Input */}
-      <div className="p-6 border-t border-gray-200/60 bg-white/80 backdrop-blur-sm rounded-b-2xl">
+      <div className="p-6 border-t border-gray-200 bg-white rounded-b-2xl">
         <div className="flex space-x-3">
           <div className="flex-1">
             <textarea
@@ -558,7 +566,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 (useConversationMode ? isConversationLoading : isSending) ||
                 isTyping
               }
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 resize-none disabled:opacity-50 text-gray-900 placeholder-gray-400 shadow-sm hover:shadow-md transition-all duration-200"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500/20 focus:border-gray-300 resize-none disabled:opacity-50 text-gray-900 placeholder-gray-400 transition-all duration-200"
               rows={1}
               style={{ minHeight: "48px", maxHeight: "120px" }}
             />
@@ -570,7 +578,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
               (useConversationMode ? isConversationLoading : isSending) ||
               isTyping
             }
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center"
             title={useConversationMode ? "Send message to AI" : "Send message"}
           >
             {(useConversationMode ? isConversationLoading : isSending) ||

@@ -1,6 +1,5 @@
 import {
   MagnifyingGlassIcon,
-  PlusIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 import { SidebarToggle } from "./SidebarToggle";
@@ -76,7 +75,6 @@ export const ChatSidebar = ({
               disabled={isCreatingSession}
               className="w-full flex items-center justify-center space-x-2 px-3 py-2.5 rounded-lg transition-all duration-300 text-sm font-bold bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
             >
-              <PlusIcon className="h-4 w-4" />
               <span>{isCreatingSession ? "Creating..." : "New Chat"}</span>
             </button>
           </div>
@@ -102,20 +100,20 @@ export const ChatSidebar = ({
       {/* Chat List */}
       <div
         className={`flex-1 overflow-y-auto min-h-0 ${
-          isCollapsed ? "p-2" : "p-4"
-        } space-y-2 scroll-smooth`}
+          isCollapsed ? "p-1" : "p-2"
+        } space-y-1 scroll-smooth`}
       >
         {!isCollapsed && (
           <>
             {chats.length === 0 ? (
-              <div className="text-center py-8 px-2">
-                <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                  <ChatBubbleLeftRightIcon className="h-8 w-8 text-gray-400" />
+              <div className="text-center py-4 px-2">
+                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3 shadow-lg">
+                  <ChatBubbleLeftRightIcon className="h-6 w-6 text-gray-400" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900 mb-2">
+                <h3 className="text-sm font-bold text-gray-900 mb-1">
                   No conversations yet
                 </h3>
-                <p className="text-xs text-gray-500 mb-4 leading-relaxed">
+                <p className="text-xs text-gray-500 mb-2 leading-relaxed">
                   Start your first AI conversation to see it appear here
                 </p>
               </div>
@@ -142,9 +140,9 @@ export const ChatSidebar = ({
 
       {/* Footer */}
       <div
-        className={`flex-shrink-0 ${
-          isCollapsed ? "p-2" : "p-4"
-        } border-t border-gray-200`}
+        className={`flex-shrink-0 ${isCollapsed ? "p-2" : "p-4"} ${
+          isCollapsed ? "" : "border-t border-gray-200"
+        }`}
       >
         {!isCollapsed && (
           <div className="text-center">

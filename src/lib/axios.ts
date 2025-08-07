@@ -142,6 +142,28 @@ const createApiInstance = (endpoint: string): AxiosInstance => {
         }
 
         config.headers.Authorization = `Bearer ${accessToken}`;
+
+        // Log token and endpoint for debugging
+        console.log(`🔐 JWT Token attached to request:`, {
+          endpoint: `${endpoint}${config.url}`,
+          method: config.method?.toUpperCase(),
+          tokenPreview: `${accessToken.substring(
+            0,
+            20
+          )}...${accessToken.substring(accessToken.length - 10)}`,
+          fullToken: accessToken, // Full token for debugging
+          hasData: !!config.data,
+          dataPreview: config.data
+            ? typeof config.data === "string"
+              ? config.data.substring(0, 100) + "..."
+              : "Object/FormData"
+            : "No data",
+        });
+      } else {
+        console.warn(`⚠️ No JWT token available for request:`, {
+          endpoint: `${endpoint}${config.url}`,
+          method: config.method?.toUpperCase(),
+        });
       }
 
       console.log(

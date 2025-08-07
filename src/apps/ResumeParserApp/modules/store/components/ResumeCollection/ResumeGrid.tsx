@@ -1,17 +1,18 @@
-import React from "react";
-import type { StoreResume as Resume, ResumeComment } from "../../types";
-import FileCard from "./FileCard";
-import CommentDialog from "./CommentDialog";
-import DeleteConfirmModal from "./DeleteConfirmModal";
-import Pagination from "./Pagination";
+import React, { useState } from "react";
+import { resumeApi } from "../../../../../../lib/axios";
 import { buildResumeApiUrl } from "./utils";
+import ResumeCard from "./ResumeCard";
+import Pagination from "./Pagination";
+import DeleteConfirmModal from "./DeleteConfirmModal";
+import CommentDialog from "./CommentDialog";
+import type { ResumeData, ResumeComment } from "../../../../../../types/global";
 
 interface ResumeGridProps {
-  filteredResumes: Resume[];
-  paginatedResumes: Resume[];
+  filteredResumes: ResumeData[];
+  paginatedResumes: ResumeData[];
   currentPage: number;
   totalPages: number;
-  onDelete: (resume: Resume) => void;
+  onDelete: (resume: ResumeData) => void;
   onResumeDeleted: (resumeId: number) => void;
   onCommentAdded: (resumeId: number, comment: ResumeComment) => void;
   onCommentUpdated: (resumeId: number, comment: ResumeComment) => void;
@@ -32,40 +33,43 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
   onCommentUpdated,
   onCommentDeleted,
   onPageChange,
-  isDeleting = false,
-  deletingResumeId = null,
 }) => {
-  const [selectedResume, setSelectedResume] = React.useState<Resume | null>(
+  const [selectedResume, setSelectedResume] = React.useState<ResumeData | null>(
     null
   );
   const [isCommentDialogOpen, setIsCommentDialogOpen] = React.useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
-  const [resumeToDelete, setResumeToDelete] = React.useState<Resume | null>(
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [resumeToDelete, setResumeToDelete] = React.useState<ResumeData | null>(
     null
   );
 
-  const handleCommentClick = (resume: Resume) => {
+  const handleCommentClick = (resume: ResumeData) => {
     setSelectedResume(resume);
     setIsCommentDialogOpen(true);
   };
 
-  const handleDeleteClick = (resume: Resume) => {
+  const handleDeleteClick = (resume: ResumeData) => {
     setResumeToDelete(resume);
-    setIsDeleteModalOpen(true);
+    setShowDeleteModal(true);
   };
 
   const handleDeleteConfirm = () => {
     if (resumeToDelete) {
       onDelete(resumeToDelete);
       onResumeDeleted(resumeToDelete.id);
-      setIsDeleteModalOpen(false);
+      setShowDeleteModal(false);
       setResumeToDelete(null);
     }
   };
 
   const handleDeleteCancel = () => {
-    setIsDeleteModalOpen(false);
+    setShowDeleteModal(false);
     setResumeToDelete(null);
+  };
+
+  // Handle pagination change
+  const handlePageChange = (page: number) => {
+    onPageChange({} as React.ChangeEvent<unknown>, page);
   };
 
   return (
@@ -73,30 +77,39 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
       {/* Enhanced Resume Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 auto-rows-fr">
         {paginatedResumes.map((resume) => (
-          <FileCard
+          <ResumeCard
             key={resume.id}
             resume={resume}
             onView={() => {
-              const fileUrl = buildResumeApiUrl(resume.id);
-
               try {
                 // For viewing, we'll fetch the file and create a blob URL to display inline
                 const viewFile = async () => {
                   try {
                     console.log(
                       `🔄 Loading resume for viewing: "${
-                        resume.original_filename || resume.filename
-                      }" from URL: ${fileUrl}`
+                        resume.originalFilename || resume.filename
+                      }" with JWT authentication`
                     );
 
-                    // Fetch the file
-                    const response = await fetch(fileUrl);
-                    if (!response.ok) {
-                      throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    // Log the request details
+                    console.log(`🔐 JWT Token for resume view API call:`, {
+                      endpoint: `/resume/${resume.id}`,
+                      method: "GET",
+                      resumeId: resume.id,
+                      filename: resume.originalFilename || resume.filename,
+                      timestamp: new Date().toISOString(),
+                    });
+
+                    // Use axios with JWT authentication
+                    const response = await resumeApi.get(
+                      `/resume/${resume.id}`,
+                      {
+                        responseType: "blob",
+                      }
+                    );
 
                     // Get the file as a blob
-                    const blob = await response.blob();
+                    const blob = response.data;
 
                     // Create a blob URL for viewing
                     const blobUrl = window.URL.createObjectURL(blob);
@@ -111,30 +124,55 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
 
                     console.log(
                       `✅ Opened resume "${
-                        resume.original_filename || resume.filename
+                        resume.originalFilename || resume.filename
                       }" for viewing in new tab`
                     );
                   } catch (error) {
                     console.error(
                       `❌ Failed to load resume for viewing "${
-                        resume.original_filename || resume.filename
+                        resume.originalFilename || resume.filename
                       }":`,
                       error
                     );
 
+                    // Handle specific error cases
+                    if (
+                      error &&
+                      typeof error === "object" &&
+                      "response" in error
+                    ) {
+                      const axiosError = error as {
+                        response?: { status: number };
+                      };
+
+                      if (axiosError.response?.status === 401) {
+                        alert("Authentication failed. Please login again.");
+                        return;
+                      } else if (axiosError.response?.status === 404) {
+                        alert("Resume file not found.");
+                        return;
+                      } else if (axiosError.response?.status === 403) {
+                        alert(
+                          "Access denied. You don't have permission to view this file."
+                        );
+                        return;
+                      }
+                    }
+
                     // Fallback: try to open the URL directly
                     try {
+                      const fileUrl = buildResumeApiUrl(resume.id);
                       window.open(fileUrl, "_blank");
                       console.log(
                         `✅ Fallback: Opened resume "${
-                          resume.original_filename || resume.filename
+                          resume.originalFilename || resume.filename
                         }" directly in new tab`
                       );
                     } catch (fallbackError) {
                       console.error("❌ Fallback also failed:", fallbackError);
                       alert(
                         `Unable to view resume "${
-                          resume.original_filename || resume.filename
+                          resume.originalFilename || resume.filename
                         }" - please try again`
                       );
                     }
@@ -145,25 +183,28 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
               } catch (error) {
                 console.error(
                   `❌ Failed to open resume "${
-                    resume.original_filename || resume.filename
+                    resume.originalFilename || resume.filename
                   }":`,
                   error
                 );
                 alert(
                   `Unable to view resume "${
-                    resume.original_filename || resume.filename
+                    resume.originalFilename || resume.filename
                   }" - please try again`
                 );
               }
             }}
+            onDownload={() => {
+              // Download functionality can be added here
+              console.log("Download functionality not implemented yet");
+            }}
             onDelete={() => handleDeleteClick(resume)}
-            onComment={() => handleCommentClick(resume)}
+            onAddComment={() => handleCommentClick(resume)}
             onEditComment={() => handleCommentClick(resume)}
             onDeleteComment={() => {
               console.log(`Deleting comment for resume ID: ${resume.id}`);
               onCommentDeleted(resume.id);
             }}
-            isDeleting={isDeleting && deletingResumeId === resume.id}
           />
         ))}
       </div>
@@ -177,36 +218,31 @@ const ResumeGrid: React.FC<ResumeGridProps> = ({
               totalPages={totalPages}
               totalItems={filteredResumes.length}
               itemsPerPage={10}
-              onPageChange={(page) =>
-                onPageChange({} as React.ChangeEvent<unknown>, page)
-              }
+              onPageChange={handlePageChange}
             />
           </div>
         </div>
       )}
 
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        open={showDeleteModal}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        resume={resumeToDelete}
+      />
+
       {/* Comment Dialog */}
       {selectedResume && (
         <CommentDialog
           open={isCommentDialogOpen}
-          onClose={() => {
-            setIsCommentDialogOpen(false);
-            setSelectedResume(null);
-          }}
+          onClose={() => setIsCommentDialogOpen(false)}
           resume={selectedResume}
           onCommentAdded={onCommentAdded}
           onCommentUpdated={onCommentUpdated}
           onCommentDeleted={onCommentDeleted}
         />
       )}
-
-      {/* Delete Confirmation Modal */}
-      <DeleteConfirmModal
-        open={isDeleteModalOpen}
-        onClose={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
-        resume={resumeToDelete}
-      />
     </div>
   );
 };

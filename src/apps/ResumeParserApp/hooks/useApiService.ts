@@ -14,8 +14,33 @@ import type { ApiError } from "../types/api";
  * - Request/response interceptors
  * - Retry logic with exponential backoff
  * - Timeout handling
+ * - JWT authentication
  */
 export const useApiService = () => {
+  /**
+   * Get JWT token from localStorage
+   */
+  const getAuthToken = useCallback((): string | null => {
+    const token =
+      localStorage.getItem("accessToken") || localStorage.getItem("authToken");
+
+    if (token) {
+      console.log(`🔐 JWT Token retrieved for fetch request:`, {
+        tokenPreview: `${token.substring(0, 20)}...${token.substring(
+          token.length - 10
+        )}`,
+        fullToken: token, // Full token for debugging
+        source: localStorage.getItem("accessToken")
+          ? "accessToken"
+          : "authToken",
+      });
+    } else {
+      console.warn(`⚠️ No JWT token found in localStorage for fetch request`);
+    }
+
+    return token;
+  }, []);
+
   /**
    * Generic fetch wrapper with retry logic and proper error handling
    */
@@ -34,16 +59,48 @@ export const useApiService = () => {
       try {
         // Prepare headers - don't set Content-Type for FormData
         const headers: Record<string, string> = {};
-        
+
         // Only add Content-Type if it's not FormData and not already set
         if (!(options.body instanceof FormData)) {
           headers["Content-Type"] = "application/json";
         }
-        
+
+        // Add JWT authentication token
+        const token = getAuthToken();
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+          console.log(`🔐 JWT Token attached to fetch request:`, {
+            url,
+            method: options.method || "GET",
+            tokenPreview: `${token.substring(0, 20)}...${token.substring(
+              token.length - 10
+            )}`,
+            fullToken: token, // Full token for debugging
+            hasData: !!options.body,
+            dataPreview: options.body
+              ? typeof options.body === "string"
+                ? options.body.substring(0, 100) + "..."
+                : "Object/FormData"
+              : "No data",
+          });
+        } else {
+          console.warn(`⚠️ No JWT token available for fetch request:`, {
+            url,
+            method: options.method || "GET",
+          });
+        }
+
         // Add any custom headers
         if (options.headers) {
           Object.assign(headers, options.headers);
         }
+
+        console.log(`🚀 Fetch Request with JWT:`, {
+          url,
+          method: options.method || "GET",
+          headers: Object.keys(headers),
+          hasToken: !!token,
+        });
 
         const response = await fetch(url, {
           ...options,
@@ -74,6 +131,11 @@ export const useApiService = () => {
         }
 
         const data = await response.json();
+        console.log(`✅ Fetch Response received:`, {
+          url,
+          status: response.status,
+          hasData: !!data,
+        });
         return data;
       } catch (error) {
         clearTimeout(timeoutId);
@@ -96,7 +158,7 @@ export const useApiService = () => {
         throw error;
       }
     },
-    []
+    [getAuthToken]
   );
 
   /**
@@ -127,7 +189,7 @@ export const useApiService = () => {
   }, []);
 
   /**
-   * Create request options with common headers
+   * Create request options with common headers and JWT authentication
    */
   const createRequestOptions = useCallback(
     (
@@ -135,12 +197,19 @@ export const useApiService = () => {
       body?: unknown,
       customHeaders?: Record<string, string>
     ): RequestInit => {
+      const token = getAuthToken();
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...customHeaders,
+      };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const options: RequestInit = {
         method,
-        headers: {
-          "Content-Type": "application/json",
-          ...customHeaders,
-        },
+        headers,
       };
 
       if (body) {
@@ -149,7 +218,7 @@ export const useApiService = () => {
 
       return options;
     },
-    []
+    [getAuthToken]
   );
 
   return useMemo(

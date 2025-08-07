@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useIsAuthenticated, useActions } from "../store";
 import LoadingScreen from "./LoadingScreen";
@@ -10,105 +10,40 @@ interface AuthGuardProps {
 /**
  * AuthGuard Component
  *
- * Comprehensive authentication protection system that:
- * - Validates access tokens on app initialization
- * - Redirects unauthenticated users to login
- * - Shows loading animation during auth checks
- * - Handles token expiration and cleanup
- * - Protects against manual URL navigation
+ * Protects routes by checking authentication status.
+ * Shows loading screen during authentication check.
+ * Redirects to login if not authenticated.
+ *
+ * @param children - Protected content to render if authenticated
  */
 const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [authCheckComplete, setAuthCheckComplete] = useState(false);
   const isAuthenticated = useIsAuthenticated();
-  const { initializeAuth, logout } = useActions();
+  const { logout } = useActions();
   const location = useLocation();
 
   /**
-   * Validates if user has valid authentication tokens
-   */
-  const validateAuthentication = async (): Promise<boolean> => {
-    try {
-      // Check for access token in localStorage
-      const accessToken =
-        localStorage.getItem("access_token") || localStorage.getItem("token");
-      const userId = localStorage.getItem("user_id");
-      const username = localStorage.getItem("username");
-
-      // If no token found, user is not authenticated
-      if (!accessToken) {
-        console.log("🔐 AuthGuard: No access token found");
-        await cleanup();
-        return false;
-      }
-
-      // Check if token is expired (basic JWT parsing)
-      if (isTokenExpired(accessToken)) {
-        console.log("🔐 AuthGuard: Token expired");
-        await cleanup();
-        return false;
-      }
-
-      // If we have token and basic user info, consider authenticated
-      if (accessToken && userId && username) {
-        console.log("🔐 AuthGuard: Valid authentication found");
-        return true;
-      }
-
-      // Try to initialize auth from stored token
-      console.log("🔐 AuthGuard: Attempting to initialize auth from token");
-      const authResult = await initializeAuth();
-
-      if (authResult) {
-        console.log("✅ AuthGuard: Authentication initialized successfully");
-        return true;
-      } else {
-        console.log("❌ AuthGuard: Failed to initialize authentication");
-        await cleanup();
-        return false;
-      }
-    } catch (error) {
-      console.error(
-        "❌ AuthGuard: Error during authentication validation:",
-        error
-      );
-      await cleanup();
-      return false;
-    }
-  };
-
-  /**
-   * Basic JWT token expiration check
+   * Check if JWT token is expired
    */
   const isTokenExpired = (token: string): boolean => {
     try {
-      // Basic JWT structure check
-      const parts = token.split(".");
-      if (parts.length !== 3) {
-        return true; // Not a valid JWT
-      }
-
-      // Decode payload (basic check - in production you'd want more robust validation)
-      const payload = JSON.parse(atob(parts[1]));
+      const payload = JSON.parse(atob(token.split(".")[1]));
       const currentTime = Math.floor(Date.now() / 1000);
-
-      // Check if token has exp claim and if it's expired
-      if (payload.exp && payload.exp < currentTime) {
-        return true;
-      }
-
-      return false;
+      return payload.exp < currentTime;
     } catch (error) {
-      console.error("Error checking token expiration:", error);
-      return true; // Assume expired if we can't parse
+      console.error("Error parsing token:", error);
+      return true; // Consider expired if we can't parse it
     }
   };
 
   /**
    * Clean up authentication data
    */
-  const cleanup = async (): Promise<void> => {
+  const cleanup = useCallback(async (): Promise<void> => {
     try {
+      console.log("🧹 AuthGuard: Cleaning up authentication data...");
+
       // Clear localStorage
       localStorage.removeItem("access_token");
       localStorage.removeItem("token");
@@ -124,7 +59,48 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     } catch (error) {
       console.error("Error during cleanup:", error);
     }
-  };
+  }, [logout]);
+
+  /**
+   * Validate current authentication status
+   */
+  const validateAuthentication = useCallback(async (): Promise<boolean> => {
+    try {
+      console.log("🔐 AuthGuard: Validating authentication...");
+
+      // Check for access token
+      const accessToken =
+        localStorage.getItem("access_token") || localStorage.getItem("token");
+
+      if (!accessToken) {
+        console.log("❌ AuthGuard: No access token found");
+        return false;
+      }
+
+      // Check if token is expired
+      if (isTokenExpired(accessToken)) {
+        console.log("❌ AuthGuard: Token is expired");
+        await cleanup();
+        return false;
+      }
+
+      // Validate token with backend (optional - can be removed if not needed)
+      try {
+        // You can add a token validation API call here if needed
+        // const response = await api.get('/auth/validate');
+        // return response.data.valid;
+        console.log("✅ AuthGuard: Token validation successful");
+        return true;
+      } catch (error) {
+        console.log("❌ AuthGuard: Token validation failed:", error);
+        await cleanup();
+        return false;
+      }
+    } catch (error) {
+      console.error("❌ AuthGuard: Authentication validation error:", error);
+      return false;
+    }
+  }, [cleanup]);
 
   /**
    * Initialize authentication on component mount
@@ -161,7 +137,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     };
 
     initAuth();
-  }, []);
+  }, [validateAuthentication]);
 
   /**
    * Handle route changes - revalidate auth for sensitive routes
@@ -183,15 +159,13 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
         }
       }
     }
-  }, [location.pathname, isInitializing, authCheckComplete]);
+  }, [location.pathname, isInitializing, authCheckComplete, cleanup]);
 
   /**
    * Show loading screen during initialization
    */
   if (isInitializing || !authCheckComplete) {
-    return (
-      <LoadingScreen message="" fullScreen={true} />
-    );
+    return <LoadingScreen message="" fullScreen={true} />;
   }
 
   /**

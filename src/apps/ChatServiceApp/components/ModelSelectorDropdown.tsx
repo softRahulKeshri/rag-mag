@@ -4,6 +4,7 @@ import {
   SparklesIcon,
   CpuChipIcon,
   CloudIcon,
+  CheckIcon,
 } from "@heroicons/react/24/outline";
 import { ModelType } from "../types/types";
 
@@ -88,7 +89,7 @@ export const ModelSelectorDropdown: React.FC<ModelSelectorDropdownProps> = ({
                     </p>
                   </div>
                   {selectedModel === model && (
-                    <div className="w-2 h-2 bg-[#3077F3] rounded-full"></div>
+                    <CheckIcon className="h-4 w-4 text-[#3077F3]" />
                   )}
                 </button>
               );

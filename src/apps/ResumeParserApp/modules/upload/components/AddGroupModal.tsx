@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useGroupApi } from "../../../hooks/useGroupApi";
 import { useToast } from "../../../../../components/ui/useToast";
-import type { CreateGroupRequest, Group } from "../../../types/api";
+import type { Group } from "../../../types/api";
 import { UserGroupIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 interface AddGroupModalProps {
@@ -17,45 +17,51 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
   onGroupCreated,
 }) => {
   const [groupName, setGroupName] = useState("");
-  const [isCreating, setIsCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const { createGroup } = useGroupApi();
   const { showToast } = useToast();
 
-  // Validation constants
+  // Constants for validation
   const MIN_LENGTH = 2;
   const MAX_LENGTH = 50;
 
-  const handleInputChange = useCallback(
-    (value: string) => {
-      setGroupName(value);
-      // Clear error when user starts typing
-      if (error) {
-        setError(null);
-      }
-    },
-    [error, setError]
-  );
+  // Form validation
+  const isFormValid =
+    groupName.trim().length >= MIN_LENGTH &&
+    groupName.trim().length <= MAX_LENGTH;
 
-  const validateGroupName = useCallback((name: string): string | null => {
-    if (!name.trim()) {
-      return "Group name is required";
-    }
+  // Validate group name
+  const validateGroupName = (name: string): string | null => {
     if (name.trim().length < MIN_LENGTH) {
-      return `Group name must be at least ${MIN_LENGTH} characters`;
+      return `Group name must be at least ${MIN_LENGTH} characters long`;
     }
     if (name.trim().length > MAX_LENGTH) {
-      return `Group name must be no more than ${MAX_LENGTH} characters`;
+      return `Group name must be no more than ${MAX_LENGTH} characters long`;
+    }
+    if (!/^[a-zA-Z0-9\s\-_]+$/.test(name.trim())) {
+      return "Group name can only contain letters, numbers, spaces, hyphens, and underscores";
     }
     return null;
-  }, []);
+  };
 
+  // Handle input change
+  const handleInputChange = (value: string) => {
+    setGroupName(value);
+    if (error) setError(null);
+  };
+
+  // Handle form submission
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
 
-      const validationError = validateGroupName(groupName);
+      if (!isFormValid || isCreating) return;
+
+      const trimmedName = groupName.trim();
+      const validationError = validateGroupName(trimmedName);
+
       if (validationError) {
         setError(validationError);
         return;
@@ -65,24 +71,32 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
       setError(null);
 
       try {
-        const groupData: CreateGroupRequest = {
-          name: groupName.trim(),
-        };
+        const newGroup = await createGroup({
+          name: trimmedName,
+        });
 
-        const newGroup = await createGroup(groupData);
         await onGroupCreated(newGroup);
+        showToast(`Group "${trimmedName}" created successfully!`, "success");
         onClose();
-        // Reset form
-        setGroupName("");
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Failed to create group";
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to create group";
         setError(errorMessage);
         showToast(errorMessage, "error");
       } finally {
         setIsCreating(false);
       }
     },
-    [groupName, validateGroupName, createGroup, onGroupCreated, onClose]
+    [
+      groupName,
+      validateGroupName,
+      createGroup,
+      onGroupCreated,
+      onClose,
+      showToast,
+      isCreating,
+      isFormValid,
+    ]
   );
 
   const handleCancel = useCallback(() => {
@@ -92,10 +106,6 @@ const AddGroupModal: React.FC<AddGroupModalProps> = ({
       onClose();
     }
   }, [isCreating, onClose]);
-
-  const isFormValid =
-    groupName.trim().length >= MIN_LENGTH &&
-    groupName.trim().length <= MAX_LENGTH;
 
   if (!open) return null;
 

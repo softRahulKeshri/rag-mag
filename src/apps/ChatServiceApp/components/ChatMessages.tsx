@@ -2,15 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import {
   Square2StackIcon,
   DocumentDuplicateIcon,
-  ChatBubbleLeftRightIcon,
   UserIcon,
   CheckIcon,
+  SparklesIcon,
 } from "@heroicons/react/24/outline";
-import { SparklesIcon as SparklesIconSolid } from "@heroicons/react/24/solid";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { IMessage } from "../types/types";
-import { formatTimestamp } from "../utils/chatUtils";
 import { ChatMessagesSkeleton } from "./ChatSkeleton";
 
 interface ChatMessagesProps {
@@ -94,13 +92,13 @@ export const ChatMessages = ({
 
   // AI Typing Indicator Component
   const AITypingIndicator = () => (
-    <div className="group bg-gradient-to-r from-gray-50/50 to-white/50 backdrop-blur-sm">
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="flex items-start space-x-4 justify-start">
+    <div className="group">
+      <div className="max-w-4xl mx-auto px-4 py-2">
+        <div className="flex items-start space-x-3 justify-start">
           {/* AI Avatar */}
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg">
-              <SparklesIconSolid className="h-5 w-5 text-white" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-200 bg-white">
+              <SparklesIcon className="h-4 w-4 text-gray-600" />
             </div>
           </div>
 
@@ -108,11 +106,11 @@ export const ChatMessages = ({
           <div className="min-w-0 max-w-[85%] lg:max-w-[75%] xl:max-w-[70%]">
             <div className="relative">
               <div className="prose prose-sm max-w-none">
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <span className="text-sm font-semibold text-gray-700">
                     AI is thinking
                   </span>
-                  <div className="ai-typing-dots text-blue-600">
+                  <div className="ai-typing-dots text-gray-600">
                     <div></div>
                     <div></div>
                     <div></div>
@@ -129,7 +127,7 @@ export const ChatMessages = ({
   // Loading state for messages
   if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-gray-50/30 to-white overflow-hidden">
+      <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
         <ChatMessagesSkeleton messageCount={5} />
       </div>
     );
@@ -137,24 +135,14 @@ export const ChatMessages = ({
 
   if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8 lg:p-12 bg-gradient-to-br from-gray-50/30 to-white overflow-y-auto">
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-8 overflow-y-auto h-full">
         <div className="text-center max-w-md mx-auto">
-          {/* Welcome Icon */}
-          <div className="relative mb-10">
-            <div className="relative mx-auto w-24 h-24">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 rounded-3xl flex items-center justify-center shadow-2xl">
-                <ChatBubbleLeftRightIcon className="h-12 w-12 text-white" />
-              </div>
-              <div className="absolute -inset-2 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-3xl blur-xl"></div>
-            </div>
-          </div>
-
           {/* Welcome Content */}
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="space-y-3">
+            <h1 className="text-2xl font-bold text-gray-900">
               Welcome to ChatAI
             </h1>
-            <p className="text-gray-600 leading-relaxed text-lg">
+            <p className="text-gray-600 leading-relaxed text-base">
               Start a conversation below and experience intelligent AI-powered
               chat
             </p>
@@ -167,18 +155,18 @@ export const ChatMessages = ({
   return (
     <div
       ref={messagesContainerRef}
-      className="h-full overflow-y-auto bg-gradient-to-br from-gray-50/30 via-white to-gray-50/20 chat-scrollbar scroll-smooth flex flex-col"
+      className="h-full overflow-y-auto chat-scrollbar scroll-smooth flex flex-col bg-gray-50"
     >
       <style>{`
         .chat-scrollbar::-webkit-scrollbar {
-          width: 8px;
+          width: 6px;
         }
         .chat-scrollbar::-webkit-scrollbar-track {
           background: transparent;
         }
         .chat-scrollbar::-webkit-scrollbar-thumb {
           background: rgba(0, 0, 0, 0.1);
-          border-radius: 4px;
+          border-radius: 3px;
           transition: background 0.3s ease;
         }
         .chat-scrollbar::-webkit-scrollbar-thumb:hover {
@@ -187,11 +175,11 @@ export const ChatMessages = ({
         .ai-typing-dots {
           display: flex;
           align-items: center;
-          gap: 3px;
+          gap: 2px;
         }
         .ai-typing-dots div {
-          width: 6px;
-          height: 6px;
+          width: 4px;
+          height: 4px;
           border-radius: 50%;
           background: currentColor;
           animation: typing 1.4s infinite ease-in-out;
@@ -223,24 +211,17 @@ export const ChatMessages = ({
         .chat-scrollbar > div:first-child {
           min-height: 100%;
         }
-        /* Premium user message styling */
-        .user-message-bubble {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Message bubble shadows and elevation */
+        .message-bubble-user {
+          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
         }
-        .user-message-bubble:hover {
-          background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-          box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
-          transform: translateY(-1px);
-        }
-        .user-avatar-glow {
-          box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+        .message-bubble-ai {
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
         /* Markdown styling for AI responses */
         .ai-message-markdown {
           color: inherit;
-          line-height: 1.6;
+          line-height: 1.5;
         }
         .ai-message-markdown h1,
         .ai-message-markdown h2,
@@ -248,52 +229,52 @@ export const ChatMessages = ({
         .ai-message-markdown h4,
         .ai-message-markdown h5,
         .ai-message-markdown h6 {
-          margin-top: 1.5em;
+          margin-top: 1em;
           margin-bottom: 0.5em;
           font-weight: 600;
           line-height: 1.25;
         }
         .ai-message-markdown h1 {
-          font-size: 1.5em;
+          font-size: 1.4em;
         }
         .ai-message-markdown h2 {
-          font-size: 1.3em;
+          font-size: 1.2em;
         }
         .ai-message-markdown h3 {
           font-size: 1.1em;
         }
         .ai-message-markdown p {
-          margin-bottom: 1em;
+          margin-bottom: 0.75em;
         }
         .ai-message-markdown ul,
         .ai-message-markdown ol {
-          margin-bottom: 1em;
-          padding-left: 1.5em;
+          margin-bottom: 0.75em;
+          padding-left: 1.25em;
         }
         .ai-message-markdown li {
-          margin-bottom: 0.25em;
+          margin-bottom: 0.2em;
         }
         .ai-message-markdown blockquote {
-          border-left: 4px solid #e5e7eb;
-          padding-left: 1em;
-          margin: 1em 0;
+          border-left: 3px solid #e5e7eb;
+          padding-left: 0.75em;
+          margin: 0.75em 0;
           font-style: italic;
           color: #6b7280;
         }
         .ai-message-markdown code {
           background-color: #f3f4f6;
-          padding: 0.125em 0.25em;
-          border-radius: 0.25em;
+          padding: 0.1em 0.2em;
+          border-radius: 0.2em;
           font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-          font-size: 0.875em;
+          font-size: 0.85em;
         }
         .ai-message-markdown pre {
           background-color: #1f2937;
           color: #f9fafb;
-          padding: 1em;
-          border-radius: 0.5em;
+          padding: 0.75em;
+          border-radius: 0.4em;
           overflow-x: auto;
-          margin: 1em 0;
+          margin: 0.75em 0;
         }
         .ai-message-markdown pre code {
           background-color: transparent;
@@ -303,12 +284,12 @@ export const ChatMessages = ({
         .ai-message-markdown table {
           border-collapse: collapse;
           width: 100%;
-          margin: 1em 0;
+          margin: 0.75em 0;
         }
         .ai-message-markdown th,
         .ai-message-markdown td {
           border: 1px solid #e5e7eb;
-          padding: 0.5em;
+          padding: 0.4em;
           text-align: left;
         }
         .ai-message-markdown th {
@@ -325,31 +306,24 @@ export const ChatMessages = ({
         .ai-message-markdown hr {
           border: none;
           border-top: 1px solid #e5e7eb;
-          margin: 2em 0;
+          margin: 1.5em 0;
         }
       `}</style>
 
       <div className="flex-1 max-w-4xl mx-auto w-full">
         {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`group ${
-              message.role === "user"
-                ? "bg-gradient-to-r from-indigo-50/30 to-purple-50/30"
-                : "bg-gradient-to-r from-gray-50/50 to-white/50"
-            }`}
-          >
-            <div className="max-w-4xl mx-auto px-6 py-8">
+          <div key={message.id} className="group relative">
+            <div className="max-w-4xl mx-auto px-4 py-1">
               <div
-                className={`flex items-start space-x-4 ${
+                className={`flex items-start space-x-2 ${
                   message.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
                 {/* Avatar - Only show for AI messages on the left */}
                 {message.role === "assistant" && (
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg">
-                      <SparklesIconSolid className="h-5 w-5 text-white" />
+                  <div className="flex-shrink-0 relative">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-200 bg-white shadow-sm">
+                      <SparklesIcon className="h-4 w-4 text-gray-600" />
                     </div>
                   </div>
                 )}
@@ -363,27 +337,27 @@ export const ChatMessages = ({
                   <div className="relative">
                     {/* Message Bubble */}
                     <div
-                      className={`rounded-2xl px-6 py-4 transition-all duration-300 ${
+                      className={`rounded-xl px-3 py-2 transition-all duration-300 ${
                         message.role === "user"
-                          ? "user-message-bubble text-white backdrop-blur-sm"
-                          : "bg-white text-gray-900 shadow-gray-200/50 border border-gray-100 shadow-lg"
+                          ? "message-bubble-user bg-blue-600 text-white"
+                          : "message-bubble-ai bg-white text-gray-900 border border-gray-200"
                       }`}
                     >
                       {/* Message Text */}
                       <div className="prose prose-sm max-w-none">
                         {message.isStreaming ? (
                           <div className="flex items-end space-x-2">
-                            <div className="whitespace-pre-wrap leading-relaxed text-[15px] text-inherit">
+                            <div className="whitespace-pre-wrap leading-relaxed text-[14px] text-inherit">
                               {message.content}
                             </div>
                             <div className="flex space-x-1 pb-1">
-                              <div className="w-2 h-2 bg-current rounded-full animate-bounce opacity-70"></div>
+                              <div className="w-1.5 h-1.5 bg-current rounded-full animate-bounce opacity-70"></div>
                               <div
-                                className="w-2 h-2 bg-current rounded-full animate-bounce opacity-70"
+                                className="w-1.5 h-1.5 bg-current rounded-full animate-bounce opacity-70"
                                 style={{ animationDelay: "0.1s" }}
                               ></div>
                               <div
-                                className="w-2 h-2 bg-current rounded-full animate-bounce opacity-70"
+                                className="w-1.5 h-1.5 bg-current rounded-full animate-bounce opacity-70"
                                 style={{ animationDelay: "0.2s" }}
                               ></div>
                             </div>
@@ -402,7 +376,7 @@ export const ChatMessages = ({
                                   const isInline =
                                     !className?.includes("language-");
                                   return !isInline ? (
-                                    <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+                                    <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg overflow-x-auto">
                                       <code className={className}>
                                         {children}
                                       </code>
@@ -433,12 +407,12 @@ export const ChatMessages = ({
                                   </div>
                                 ),
                                 th: ({ children }: TableCellProps) => (
-                                  <th className="border border-gray-300 bg-gray-50 px-3 py-2 text-left font-semibold">
+                                  <th className="border border-gray-300 bg-gray-50 px-2 py-1 text-left font-semibold">
                                     {children}
                                   </th>
                                 ),
                                 td: ({ children }: TableCellProps) => (
-                                  <td className="border border-gray-300 px-3 py-2">
+                                  <td className="border border-gray-300 px-2 py-1">
                                     {children}
                                   </td>
                                 ),
@@ -449,7 +423,7 @@ export const ChatMessages = ({
                           </div>
                         ) : (
                           // User messages remain as plain text
-                          <div className="whitespace-pre-wrap leading-relaxed text-[15px] text-inherit">
+                          <div className="whitespace-pre-wrap leading-relaxed text-[14px] text-inherit">
                             {message.content}
                           </div>
                         )}
@@ -458,7 +432,7 @@ export const ChatMessages = ({
                       {/* File Attachment */}
                       {message.file && (
                         <div
-                          className={`mt-4 pt-4 ${
+                          className={`mt-2 pt-2 ${
                             message.role === "user"
                               ? "border-t border-white/20"
                               : "border-t border-gray-200/60"
@@ -471,12 +445,12 @@ export const ChatMessages = ({
                                 : "text-gray-500"
                             }`}
                           >
-                            <DocumentDuplicateIcon className="h-4 w-4" />
+                            <DocumentDuplicateIcon className="h-3 w-3" />
                             <span className="font-medium">
                               {message.file.name}
                             </span>
                             <span
-                              className={`text-xs px-2 py-1 rounded-md ${
+                              className={`text-xs px-1.5 py-0.5 rounded-md ${
                                 message.role === "user"
                                   ? "bg-white/20 text-white/90"
                                   : "bg-gray-100 text-gray-600"
@@ -487,26 +461,15 @@ export const ChatMessages = ({
                           </div>
                         </div>
                       )}
-
-                      {/* Timestamp */}
-                      <div
-                        className={`mt-3 text-xs ${
-                          message.role === "user"
-                            ? "text-white/60"
-                            : "text-gray-400"
-                        }`}
-                      >
-                        {formatTimestamp(message.timestamp)}
-                      </div>
                     </div>
 
-                    {/* Action Buttons - For both user and AI messages */}
-                    <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    {/* Copy Button - Positioned below message */}
+                    <div className="mt-0.5 opacity-0 group-hover:opacity-100 transition-all duration-300 flex justify-center">
                       <button
-                        className={`p-2.5 rounded-xl transition-all duration-200 hover:scale-110 ${
+                        className={`px-1.5 py-0.5 rounded-md transition-all duration-200 hover:scale-105 text-xs ${
                           copiedMessageId === String(message.id)
                             ? "bg-green-500 text-white shadow-lg"
-                            : "bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 shadow-lg"
+                            : "bg-white border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 shadow-sm"
                         }`}
                         aria-label={`Copy ${
                           message.role === "user" ? "user" : "AI"
@@ -516,9 +479,15 @@ export const ChatMessages = ({
                         }
                       >
                         {copiedMessageId === String(message.id) ? (
-                          <CheckIcon className="h-4 w-4" />
+                          <div className="flex items-center space-x-1">
+                            <CheckIcon className="h-2.5 w-2.5" />
+                            <span>Copied!</span>
+                          </div>
                         ) : (
-                          <Square2StackIcon className="h-4 w-4" />
+                          <div className="flex items-center space-x-1">
+                            <Square2StackIcon className="h-2.5 w-2.5" />
+                            <span>Copy</span>
+                          </div>
                         )}
                       </button>
                     </div>
@@ -527,9 +496,9 @@ export const ChatMessages = ({
 
                 {/* Avatar - Only show for user messages on the right */}
                 {message.role === "user" && (
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg user-avatar-glow">
-                      <UserIcon className="h-5 w-5 text-white" />
+                  <div className="flex-shrink-0 relative">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-gray-200 bg-white shadow-sm">
+                      <UserIcon className="h-4 w-4 text-gray-600" />
                     </div>
                   </div>
                 )}
@@ -542,7 +511,7 @@ export const ChatMessages = ({
         {isAITyping && <AITypingIndicator />}
       </div>
 
-      <div ref={messagesEndRef} className="h-4" />
+      <div ref={messagesEndRef} className="h-2" />
     </div>
   );
 };

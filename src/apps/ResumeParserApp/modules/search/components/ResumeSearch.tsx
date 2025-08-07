@@ -155,31 +155,11 @@ const ResumeSearch: React.FC = () => {
   }, [searchResults, handleSearchResults]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-n100 via-neutral-n150 to-neutral-n200">
+    <div className="min-h-screen bg-gradient-to-br from-[#F8FAFC] via-[#F1F5F9] to-[#E2E8F0]">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Premium Search Interface */}
         <div className="max-w-5xl mx-auto mb-8">
-          {/* AI Search Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-brand-gradient-orange via-brand-gradient-purple to-brand-gradient-blue bg-clip-text text-transparent px-6 py-3 rounded-2xl">
-              <div className="relative">
-                <div className="w-6 h-6 bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple rounded-full flex items-center justify-center animate-pulse">
-                  <svg
-                    className="w-3 h-3 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" />
-                  </svg>
-                </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-brand-gradient-orange rounded-full animate-ping"></div>
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-brand-gradient-orange via-brand-gradient-purple to-brand-gradient-blue bg-clip-text text-transparent">
-                AI-Powered Resume Matching
-              </span>
-            </div>
-          </div>
+         
 
           {/* Premium Search Container */}
           <div className="relative">
@@ -187,27 +167,20 @@ const ResumeSearch: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-brand-gradient-orange/10 via-brand-gradient-purple/10 to-brand-gradient-blue/10 rounded-3xl blur-xl"></div>
 
             {/* Main Search Container */}
-            <div className="relative bg-white/90 backdrop-blur-xl border border-white/30 rounded-3xl shadow-2xl p-8 overflow-hidden">
-              {/* Animated Background Pattern */}
-              <div className="absolute inset-0 opacity-5">
-                <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-brand-gradient-orange to-brand-gradient-purple rounded-full blur-3xl animate-pulse"></div>
-                <div
-                  className="absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-br from-brand-gradient-blue to-brand-gradient-cyan rounded-full blur-3xl animate-pulse"
-                  style={{ animationDelay: "1s" }}
-                ></div>
-              </div>
+            <div className="relative bg-white border-2 border-[#E5E7EB] rounded-2xl shadow-xl p-8 overflow-hidden">
+             
 
               {/* Search Mode Selector */}
               <div className="relative z-10 mb-8">
                 <div className="flex items-center justify-center">
-                  <div className="bg-gradient-to-r from-neutral-n200 to-neutral-n300 rounded-2xl p-1.5 shadow-inner">
+                  <div className="bg-[#F1F5F9] rounded-xl p-1.5 shadow-inner border-2 border-[#E2E8F0]">
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => handleSearchModeChange("text")}
-                        className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-3 ${
+                        className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${
                           searchMode === "text"
-                            ? "bg-gradient-to-r from-brand-gradient-orange to-brand-gradient-purple text-white shadow-lg transform scale-105"
-                            : "text-neutral-n700 hover:text-neutral-n900 hover:bg-white/50"
+                            ? "bg-gradient-to-r from-[#3B82F6] to-[#1D4ED8] text-white shadow-md transform scale-105"
+                            : "text-[#4B5563] hover:text-[#1F2937] hover:bg-white/80"
                         }`}
                       >
                         <svg
@@ -222,10 +195,10 @@ const ResumeSearch: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleSearchModeChange("jd")}
-                        className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-3 ${
+                        className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-3 ${
                           searchMode === "jd"
-                            ? "bg-gradient-to-r from-brand-gradient-purple to-brand-gradient-blue text-white shadow-lg transform scale-105"
-                            : "text-neutral-n700 hover:text-neutral-n900 hover:bg-white/50"
+                            ? "bg-gradient-to-r from-[#10B981] to-[#059669] text-white shadow-md transform scale-105"
+                            : "text-[#4B5563] hover:text-[#1F2937] hover:bg-white/80"
                         }`}
                       >
                         <svg

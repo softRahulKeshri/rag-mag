@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
+import FloatingResumeProcessingStatus from "./components/FloatingResumeProcessingStatus";
 import { UploadCenter } from "./modules/upload";
 import { ResumeSearch } from "./modules/search";
 import { ResumeStore } from "./modules/store";
@@ -52,6 +53,9 @@ const ResumeParserApp: React.FC = () => {
       <div className="flex-1 overflow-auto min-h-0 relative">
         {renderContent()}
       </div>
+
+      {/* Floating Processing Status - Appears globally when resumes are processing */}
+      <FloatingResumeProcessingStatus />
     </div>
   );
 };

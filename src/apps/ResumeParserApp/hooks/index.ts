@@ -21,6 +21,7 @@ export { useCommentApi } from "./useCommentApi";
 export { useGroupApi } from "./useGroupApi";
 export { useUploadApi } from "./useUploadApi";
 export { useSearchApi } from "./useSearchApi";
+export { useResumeProcessingStatus } from "./useResumeProcessingStatus";
 
 // API types
 export type {
@@ -40,4 +41,6 @@ export type {
   ResumeComment,
   CreateCommentRequest,
   UpdateCommentRequest,
+  ResumeProcessingStatus,
+  ResumeProcessingStatusResponse,
 } from "../types/api";

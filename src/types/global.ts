@@ -42,6 +42,15 @@ export interface ChatSession {
   isActive: boolean;
 }
 
+export interface ResumeComment {
+  id: number;
+  resumeId: number;
+  comment: string;
+  createdAt: string;
+  updatedAt: string;
+  hrName?: string;
+}
+
 export interface ResumeData {
   id: number;
   filename: string;
@@ -61,6 +70,8 @@ export interface ResumeData {
   job_profile?: string;
   days_available?: string;
   total_experience?: string;
+  // Comment data to preserve across tab switches
+  comment?: ResumeComment;
 }
 
 export interface GlobalState {

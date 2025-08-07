@@ -4,13 +4,14 @@ import { ChatHeader } from "./components/ChatHeader";
 import { ChatSidebar } from "./components/ChatSidebar";
 import { ChatMessages } from "./components/ChatMessages";
 import { MessageInput, type MessageInputRef } from "./components/MessageInput";
-import { ChatLoadingState } from "./components/ChatSkeleton";
+import LoadingScreen from "../../components/LoadingScreen";
 import {
   useCreateChatSessionApi,
   useChatSessionsEnhanced,
   useConversationApi,
   useFetchChatMessages,
 } from "./hooks";
+import { useIsLoading } from "../../store";
 import { getChatTitle } from "./utils/chatUtils";
 import type { IChat, IMessage, CreateChatSessionResponse } from "./types/types";
 import { ModelType } from "./types/types";
@@ -33,6 +34,9 @@ const ChatServiceApp = () => {
     ModelType.OPENAI
   );
 
+  // Global loading states
+  const isServiceSwitching = useIsLoading("serviceSwitch");
+
   // Ref for MessageInput to focus when needed
   const messageInputRef = useRef<MessageInputRef>(null);
 
@@ -45,9 +49,9 @@ const ChatServiceApp = () => {
 
   const {
     data: chatSessions,
-    isLoading: isLoadingSessions,
     error: sessionsError,
     refetch: refetchSessions,
+    isLoading: isLoadingSessions,
   } = useChatSessionsEnhanced(userId);
 
   // Conversation API for sending messages and getting AI responses
@@ -326,12 +330,10 @@ const ChatServiceApp = () => {
     );
   };
 
-  // Show loading state while fetching sessions
-  if (isLoadingSessions) {
+  // Show loading state while fetching sessions or switching services
+  if (isLoadingSessions || isServiceSwitching) {
     return (
-      <div className="h-full w-full bg-[#F5F5F5] flex items-center justify-center">
-        <ChatLoadingState message="Loading chat sessions..." />
-      </div>
+      <LoadingScreen message="Loading chat sessions..." fullScreen={true} />
     );
   }
 
@@ -359,7 +361,7 @@ const ChatServiceApp = () => {
             Connection Failed
           </h3>
           <p className="text-sm text-[#6D6F7A] mb-6 leading-relaxed">
-            {sessionsError.message ||
+            {sessionsError?.message ||
               "Unable to load your conversations. Please check your connection and try again."}
           </p>
           <button
@@ -419,11 +421,6 @@ const ChatServiceApp = () => {
         <div className="flex-shrink-0 bg-white border-b border-[#EAEAEC] shadow-sm z-10">
           <ChatHeader
             title={selectedChat?.title || "New Chat"}
-            subtitle={
-              selectedChat
-                ? `${selectedChat.messages.length} messages`
-                : "0 messages"
-            }
             selectedModel={selectedChat?.selectedModel || selectedModel}
             onClearChat={handleClearChat}
             onRenameChat={handleRenameChat}
@@ -444,7 +441,7 @@ const ChatServiceApp = () => {
           </div>
 
           {/* Message Input - Fixed at bottom */}
-          <div className="flex-shrink-0 bg-white border-t border-[#EAEAEC] shadow-lg">
+          <div className="flex-shrink-0 bg-white shadow-lg">
             <MessageInput
               ref={messageInputRef}
               onSendMessage={handleSendMessage}

@@ -16,12 +16,8 @@ import ResumeGrid from "./ResumeGrid";
 import ErrorDisplay from "./ErrorDisplay";
 
 // Import types and utilities
-import type {
-  ResumeCollectionProps,
-  StoreResume as Resume,
-  ResumeComment,
-  Group,
-} from "../../types";
+import type { ResumeCollectionProps, Group } from "../../types";
+import type { ResumeData, ResumeComment } from "../../../../../../types/global";
 import { calculateGroupStats, filterResumes } from "./utils";
 import { useGroupApi } from "../../../../hooks/useGroupApi";
 
@@ -31,6 +27,9 @@ const ResumeCollection = ({
   onResumeDeleted = () => {},
   onResumeUpdated = () => {},
   onRefreshResumes,
+  onCommentAdded,
+  onCommentUpdated,
+  onCommentDeleted,
   isLoading = false,
   isDeleting = false,
   deletingResumeId = null,
@@ -42,7 +41,7 @@ const ResumeCollection = ({
   const itemsPerPage = 10;
 
   // Local state for managing resume updates (for comment changes)
-  const [localResumes, setLocalResumes] = useState<Resume[]>(resumes);
+  const [localResumes, setLocalResumes] = useState<ResumeData[]>(resumes);
 
   // Update local resumes when prop changes
   useEffect(() => {
@@ -120,34 +119,44 @@ const ResumeCollection = ({
     resumeId: number,
     comment: ResumeComment
   ) => {
-    console.log("Adding comment to resume:", resumeId, comment);
+    console.log(
+      "📝 ResumeCollection: Adding comment to resume:",
+      resumeId,
+      comment
+    );
 
-    // Update local state immediately for optimistic UI
-    setLocalResumes((prev) => {
-      const updated = prev.map((resume) =>
-        resume.id === resumeId ? { ...resume, comment } : resume
-      );
-      console.log("Updated local resumes:", updated);
-      return updated;
-    });
+    try {
+      // Use direct handler if available (preferred approach)
+      if (onCommentAdded) {
+        await onCommentAdded(resumeId, comment);
+        console.log("✅ ResumeCollection: Comment added via direct handler");
+      } else {
+        // Fallback to legacy approach
+        console.log("⚠️ ResumeCollection: Using fallback comment handling");
 
-    // Notify parent component
-    const updatedResume = localResumes.find((r) => r.id === resumeId);
-    if (updatedResume) {
-      onResumeUpdated(resumeId, { ...updatedResume, comment });
-    }
+        // Update local state immediately for optimistic UI
+        setLocalResumes((prev) => {
+          const updated = prev.map((resume) =>
+            resume.id === resumeId ? { ...resume, comment } : resume
+          );
+          console.log("Updated local resumes:", updated);
+          return updated;
+        });
 
-    // Refresh resumes from API to get the latest data
-    if (onRefreshResumes) {
-      try {
-        await onRefreshResumes();
-        console.log("✅ Resumes refreshed after adding comment");
-      } catch (error) {
-        console.error(
-          "❌ Failed to refresh resumes after adding comment:",
-          error
-        );
+        // Notify parent component
+        const updatedResume = localResumes.find((r) => r.id === resumeId);
+        if (updatedResume) {
+          onResumeUpdated(resumeId, { ...updatedResume, comment });
+        }
+
+        // Refresh resumes from API to get the latest data
+        if (onRefreshResumes) {
+          await onRefreshResumes();
+          console.log("✅ Resumes refreshed after adding comment");
+        }
       }
+    } catch (error) {
+      console.error("❌ ResumeCollection: Failed to add comment:", error);
     }
   };
 
@@ -155,66 +164,82 @@ const ResumeCollection = ({
     resumeId: number,
     comment: ResumeComment
   ) => {
-    console.log("Updating comment for resume:", resumeId, comment);
+    console.log(
+      "✏️ ResumeCollection: Updating comment for resume:",
+      resumeId,
+      comment
+    );
 
-    // Update local state immediately for optimistic UI
-    setLocalResumes((prev) => {
-      const updated = prev.map((resume) =>
-        resume.id === resumeId ? { ...resume, comment } : resume
-      );
-      console.log("Updated local resumes:", updated);
-      return updated;
-    });
+    try {
+      // Use direct handler if available (preferred approach)
+      if (onCommentUpdated) {
+        await onCommentUpdated(resumeId, comment);
+        console.log("✅ ResumeCollection: Comment updated via direct handler");
+      } else {
+        // Fallback to legacy approach
+        console.log("⚠️ ResumeCollection: Using fallback comment handling");
 
-    // Notify parent component
-    const updatedResume = localResumes.find((r) => r.id === resumeId);
-    if (updatedResume) {
-      onResumeUpdated(resumeId, { ...updatedResume, comment });
-    }
+        // Update local state immediately for optimistic UI
+        setLocalResumes((prev) => {
+          const updated = prev.map((resume) =>
+            resume.id === resumeId ? { ...resume, comment } : resume
+          );
+          console.log("Updated local resumes:", updated);
+          return updated;
+        });
 
-    // Refresh resumes from API to get the latest data
-    if (onRefreshResumes) {
-      try {
-        await onRefreshResumes();
-        console.log("✅ Resumes refreshed after updating comment");
-      } catch (error) {
-        console.error(
-          "❌ Failed to refresh resumes after updating comment:",
-          error
-        );
+        // Notify parent component
+        const updatedResume = localResumes.find((r) => r.id === resumeId);
+        if (updatedResume) {
+          onResumeUpdated(resumeId, { ...updatedResume, comment });
+        }
+
+        // Refresh resumes from API to get the latest data
+        if (onRefreshResumes) {
+          await onRefreshResumes();
+          console.log("✅ Resumes refreshed after updating comment");
+        }
       }
+    } catch (error) {
+      console.error("❌ ResumeCollection: Failed to update comment:", error);
     }
   };
 
   const handleCommentDeleted = async (resumeId: number) => {
-    console.log("Deleting comment from resume:", resumeId);
+    console.log("🗑️ ResumeCollection: Deleting comment from resume:", resumeId);
 
-    // Update local state immediately for optimistic UI
-    setLocalResumes((prev) => {
-      const updated = prev.map((resume) =>
-        resume.id === resumeId ? { ...resume, comment: undefined } : resume
-      );
-      console.log("Updated local resumes:", updated);
-      return updated;
-    });
+    try {
+      // Use direct handler if available (preferred approach)
+      if (onCommentDeleted) {
+        await onCommentDeleted(resumeId);
+        console.log("✅ ResumeCollection: Comment deleted via direct handler");
+      } else {
+        // Fallback to legacy approach
+        console.log("⚠️ ResumeCollection: Using fallback comment handling");
 
-    // Notify parent component
-    const updatedResume = localResumes.find((r) => r.id === resumeId);
-    if (updatedResume) {
-      onResumeUpdated(resumeId, { ...updatedResume, comment: undefined });
-    }
+        // Update local state immediately for optimistic UI
+        setLocalResumes((prev) => {
+          const updated = prev.map((resume) =>
+            resume.id === resumeId ? { ...resume, comment: undefined } : resume
+          );
+          console.log("Updated local resumes:", updated);
+          return updated;
+        });
 
-    // Refresh resumes from API to get the latest data
-    if (onRefreshResumes) {
-      try {
-        await onRefreshResumes();
-        console.log("✅ Resumes refreshed after deleting comment");
-      } catch (error) {
-        console.error(
-          "❌ Failed to refresh resumes after deleting comment:",
-          error
-        );
+        // Notify parent component
+        const updatedResume = localResumes.find((r) => r.id === resumeId);
+        if (updatedResume) {
+          onResumeUpdated(resumeId, { ...updatedResume, comment: undefined });
+        }
+
+        // Refresh resumes from API to get the latest data
+        if (onRefreshResumes) {
+          await onRefreshResumes();
+          console.log("✅ Resumes refreshed after deleting comment");
+        }
       }
+    } catch (error) {
+      console.error("❌ ResumeCollection: Failed to delete comment:", error);
     }
   };
 

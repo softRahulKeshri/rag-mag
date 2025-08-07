@@ -9,6 +9,8 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import AuthGuard from "./components/AuthGuard";
+import AdminGuard from "./admin/AdminGuard";
+import AdminDashboard from "./admin/components/AdminDashboard";
 
 // App components
 import ChatServiceApp from "./apps/ChatServiceApp/ChatServiceApp";
@@ -28,7 +30,19 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* Protected Routes (wrapped with AuthGuard) */}
+          {/* Admin Routes (standalone - not wrapped in Layout) */}
+          <Route
+            path="/admin/*"
+            element={
+              <AuthGuard>
+                <AdminGuard>
+                  <AdminDashboard />
+                </AdminGuard>
+              </AuthGuard>
+            }
+          />
+
+          {/* Protected Routes (wrapped with AuthGuard and Layout) */}
           <Route
             path="/*"
             element={
@@ -44,7 +58,10 @@ const App = () => {
                       path="/pitch-analyzer/*"
                       element={<PitchAnalyzerApp />}
                     />
-                    <Route path="/chat-service/*" element={<ChatServiceApp />} />
+                    <Route
+                      path="/chat-service/*"
+                      element={<ChatServiceApp />}
+                    />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>

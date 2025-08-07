@@ -22,6 +22,8 @@ import {
   ChatBubbleLeftRightIcon,
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
+  ShieldCheckIcon,
+  UsersIcon,
 } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 
@@ -40,8 +42,11 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Global store hooks
-  const { logout } = useActions();
+  const { logout, setLoading } = useActions();
   const user = useUser();
+
+  // Check if we're in admin mode
+  const isAdminMode = currentPath.startsWith("/admin");
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -53,8 +58,20 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleAppChange = (path: string) => {
+  const handleAppChange = async (path: string) => {
+    // Set loading state for service switching
+    setLoading("serviceSwitch", true);
+
+    // Simulate a small delay to show loading state and allow for resource fetching
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    // Navigate to the new service
     navigate(path);
+
+    // Clear loading state after navigation
+    setTimeout(() => {
+      setLoading("serviceSwitch", false);
+    }, 200);
   };
 
   const handleLogout = () => {
@@ -111,43 +128,89 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Center: App Links */}
+          {/* Center: App Links or Admin Navigation */}
           <div className="hidden sm:ml-6 sm:flex space-x-2">
-            {apps.map((app) => {
-              const IconComponent = appIcons[app.name as keyof typeof appIcons];
-              const isActive = currentPath.startsWith(app.path);
-
-              return (
-                <button
-                  key={app.name}
-                  onClick={() => handleAppChange(app.path)}
-                  className={`relative group px-5 py-3 rounded-2xl text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
-                    isActive
-                      ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80"
-                  }`}
-                >
-                  <div className="flex items-center space-x-2.5">
-                    <IconComponent
-                      className={`h-4 w-4 transition-all duration-300 ${
-                        isActive
-                          ? "text-purple-600"
-                          : "text-gray-400 group-hover:text-gray-600"
-                      }`}
-                    />
-                    <span>{app.name}</span>
+            {isAdminMode ? (
+              // Admin Navigation
+              <>
+                <div className="flex items-center space-x-3 mr-4">
+                  <div className="relative">
+                    <div className="w-8 h-8 bg-gradient-to-br from-purple-500 via-blue-500 to-indigo-500 rounded-lg flex items-center justify-center shadow-md">
+                      <ShieldCheckIcon className="h-4 w-4 text-white" />
+                    </div>
+                    <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full animate-pulse border border-white shadow-sm"></div>
                   </div>
+                  <span className="text-sm font-semibold bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Admin Panel
+                  </span>
+                </div>
 
-                  {/* Active indicator */}
-                  {isActive && (
-                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full animate-pulse shadow-sm"></div>
-                  )}
+                {/* Admin Navigation Tabs */}
+                <div className="flex items-center space-x-1">
+                  <button
+                    onClick={() => handleAppChange("/admin/users")}
+                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                      currentPath.includes("/admin/users")
+                        ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
+                    }`}
+                  >
+                    <UsersIcon className="w-4 h-4" />
+                    <span>User Management</span>
+                  </button>
 
-                  {/* Hover effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-purple-100 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-                </button>
-              );
-            })}
+                  <button
+                    onClick={() => handleAppChange("/admin/logs")}
+                    className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                      currentPath.includes("/admin/logs")
+                        ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/80"
+                    }`}
+                  >
+                    <DocumentTextIcon className="w-4 h-4" />
+                    <span>Audit Logs</span>
+                  </button>
+                </div>
+              </>
+            ) : (
+              // Regular App Links
+              apps.map((app) => {
+                const IconComponent =
+                  appIcons[app.name as keyof typeof appIcons];
+                const isActive = currentPath.startsWith(app.path);
+
+                return (
+                  <button
+                    key={app.name}
+                    onClick={() => handleAppChange(app.path)}
+                    className={`relative group px-5 py-3 rounded-2xl text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
+                      isActive
+                        ? "text-purple-600 bg-gradient-to-r from-purple-50 to-indigo-50 shadow-lg"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-purple-50/80"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2.5">
+                      <IconComponent
+                        className={`h-4 w-4 transition-all duration-300 ${
+                          isActive
+                            ? "text-purple-600"
+                            : "text-gray-400 group-hover:text-gray-600"
+                        }`}
+                      />
+                      <span>{app.name}</span>
+                    </div>
+
+                    {/* Active indicator */}
+                    {isActive && (
+                      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full animate-pulse shadow-sm"></div>
+                    )}
+
+                    {/* Hover effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-50 to-purple-100 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                  </button>
+                );
+              })
+            )}
           </div>
 
           {/* Right: User Menu */}
@@ -238,6 +301,21 @@ const Navbar = () => {
                       <Cog6ToothIcon className="h-4 w-4 mr-3 text-gray-400" />
                       <span>Settings</span>
                     </button>
+
+                    {/* Admin Dashboard Link - Only show for admin users */}
+                    {(user?.role === "admin" ||
+                      import.meta.env.MODE === "development") && (
+                      <button
+                        onClick={() => {
+                          handleAppChange(ROUTES.ADMIN);
+                          setIsProfileOpen(false);
+                        }}
+                        className="flex items-center w-full px-4 py-3 text-sm text-purple-600 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 transition-all duration-200 ease-out group border-l-4 border-transparent hover:border-purple-200"
+                      >
+                        <ShieldCheckIcon className="h-4 w-4 mr-3 text-purple-500 group-hover:text-purple-600 transition-colors duration-200" />
+                        <span className="font-medium">Admin Dashboard</span>
+                      </button>
+                    )}
 
                     <div className="border-t border-gray-200/60 my-2"></div>
 

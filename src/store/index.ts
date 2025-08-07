@@ -20,6 +20,7 @@ export type {
   AppSettings,
   ChatSession,
   ResumeData,
+  ResumeComment,
   LoginResponse,
   RegisterResponse,
   ApiError,

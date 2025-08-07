@@ -1,7 +1,4 @@
-import {
-  Bars3Icon,
-  ArrowLeftEndOnRectangleIcon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon, ChevronDoubleLeftIcon } from "@heroicons/react/24/outline";
 
 interface SidebarToggleProps {
   isOpen: boolean;
@@ -27,11 +24,14 @@ export const SidebarToggle: React.FC<SidebarToggleProps> = ({
   return (
     <button
       onClick={onToggle}
-      className={`p-2 text-gray-500 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-300 cursor-pointer ${className}`}
+      className={`p-2 text-gray-500 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-all duration-300 ${
+        isOpen ? "cursor-w-resize" : "cursor-e-resize"
+      } ${className}`}
       aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
+      title={isOpen ? "Collapse sidebar" : "Expand sidebar"}
     >
       {isOpen ? (
-        <ArrowLeftEndOnRectangleIcon className="h-5 w-5" />
+        <ChevronDoubleLeftIcon className="h-5 w-5" />
       ) : (
         <Bars3Icon className="h-5 w-5" />
       )}

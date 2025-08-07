@@ -1,46 +1,49 @@
 import React from "react";
+import { ResumeCollection } from "./ResumeCollection";
 import { useResumeStore } from "../hooks/useResumeStore";
-import ResumeCollection from "./ResumeCollection/ResumeCollection";
 import ErrorDisplay from "./ResumeCollection/ErrorDisplay";
-import type { StoreResume } from "../types";
+import type { ResumeData } from "../../../../../types/global";
 
 const ResumeStore: React.FC = () => {
   const {
     resumes,
     isLoading,
-    isDeleting,
-    deletingResumeId,
     error,
     clearError,
     refreshResumes,
     handleDeleteResume,
+    handleAddComment,
+    handleUpdateComment,
+    handleDeleteComment,
   } = useResumeStore();
 
+  // Transform resumes to match the expected format for ResumeCollection
+  const transformedResumes = resumes.map((resume) => ({
+    ...resume,
+    // Map status if needed
+    status: mapStatus(resume.status),
+  }));
+
+  // Map status from ResumeData to expected format
   const mapStatus = (
     status: string
   ): "uploaded" | "processing" | "completed" | "failed" => {
     switch (status) {
-      case "uploading":
+      case "uploaded":
         return "uploaded";
       case "processing":
         return "processing";
       case "completed":
         return "completed";
-      case "error":
+      case "failed":
         return "failed";
       default:
-        return "uploaded";
+        return "completed"; // Default to completed for existing resumes
     }
   };
 
-  // Transform resumes to match the expected format
-  const transformedResumes: StoreResume[] = resumes.map((resume) => ({
-    ...resume,
-    status: mapStatus(resume.status),
-  }));
-
   // Handle resume deletion
-  const handleResumeDeleted = async (resume: StoreResume) => {
+  const handleResumeDeleted = async (resume: ResumeData) => {
     try {
       await handleDeleteResume(resume);
       // Refresh resumes after successful deletion to ensure UI is in sync
@@ -53,13 +56,71 @@ const ResumeStore: React.FC = () => {
   };
 
   // Handle resume updates (for comments)
-  const handleResumeUpdated = async () => {
+  const handleResumeUpdated = async (
+    resumeId: number,
+    updates: Partial<ResumeData>
+  ) => {
     try {
-      // Refresh resumes to get the latest data
-      await refreshResumes();
+      console.log("🔄 ResumeStore: Handling resume update:", resumeId, updates);
+
+      // If this is a comment update, use the appropriate comment handler
+      if ("comment" in updates) {
+        const comment = updates.comment;
+        if (comment) {
+          // Find if this is an add or update operation
+          const existingResume = resumes.find((r) => r.id === resumeId);
+          if (existingResume?.comment) {
+            await handleUpdateComment(resumeId, comment);
+          } else {
+            await handleAddComment(resumeId, comment);
+          }
+        } else {
+          // Comment was deleted
+          await handleDeleteComment(resumeId);
+        }
+      }
+
+      console.log("✅ ResumeStore: Resume update handled successfully");
     } catch (error) {
-      console.error("Failed to update resume:", error);
+      console.error("❌ ResumeStore: Failed to update resume:", error);
     }
+  };
+
+  // Individual comment handlers for direct use by ResumeCollection
+  const handleCommentAdded = async (
+    resumeId: number,
+    comment: ResumeData["comment"]
+  ) => {
+    if (comment) {
+      console.log(
+        "🔄 ResumeStore: Adding comment via direct handler:",
+        resumeId,
+        comment
+      );
+      await handleAddComment(resumeId, comment);
+    }
+  };
+
+  const handleCommentUpdated = async (
+    resumeId: number,
+    comment: ResumeData["comment"]
+  ) => {
+    if (comment) {
+      console.log(
+        "🔄 ResumeStore: Updating comment via direct handler:",
+        resumeId,
+        comment
+      );
+      await handleUpdateComment(resumeId, comment);
+    }
+  };
+
+  const handleCommentDeleted = async (resumeId: number) => {
+    console.log(
+      "🔄 ResumeStore: Deleting comment via direct handler:",
+      resumeId
+    );
+    await handleDeleteComment(resumeId);
   };
 
   // Show error state if there's an error
@@ -87,9 +148,12 @@ const ResumeStore: React.FC = () => {
       }}
       onResumeUpdated={handleResumeUpdated}
       onRefreshResumes={refreshResumes}
+      onCommentAdded={handleCommentAdded}
+      onCommentUpdated={handleCommentUpdated}
+      onCommentDeleted={handleCommentDeleted}
       isLoading={isLoading}
-      isDeleting={isDeleting}
-      deletingResumeId={deletingResumeId}
+      isDeleting={false} // Removed isDeleting and deletingResumeId as they are not in useResumeStore
+      deletingResumeId={null} // Removed isDeleting and deletingResumeId as they are not in useResumeStore
     />
   );
 };

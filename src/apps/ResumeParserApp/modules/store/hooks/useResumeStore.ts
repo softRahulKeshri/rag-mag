@@ -1,16 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
-import { useActions, useResumes } from "../../../../../store";
-import type {
-  StoreResume,
-  Group,
-  BackendResumeResponse,
-  ResumeComment,
-} from "../types";
+import { useResumes, useActions } from "../../../../../store";
+import type { ResumeData } from "../../../../../types/global";
+import type { BackendResumeResponse, Group, ResumeComment } from "../types";
 import { getResumesFromCVSEndpoint, deleteResume } from "../../../services/api";
 import { useGroupApi } from "../../../hooks/useGroupApi";
 
 interface UseResumeStoreReturn {
-  resumes: StoreResume[];
+  resumes: ResumeData[];
   groups: Group[];
   isLoading: boolean;
   isDeleting: boolean;
@@ -19,10 +15,10 @@ interface UseResumeStoreReturn {
   clearError: () => void;
   refreshResumes: () => Promise<void>;
   refreshGroups: () => Promise<void>;
-  handleDeleteResume: (resume: StoreResume) => Promise<void>;
+  handleDeleteResume: (resume: ResumeData) => Promise<void>;
   handleUpdateResume: (
     resumeId: number,
-    updates: Partial<StoreResume>
+    updates: Partial<ResumeData>
   ) => Promise<void>;
   handleAddComment: (resumeId: number, comment: ResumeComment) => Promise<void>;
   handleUpdateComment: (
@@ -35,50 +31,47 @@ interface UseResumeStoreReturn {
 // Utility function to transform backend response to StoreResume
 const transformBackendResume = (
   backendResume: BackendResumeResponse
-): StoreResume => {
+): ResumeData => {
   // Extract file type from filename
   const getFileType = (filename: string): string => {
-    const extension = filename.split(".").pop()?.toUpperCase();
-    return extension || "PDF";
+    const extension = filename.split(".").pop()?.toLowerCase();
+    return extension || "unknown";
   };
 
-  // Calculate approximate file size (this is a fallback since backend doesn't provide it)
+  // Calculate file size (placeholder - you might want to get this from the API)
   const getFileSize = (): number => {
-    // Return a reasonable default size for PDFs (1-2 MB range)
-    return Math.floor(Math.random() * 1000000) + 500000; // 0.5-1.5 MB
+    return 1024 * 1024; // 1MB placeholder
   };
 
-  const transformed = {
+  const transformed: ResumeData = {
     id: backendResume.id,
-    filename: backendResume.stored_filename,
-    original_filename: backendResume.original_filename,
-    stored_filename: backendResume.stored_filename,
+    filename: backendResume.original_filename,
+    originalFilename: backendResume.original_filename,
+    storedFilename: backendResume.stored_filename,
     filepath: backendResume.filepath,
     fileSize: getFileSize(),
     fileType: getFileType(backendResume.original_filename),
     uploadedAt: backendResume.upload_time,
-    status: "completed" as const, // Assuming completed since they're in the store
+    status: "completed", // Assuming all resumes from API are completed
     group: backendResume.group,
-    cloud_url: backendResume.cloud_url,
-    commented_at: backendResume.commented_at || undefined,
-    upload_time: backendResume.upload_time,
+    cloudUrl: backendResume.cloud_url || undefined,
+    commentedAt: backendResume.commented_at || undefined,
+    uploadTime: backendResume.upload_time,
     // New fields from API response
     name: backendResume.name,
     job_profile: backendResume.job_profile,
     days_available: backendResume.days_available,
     total_experience: backendResume.total_experience,
-    // Transform comment if it exists
-    comment:
-      backendResume.comment && backendResume.comment.trim() !== ""
-        ? {
-            id: Date.now(), // Generate temporary ID
-            resumeId: backendResume.id,
-            comment: backendResume.comment || "",
-            createdAt: backendResume.commented_at || backendResume.upload_time,
-            updatedAt: backendResume.commented_at || backendResume.upload_time,
-            hrName: "HR User", // Default value, should come from auth context
-          }
-        : undefined,
+    // Comment data to preserve across tab switches
+    comment: backendResume.comment
+      ? {
+          id: 0, // Placeholder ID
+          resumeId: backendResume.id,
+          comment: backendResume.comment,
+          createdAt: backendResume.commented_at || new Date().toISOString(),
+          updatedAt: backendResume.commented_at || new Date().toISOString(),
+        }
+      : undefined,
   };
 
   return transformed;
@@ -123,36 +116,12 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   const refreshResumes = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+
     try {
-      // Call the real API endpoint
+      // Use the Resume API hook to fetch resumes
       const backendResumes = await getResumesFromCVSEndpoint();
-
-      // Transform backend response to frontend format
       const transformedResumes = backendResumes.map(transformBackendResume);
-
-      // Transform to global store format
-      const globalResumeData = transformedResumes.map((resume) => ({
-        id: resume.id,
-        filename: resume.filename,
-        originalFilename: resume.original_filename || resume.filename,
-        storedFilename: resume.stored_filename || resume.filename,
-        filepath: resume.filepath || "",
-        fileSize: resume.fileSize,
-        fileType: resume.fileType,
-        uploadedAt: resume.uploadedAt,
-        status: resume.status,
-        group: resume.group,
-        cloudUrl: resume.cloud_url,
-        commentedAt: resume.commented_at,
-        uploadTime: resume.upload_time,
-        // Include the new fields from API response
-        name: resume.name,
-        job_profile: resume.job_profile,
-        days_available: resume.days_available,
-        total_experience: resume.total_experience,
-      }));
-
-      setGlobalResumes(globalResumeData);
+      setGlobalResumes(transformedResumes);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to load resumes";
@@ -161,7 +130,7 @@ export const useResumeStore = (): UseResumeStoreReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [setGlobalResumes]);
 
   const refreshGroups = useCallback(async () => {
     try {
@@ -176,30 +145,33 @@ export const useResumeStore = (): UseResumeStoreReturn => {
     }
   }, [getGroups]);
 
-  const handleDeleteResume = useCallback(async (resume: StoreResume) => {
-    setIsDeleting(true);
-    setDeletingResumeId(resume.id);
-    setError(null);
+  const handleDeleteResume = useCallback(
+    async (resume: ResumeData) => {
+      setIsDeleting(true);
+      setDeletingResumeId(resume.id);
+      setError(null);
 
-    try {
-      // Call the real API endpoint
-      await deleteResume(resume.id);
+      try {
+        // Call the real API endpoint
+        await deleteResume(resume.id);
 
-      // Remove the resume from global state
-      setGlobalResumes(globalResumes.filter((r) => r.id !== resume.id));
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to delete resume";
-      setError(errorMessage);
-      throw err; // Re-throw to let the component handle the error
-    } finally {
-      setIsDeleting(false);
-      setDeletingResumeId(null);
-    }
-  }, []);
+        // Remove the resume from global state
+        setGlobalResumes(globalResumes.filter((r) => r.id !== resume.id));
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to delete resume";
+        setError(errorMessage);
+        throw err; // Re-throw to let the component handle the error
+      } finally {
+        setIsDeleting(false);
+        setDeletingResumeId(null);
+      }
+    },
+    [globalResumes, setGlobalResumes]
+  );
 
   const handleUpdateResume = useCallback(
-    async (resumeId: number, updates: Partial<StoreResume>) => {
+    async (resumeId: number, updates: Partial<ResumeData>) => {
       try {
         // Update global state immediately for optimistic UI
         setGlobalResumes(
@@ -213,51 +185,82 @@ export const useResumeStore = (): UseResumeStoreReturn => {
         );
       }
     },
-    []
+    [globalResumes, setGlobalResumes]
   );
 
   const handleAddComment = useCallback(
     async (resumeId: number, comment: ResumeComment) => {
       try {
+        console.log(
+          "🔄 useResumeStore: Adding comment for resume:",
+          resumeId,
+          comment
+        );
+
         // Update global state immediately for optimistic UI
         setGlobalResumes(
           globalResumes.map((r) => (r.id === resumeId ? { ...r, comment } : r))
         );
+
+        console.log("✅ useResumeStore: Comment added to global state");
       } catch (err) {
+        console.error("❌ useResumeStore: Failed to add comment:", err);
         setError(err instanceof Error ? err.message : "Failed to add comment");
       }
     },
-    []
+    [globalResumes, setGlobalResumes]
   );
 
   const handleUpdateComment = useCallback(
     async (resumeId: number, comment: ResumeComment) => {
       try {
+        console.log(
+          "🔄 useResumeStore: Updating comment for resume:",
+          resumeId,
+          comment
+        );
+
         // Update global state immediately for optimistic UI
         setGlobalResumes(
           globalResumes.map((r) => (r.id === resumeId ? { ...r, comment } : r))
         );
+
+        console.log("✅ useResumeStore: Comment updated in global state");
       } catch (err) {
+        console.error("❌ useResumeStore: Failed to update comment:", err);
         setError(
           err instanceof Error ? err.message : "Failed to update comment"
         );
       }
     },
-    []
+    [globalResumes, setGlobalResumes]
   );
 
-  const handleDeleteComment = useCallback(async (resumeId: number) => {
-    try {
-      // Update global state immediately for optimistic UI
-      setGlobalResumes(
-        globalResumes.map((r) =>
-          r.id === resumeId ? { ...r, comment: undefined } : r
-        )
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete comment");
-    }
-  }, []);
+  const handleDeleteComment = useCallback(
+    async (resumeId: number) => {
+      try {
+        console.log(
+          "🔄 useResumeStore: Deleting comment for resume:",
+          resumeId
+        );
+
+        // Update global state immediately for optimistic UI
+        setGlobalResumes(
+          globalResumes.map((r) =>
+            r.id === resumeId ? { ...r, comment: undefined } : r
+          )
+        );
+
+        console.log("✅ useResumeStore: Comment deleted from global state");
+      } catch (err) {
+        console.error("❌ useResumeStore: Failed to delete comment:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to delete comment"
+        );
+      }
+    },
+    [globalResumes, setGlobalResumes]
+  );
 
   // Clear error function
   const clearError = useCallback(() => {
@@ -271,7 +274,7 @@ export const useResumeStore = (): UseResumeStoreReturn => {
   }, [refreshResumes, refreshGroups]);
 
   return {
-    resumes: globalResumes as StoreResume[], // Use global resumes with type assertion
+    resumes: globalResumes as ResumeData[], // Use global resumes with type assertion
     groups,
     isLoading,
     isDeleting,

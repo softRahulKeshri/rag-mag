@@ -8,3 +8,4 @@ export { default as PitchDetailsWithChat } from "./PitchDetailsWithChat";
 export { default as Sidebar } from "./Sidebar";
 export { default as SidebarToggle } from "./SidebarToggle";
 export { default as UploadArea } from "./UploadArea";
+export { default as FloatingPitchProcessingStatus } from "./FloatingPitchProcessingStatus";
