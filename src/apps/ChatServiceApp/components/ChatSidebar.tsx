@@ -1,6 +1,7 @@
 import {
   MagnifyingGlassIcon,
   ChatBubbleLeftRightIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import { SidebarToggle } from "./SidebarToggle";
 import ChatListItem from "./ChatListItem";
@@ -31,7 +32,7 @@ export const ChatSidebar = ({
       {/* Header Section */}
       <div
         className={`flex-shrink-0 border-b border-gray-200 ${
-          isCollapsed ? "p-3" : "p-6"
+          isCollapsed ? "p-4" : "p-6"
         }`}
       >
         <div
@@ -67,9 +68,37 @@ export const ChatSidebar = ({
           )}
         </div>
 
-        {/* New Chat Button */}
-        {!isCollapsed && (
-          <div>
+        {/* New Chat Button - Show in both collapsed and expanded states */}
+        <div className={isCollapsed ? "mt-4" : ""}>
+          {isCollapsed ? (
+            // Collapsed state - Icon only with enhanced tooltip
+            <div className="relative group flex justify-center">
+              <button
+                onClick={onNewChat}
+                disabled={isCreatingSession}
+                className="w-10 h-10 flex items-center justify-center rounded-lg transition-all duration-300 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
+                title={isCreatingSession ? "Creating new chat..." : "New Chat"}
+                aria-label={
+                  isCreatingSession ? "Creating new chat..." : "New Chat"
+                }
+              >
+                {isCreatingSession ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <PlusIcon className="h-5 w-5" />
+                )}
+              </button>
+
+              {/* Enhanced Tooltip for collapsed state */}
+              <div className="absolute left-full ml-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50">
+                <div className="bg-gray-900 text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap shadow-xl border border-gray-700">
+                  {isCreatingSession ? "Creating..." : "New Chat"}
+                  <div className="absolute top-1/2 -left-1 transform -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45 border-l border-b border-gray-700"></div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            // Expanded state - Full button
             <button
               onClick={onNewChat}
               disabled={isCreatingSession}
@@ -77,8 +106,8 @@ export const ChatSidebar = ({
             >
               <span>{isCreatingSession ? "Creating..." : "New Chat"}</span>
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Search Section */}
@@ -100,7 +129,7 @@ export const ChatSidebar = ({
       {/* Chat List */}
       <div
         className={`flex-1 overflow-y-auto min-h-0 ${
-          isCollapsed ? "p-1" : "p-2"
+          isCollapsed ? "p-2" : "p-2"
         } space-y-1 scroll-smooth`}
       >
         {!isCollapsed && (
@@ -140,7 +169,7 @@ export const ChatSidebar = ({
 
       {/* Footer */}
       <div
-        className={`flex-shrink-0 ${isCollapsed ? "p-2" : "p-4"} ${
+        className={`flex-shrink-0 ${isCollapsed ? "p-3" : "p-4"} ${
           isCollapsed ? "" : "border-t border-gray-200"
         }`}
       >
@@ -153,7 +182,7 @@ export const ChatSidebar = ({
 
       {/* Collapse Toggle Button - Show when collapsed */}
       {isCollapsed && onToggleCollapse && (
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-3 right-3">
           <SidebarToggle
             isOpen={false}
             onToggle={onToggleCollapse}

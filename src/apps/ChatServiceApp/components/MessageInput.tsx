@@ -145,19 +145,19 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
           </div>
         )}
 
-        {/* Main Input Container - Enhanced with spotlight effect */}
+        {/* Main Input Container - Enhanced with soft box-shadow */}
         <div className="p-2">
           <form
             onSubmit={handleSubmit}
-            className={`relative bg-white rounded-xl transition-all duration-300 ${
+            className={`relative bg-white rounded-xl transition-all duration-300 max-w-2xl mx-auto ${
               isFocused
-                ? "ring-2 ring-blue-500/20 shadow-xl border border-blue-200 transform scale-[1.01]"
-                : "shadow-lg border border-gray-200/60 hover:shadow-xl hover:border-gray-300/60 hover:scale-[1.005]"
+                ? "ring-2 ring-blue-500/20 shadow-xl border border-blue-200"
+                : "shadow-lg border border-gray-200/60 hover:shadow-xl hover:border-gray-300/60"
             }`}
             style={{
               boxShadow: isFocused
-                ? "0 20px 40px -12px rgba(59, 130, 246, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.1)"
-                : "0 15px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -5px rgba(0, 0, 0, 0.04)",
+                ? "0 20px 40px -12px rgba(59, 130, 246, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+                : "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05)",
             }}
           >
             {/* Input Area */}
@@ -170,7 +170,7 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
                 className={`flex-shrink-0 p-2 rounded-lg transition-all duration-200 ${
                   isSending
                     ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-500 hover:text-blue-600 hover:bg-blue-50 hover:scale-105"
+                    : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
                 }`}
                 aria-label="Attach file"
               >
@@ -201,6 +201,7 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
                     isSending ? "text-gray-400 cursor-not-allowed" : ""
                   }`}
                   rows={1}
+                  style={{ transform: "none" }}
                 />
 
                 {/* Character Count */}
@@ -218,7 +219,7 @@ export const MessageInput = forwardRef<MessageInputRef, MessageInputProps>(
                 className={`flex-shrink-0 px-4 py-2 rounded-xl transition-all duration-200 ${
                   !hasContent || isSending
                     ? "text-gray-300 bg-gray-100 cursor-not-allowed"
-                    : "text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    : "text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl"
                 }`}
                 aria-label={isSending ? "Sending..." : "Send message"}
               >

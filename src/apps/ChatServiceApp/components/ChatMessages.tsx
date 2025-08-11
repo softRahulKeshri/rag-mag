@@ -138,11 +138,20 @@ export const ChatMessages = ({
       <div className="flex-1 flex items-center justify-center p-6 lg:p-8 overflow-y-auto h-full">
         <div className="text-center max-w-md mx-auto">
           {/* Welcome Content */}
-          <div className="space-y-3">
-            <h1 className="text-2xl font-bold text-gray-900">
+          <div className="space-y-4">
+            <h1
+              className="text-3xl font-bold leading-tight"
+              style={{
+                background:
+                  "linear-gradient(to right, #B96AF7, #FDA052, #3077F3)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
               Welcome to ChatAI
             </h1>
-            <p className="text-gray-600 leading-relaxed text-base">
+            <p className="text-gray-600 leading-relaxed text-lg font-medium">
               Start a conversation below and experience intelligent AI-powered
               chat
             </p>
