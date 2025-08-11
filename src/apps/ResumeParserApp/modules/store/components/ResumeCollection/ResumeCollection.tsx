@@ -16,8 +16,12 @@ import ResumeGrid from "./ResumeGrid";
 import ErrorDisplay from "./ErrorDisplay";
 
 // Import types and utilities
-import type { ResumeCollectionProps, Group } from "../../types";
-import type { ResumeData, ResumeComment } from "../../../../../../types/global";
+import type {
+  ResumeCollectionProps,
+  Group,
+  ResumeData,
+  ResumeComment,
+} from "../../types";
 import { calculateGroupStats, filterResumes } from "./utils";
 import { useGroupApi } from "../../../../hooks/useGroupApi";
 

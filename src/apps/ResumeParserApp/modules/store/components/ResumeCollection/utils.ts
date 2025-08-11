@@ -1,5 +1,4 @@
-import type { Group, GroupStat } from "../../types";
-import type { ResumeData } from "../../../../../../types/global";
+import type { Group, GroupStat, ResumeData } from "../../types";
 
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return "0 Bytes";

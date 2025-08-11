@@ -1,4 +1,12 @@
 /**
+ * API Service Hook
+ *
+ * Centralized API service hook with JWT authentication and error handling
+ */
+
+export { useApiService } from "./useApiService";
+
+/**
  * Pitch Upload Hook
  *
  * Simple hook for uploading pitch files to the Magure AI API
