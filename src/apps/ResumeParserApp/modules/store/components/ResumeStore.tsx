@@ -2,7 +2,7 @@ import React from "react";
 import { ResumeCollection } from "./ResumeCollection";
 import { useResumeStore } from "../hooks/useResumeStore";
 import ErrorDisplay from "./ResumeCollection/ErrorDisplay";
-import type { ResumeData } from "../../../../../types/global";
+import type { ResumeData } from "../types";
 
 const ResumeStore: React.FC = () => {
   const {

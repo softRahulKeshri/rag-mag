@@ -1,7 +1,36 @@
-import type { ResumeData, ResumeComment } from "../../../../types/global";
+// Store Module Types - Self-contained to avoid circular dependencies
 
-// Re-export ResumeComment for backward compatibility
-export type { ResumeComment };
+export interface ResumeComment {
+  id: number;
+  resumeId: number;
+  comment: string;
+  createdAt: string;
+  updatedAt: string;
+  hrName?: string;
+}
+
+export interface ResumeData {
+  id: number;
+  filename: string;
+  originalFilename: string;
+  storedFilename: string;
+  filepath: string;
+  fileSize: number;
+  fileType: string;
+  uploadedAt: string;
+  status: "uploaded" | "processing" | "completed" | "failed";
+  group?: string;
+  cloudUrl?: string;
+  commentedAt?: string;
+  uploadTime?: string;
+  // New fields from API response
+  name?: string;
+  job_profile?: string;
+  days_available?: string;
+  total_experience?: string;
+  // Comment data to preserve across tab switches
+  comment?: ResumeComment;
+}
 
 // Store Module Types
 export interface StoreResume {

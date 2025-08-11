@@ -303,8 +303,7 @@ const Navbar = () => {
                     </button>
 
                     {/* Admin Dashboard Link - Only show for admin users */}
-                    {(user?.role === "admin" ||
-                      import.meta.env.MODE === "development") && (
+                    
                       <button
                         onClick={() => {
                           handleAppChange(ROUTES.ADMIN);
@@ -315,7 +314,7 @@ const Navbar = () => {
                         <ShieldCheckIcon className="h-4 w-4 mr-3 text-purple-500 group-hover:text-purple-600 transition-colors duration-200" />
                         <span className="font-medium">Admin Dashboard</span>
                       </button>
-                    )}
+                    
 
                     <div className="border-t border-gray-200/60 my-2"></div>
 

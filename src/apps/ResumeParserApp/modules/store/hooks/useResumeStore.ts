@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useResumes, useActions } from "../../../../../store";
-import type { ResumeData } from "../../../../../types/global";
-import type { BackendResumeResponse, Group, ResumeComment } from "../types";
+import type { ResumeData, ResumeComment } from "../types";
+import type { BackendResumeResponse, Group } from "../types";
 import { getResumesFromCVSEndpoint, deleteResume } from "../../../services/api";
 import { useGroupApi } from "../../../hooks/useGroupApi";
 
