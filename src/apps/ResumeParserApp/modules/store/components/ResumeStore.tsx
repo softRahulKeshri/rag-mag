@@ -17,13 +17,6 @@ const ResumeStore: React.FC = () => {
     handleDeleteComment,
   } = useResumeStore();
 
-  // Transform resumes to match the expected format for ResumeCollection
-  const transformedResumes = resumes.map((resume) => ({
-    ...resume,
-    // Map status if needed
-    status: mapStatus(resume.status),
-  }));
-
   // Map status from ResumeData to expected format
   const mapStatus = (
     status: string
@@ -41,6 +34,13 @@ const ResumeStore: React.FC = () => {
         return "completed"; // Default to completed for existing resumes
     }
   };
+
+  // Transform resumes to match the expected format for ResumeCollection
+  const transformedResumes = resumes.map((resume) => ({
+    ...resume,
+    // Map status if needed
+    status: mapStatus(resume.status),
+  }));
 
   // Handle resume deletion
   const handleResumeDeleted = async (resume: ResumeData) => {
